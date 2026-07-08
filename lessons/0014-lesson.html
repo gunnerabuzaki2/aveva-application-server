@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 14: Containment + Lab 8 — Modeling the Mixer</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0013-lesson.html">← Lesson 13: Change Control</a> &nbsp;|&nbsp;
+  <a href="0015-lesson.html">Lesson 15: Module 5 →</a>
+</nav>
+
+<h1>Lesson 14: Containment + Lab 8 — Modeling the Mixer</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 4, Section 4 + Lab 8 (pages 4-45 to 4-66)</p>
+<p class="page-ref">How objects contain other objects to form composite equipment — and building a complete Mixer model using containment in Lab 8.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>14.1 Containment — Organizing Objects Within Objects</h2>
+<p class="page-ref">Reference: Module 4, Section 4 (pages 4-45 to 4-47)</p>
+
+<p>In the previous lessons, we modeled individual equipment components — pumps, valves, sensors, and instruments — as separate Galaxy objects. In a real plant, however, these components don't exist in isolation. A mixer contains an agitator, inlets, an outlet, level and temperature sensors, and pumps. <strong>Containment</strong> is the mechanism that lets you model these physical relationships directly in the Galaxy.</p>
+
+<div class="key-concept">
+  <strong>Containment</strong> is the ability of one Galaxy object to contain other objects within it, creating a parent-child hierarchy. Containment models the physical structure of real equipment — a mixer physically contains pumps, sensors, and inlets, so in the Galaxy, the Mixer object contains those component objects.
+</div>
+
+<p>Containment is not just organizational grouping. When an object is contained within another object:</p>
+<ul>
+  <li>The <strong>contained object's fully qualified name</strong> reflects the hierarchy (e.g., <code>Plant.Production.Line1.Mixer100.Pump1_001</code>)</li>
+  <li>The contained object <strong>lives inside</strong> the parent object in the Galaxy Model tree</li>
+  <li>The parent object can <strong>reference and interact with</strong> its contained objects via scripts and attribute bindings</li>
+  <li>When the parent is <strong>deployed</strong>, all contained objects are deployed together as a unit</li>
+  <li>The containment relationship is <strong>part of the object's design</strong> — it is defined in templates, not at runtime</li>
+</ul>
+
+<h3>Containment vs. Other Relationships</h3>
+<table>
+  <tr><th>Relationship</th><th>What It Does</th><th>When to Use</th></tr>
+  <tr>
+    <td><strong>Containment</strong></td>
+    <td>Parent physically contains child — child is part of the parent's design</td>
+    <td>Components that are integral to an equipment piece (sensors built into a mixer, pumps attached to a vessel)</td>
+  </tr>
+  <tr>
+    <td><strong>Reference</strong></td>
+    <td>One object references another by attribute path — objects remain separate</td>
+    <td>Objects that need to read/write data from other objects but are not physically part of them</td>
+  </tr>
+  <tr>
+    <td><strong>Inheritance</strong></td>
+    <td>Child template derives from parent template — shares structure and behavior</td>
+    <td>Creating reusable equipment templates (all pumps share common attributes)</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Think physically:</strong> If you would need a wrench to remove component X from equipment Y, then X should be <em>contained</em> by Y in the Galaxy. If X and Y just need to share data, use <em>references</em> instead.
+</div>
+
+<!-- ============================================================ -->
+<h2>14.2 Containment Hierarchy and Naming</h2>
+<p class="page-ref">Reference: Module 4, Section 4 (pages 4-48 to 4-50)</p>
+
+<p>When you place an object inside another object, the contained object's <strong>fully qualified name</strong> (FQN) includes the entire containment path. This naming convention is automatic — you don't build it manually.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0195_0.png" alt="Containment Hierarchy">
+  <div class="caption">Containment hierarchy showing how objects are nested — the Galaxy Model tree reflects the physical equipment structure (Module 4, page 4-48)</div>
+</div>
+
+<p>Consider the complete Mixer100 deployment hierarchy:</p>
+
+<table>
+  <tr><th>Fully Qualified Name</th><th>Object Type</th><th>Role</th></tr>
+  <tr><td><code>Plant.Production.Line1.Mixer100</code></td><td>Mixer template instance</td><td>Parent — the mixer unit</td></tr>
+  <tr><td><code>...Mixer100.Agitator_001</code></td><td>Agitator</td><td>Contained child — mixing motor</td></tr>
+  <tr><td><code>...Mixer100.Inlet1_001</code></td><td>Inlet</td><td>Contained child — first inlet valve</td></tr>
+  <tr><td><code>...Mixer100.Inlet2_001</code></td><td>Inlet</td><td>Contained child — second inlet valve</td></tr>
+  <tr><td><code>...Mixer100.Outlet_001</code></td><td>Outlet</td><td>Contained child — outlet valve</td></tr>
+  <tr><td><code>...Mixer100.Pump1_001</code></td><td>Pump</td><td>Contained child — inlet pump 1</td></tr>
+  <tr><td><code>...Mixer100.Pump2_001</code></td><td>Pump</td><td>Contained child — inlet pump 2</td></tr>
+  <tr><td><code>...Mixer100.Level_001</code></td><td>Level sensor</td><td>Contained child — level measurement</td></tr>
+  <tr><td><code>...Mixer100.Temperature_001</code></td><td>Temperature sensor</td><td>Contained child — temperature measurement</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0189_0.png" alt="Deployment View of Mixer100">
+  <div class="caption">Deployment view showing Mixer100 with all contained components under Line1 — note how every component (Agitator, Inlets, Outlet, Pumps, Level, Temperature) appears nested under the Mixer (Module 4, page 4-45)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Naming convention:</strong> The fully qualified name always starts from the <code>$Plant</code> object and flows down through each level of containment. The dot-separated path mirrors the hierarchy exactly. This makes it easy to locate any object and understand its position in the plant structure.
+</div>
+
+<h3>Controlling Containment</h3>
+<p>Containment is defined by the <strong>Container</strong> attribute on any object. When you drag an object onto another in the Model pane, or when you set the Container attribute in the Object Viewer, you establish the containment relationship.</p>
+
+<div class="pitfall">
+  <strong>Important:</strong> Containment is a <em>design-time</em> decision. Once you set the Container attribute on an object, that object becomes part of the parent. Moving or removing a contained object requires updating the Container attribute — you cannot simply delete the parent without addressing the children.
+</div>
+
+<!-- ============================================================ -->
+<h2>14.3 Containment Benefits</h2>
+<p class="page-ref">Reference: Module 4, Section 4 (pages 4-51 to 4-53)</p>
+
+<p>Containment provides several practical benefits for building and managing a Galaxy:</p>
+
+<ul>
+  <li><strong>Logical organization:</strong> The Galaxy Model tree mirrors the physical plant, making it easy to navigate large applications with thousands of objects</li>
+  <li><strong>Deployment efficiency:</strong> Deploying a parent object automatically deploys all contained children — no need to deploy each sensor and pump individually</li>
+  <li><strong>Cascade deletion:</strong> Deleting a parent object removes all its contained children, preventing orphaned objects</li>
+  <li><strong>Attribute scoping:</strong> Scripts within the parent can easily reference contained objects using relative paths (e.g., <code>Me.Pump1_001.Running</code>)</li>
+  <li><strong>Template reuse:</strong> Once a Mixer template is built with its contained components, every Mixer instance in the plant inherits the same structure automatically</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>14.4 Lab 8 — Modeling the Mixer</h2>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-54 to 4-66)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Create a Mixer template with all contained equipment components</li>
+    <li>Configure contained object attributes (I/O references, alarm settings, engineering units)</li>
+    <li>Deploy the complete Mixer model and verify it in the Object Viewer</li>
+  </ul>
+</div>
+
+<p>This lab brings together everything learned so far — template creation, inheritance, attribute configuration, and containment — into a single comprehensive equipment model. The Mixer is the most complex piece of equipment in the training Galaxy, and modeling it properly demonstrates how all these concepts work together.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0196_0.png" alt="Lab 8 Introduction">
+  <div class="caption">Lab 8 introduction — Modeling the Mixer as a composite equipment piece with all its contained components (Module 4, page 4-54)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Step 1: Create the Mixer Template</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-55 to 4-57)</p>
+
+<p>The Mixer template serves as the parent object that will contain all sub-components. It defines the mixer's own attributes (name, status, mixing speed) as well as the structural framework for containment.</p>
+
+<p><strong>Step 1a:</strong> In the Galaxy Model pane, navigate to the <code>$Equipment</code> area. Right-click and select <strong>New → Object</strong>. Choose the appropriate parent template (typically <code>$Equipment</code> or a derived equipment template).</p>
+
+<p><strong>Step 1b:</strong> Name the new object <code>Mixer100</code>. This is the instance — not the template — representing a specific mixer in the plant.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0197_0.png" alt="Creating Mixer Template">
+  <div class="caption">Creating the Mixer template — the new Mixer100 object is created in the Galaxy Model hierarchy (Module 4, page 4-55)</div>
+</div>
+
+<p><strong>Step 1c:</strong> Set the Container attribute on Mixer100 to place it under the correct parent in the hierarchy (e.g., under <code>Line1</code>).</p>
+
+<div class="screenshot">
+  <img src="../images/page_0197_1.png" alt="Mixer Container Setup">
+  <div class="caption">Configuring the Mixer's position in the containment hierarchy — placing it under the production line (Module 4, page 4-56)</div>
+</div>
+
+<div class="tip">
+  <strong>Tip:</strong> The Mixer template inherits attributes from its parent template. Make sure you understand which attributes come from inheritance versus which are unique to the Mixer before adding contained objects.
+</div>
+
+<!-- ============================================================ -->
+<h3>Step 2: Add Contained Objects to the Mixer</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-57 to 4-60)</p>
+
+<p>Now comes the core of containment — adding all the component objects inside the Mixer. Each component is created as a separate object, then placed inside the Mixer via its Container attribute.</p>
+
+<p><strong>Step 2a:</strong> Create the following contained objects inside Mixer100:</p>
+
+<table>
+  <tr><th>Object Name</th><th>Template</th><th>Purpose</th></tr>
+  <tr><td><code>Agitator_001</code></td><td>Agitator template</td><td>Mixing motor / agitator</td></tr>
+  <tr><td><code>Inlet1_001</code></td><td>Inlet template</td><td>First material inlet valve</td></tr>
+  <tr><td><code>Inlet2_001</code></td><td>Inlet template</td><td>Second material inlet valve</td></tr>
+  <tr><td><code>Outlet_001</code></td><td>Outlet template</td><td>Discharge outlet valve</td></tr>
+  <tr><td><code>Pump1_001</code></td><td>Pump template</td><td>Inlet pump — material feed 1</td></tr>
+  <tr><td><code>Pump2_001</code></td><td>Pump template</td><td>Inlet pump — material feed 2</td></tr>
+  <tr><td><code>Level_001</code></td><td>Level sensor template</td><td>Mixer level measurement</td></tr>
+  <tr><td><code>Temperature_001</code></td><td>Temperature sensor template</td><td>Mixer temperature measurement</td></tr>
+</table>
+
+<p><strong>Step 2b:</strong> For each object, set its <strong>Container</strong> attribute to <code>Plant.Production.Line1.Mixer100</code>. You can do this by dragging the object onto Mixer100 in the Model pane, or by editing the Container field in the Object Viewer.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0197_2.png" alt="Adding Contained Objects">
+  <div class="caption">Adding component objects to the Mixer — each object's Container attribute is set to point to Mixer100 (Module 4, page 4-57)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Watch out:</strong> Each contained object must have the correct Container attribute set. If the Container is left blank or set incorrectly, the object will appear as a standalone object in the Galaxy Model, not as part of the Mixer. Verify the hierarchy in the Model pane after adding each component.
+</div>
+
+<!-- ============================================================ -->
+<h3>Step 3: Configure Contained Object Attributes</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-60 to 4-63)</p>
+
+<p>With all components in place, the next step is configuring each contained object's unique attributes — I/O connections, alarm thresholds, engineering units, and setpoints.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0198_0.png" alt="Configuring Contained Attributes">
+  <div class="caption">Configuring attributes on contained objects — setting I/O references, alarm limits, and engineering units for each component (Module 4, page 4-60)</div>
+</div>
+
+<p><strong>Key attribute configurations per component:</strong></p>
+
+<table>
+  <tr><th>Component</th><th>Key Attributes to Configure</th></tr>
+  <tr><td><strong>Agitator_001</strong></td><td>Running status I/O link, speed setpoint, motor fault alarm</td></tr>
+  <tr><td><strong>Inlet1_001 / Inlet2_001</strong></td><td>Valve open/close I/O link, flow rate, valve fault alarm</td></tr>
+  <tr><td><strong>Outlet_001</strong></td><td>Valve open/close I/O link, flow rate, valve fault alarm</td></tr>
+  <tr><td><strong>Pump1_001 / Pump2_001</strong></td><td>Pump running I/O link, flow rate, pump fault alarm, trip alarm</td></tr>
+  <tr><td><strong>Level_001</strong></td><td>Level input I/O link, high/low alarm setpoints, engineering units (% or L)</td></tr>
+  <tr><td><strong>Temperature_001</strong></td><td>Temperature input I/O link, high/low alarm setpoints, engineering units (°C or °F)</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0198_1.png" alt="Attribute Configuration Details">
+  <div class="caption">Detailed attribute configuration — the I/O links connect each component to its simulated or real data source (Module 4, page 4-61)</div>
+</div>
+
+<p><strong>Step 3a:</strong> Open each contained object in the Object Viewer. Configure the I/O link attributes to point to the appropriate data source (OPC tags, simulation server tags, or direct references).</p>
+
+<p><strong>Step 3b:</strong> Set alarm thresholds for the Level and Temperature sensors. These will trigger alarms when values exceed the configured limits.</p>
+
+<p><strong>Step 3c:</strong> Set engineering units on all analog attributes so that values display correctly in the Object Viewer and any connected HMI.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0199_0.png" alt="More Configuration Steps">
+  <div class="caption">Continuing configuration — setting additional attributes on the contained components (Module 4, page 4-62)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0199_1.png" alt="Configuration Completion">
+  <div class="caption">Final attribute settings on the Mixer's contained objects (Module 4, page 4-63)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Step 4: Deploy and Verify</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-64 to 4-66)</p>
+
+<p>With all attributes configured, deploy the Mixer and verify that all contained objects come up correctly.</p>
+
+<p><strong>Step 4a:</strong> Right-click on <code>Mixer100</code> in the Galaxy Model and select <strong>Deploy</strong>. Because Mixer100 contains all the child objects, deploying the parent automatically deploys every contained child.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0200_0.png" alt="Deployment of Mixer">
+  <div class="caption">Deploying Mixer100 — the deployment includes all contained objects automatically (Module 4, page 4-64)</div>
+</div>
+
+<p><strong>Step 4b:</strong> Open the <strong>Object Viewer</strong> for Mixer100. Verify that:</p>
+<ul>
+  <li>Its own attributes display correctly (name, status, mixing speed)</li>
+  <li>All contained objects appear in the Object Viewer's tree structure</li>
+  <li>Each contained object shows its configured I/O values (live if simulation is running)</li>
+  <li>Alarm states are visible and correctly configured</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0201_0.png" alt="Object Viewer Verification">
+  <div class="caption">Object Viewer showing Mixer100 with all contained components — each child object's attributes are visible and showing live data (Module 4, page 4-65)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0201_1.png" alt="Object Viewer Detail">
+  <div class="caption">Object Viewer detail view — verifying that contained objects are reporting correct I/O values and alarm states (Module 4, page 4-65)</div>
+</div>
+
+<p><strong>Step 4c:</strong> Verify the deployment status shows successful for all objects. If any contained object fails to deploy, check its I/O link configuration and Container attribute.</p>
+
+<!-- ============================================================ -->
+<h3>Step 5: Lab Completion — Module 4 Summary</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (page 4-66)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0202_0.png" alt="Lab 8 Completion">
+  <div class="caption">Lab 8 completion — the Mixer is fully modeled with all contained components deployed and verified (Module 4, page 4-66)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0202_1.png" alt="Module 4 Summary">
+  <div class="caption">Module 4 summary — reviewing the complete object model built throughout Module 4 (Module 4, page 4-66)</div>
+</div>
+
+<p>Congratulations — you have completed Lab 8 and Module 4. The Mixer model demonstrates how all the concepts from this module come together:</p>
+
+<ul>
+  <li><strong>Template creation</strong> — the Mixer and all its components are built from reusable templates</li>
+  <li><strong>Inheritance</strong> — each component inherits common attributes and behavior from its base template</li>
+  <li><strong>Containment</strong> — all components are contained within the Mixer, reflecting the physical equipment structure</li>
+  <li><strong>Attribute configuration</strong> — I/O links, alarms, and engineering units are set per component</li>
+  <li><strong>Deployment</strong> — deploying the parent deploys the entire composite unit</li>
+</ul>
+
+<div class="key-concept">
+  <strong>Module 4 Complete:</strong> You now understand how to create equipment templates, use inheritance to specialize them, configure attributes with I/O links and alarms, and use containment to model composite equipment. These are the fundamental building blocks of any Application Server project.
+</div>
+
+<!-- ============================================================ -->
+<div class="quiz">
+  <h3>Quiz — Test Your Understanding</h3>
+
+  <p><strong>Q1:</strong> What is containment in Application Server, and how does it differ from a reference relationship?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Containment means one object physically contains another — the child is part of the parent's design and is deployed/deleted with it. A reference is a data link between two independent objects that remain separate in the Galaxy hierarchy.</p></details>
+
+  <p><strong>Q2:</strong> If Mixer100 contains Pump1_001, what is Pump1_001's fully qualified name?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Plant.Production.Line1.Mixer100.Pump1_001</p></details>
+
+  <p><strong>Q3:</strong> What happens when you deploy a parent object that contains children?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">All contained child objects are deployed automatically as part of the deployment — you do not need to deploy each child individually.</p></details>
+
+  <p><strong>Q4:</strong> What attribute on an object defines its containment relationship?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The Container attribute — it specifies the fully qualified name of the parent object that contains this object.</p></details>
+
+  <p><strong>Q5:</strong> How many components does the Mixer100 model contain in Lab 8?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Eight components: Agitator_001, Inlet1_001, Inlet2_001, Outlet_001, Pump1_001, Pump2_001, Level_001, and Temperature_001.</p></details>
+
+  <p><strong>Q6:</strong> What is a practical rule of thumb for deciding whether to use containment vs. a reference?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">If you would need a wrench to remove component X from equipment Y in the real world, use containment. If X and Y just need to share data but are physically separate, use a reference.</p></details>
+
+  <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+<ol>
+  <li><strong>Containment</strong> models physical relationships — parent objects contain child objects as integral components.</li>
+  <li>The <strong>Container attribute</strong> defines the containment relationship for each object.</li>
+  <li>Fully qualified names reflect the containment hierarchy (e.g., <code>Plant.Production.Line1.Mixer100.Pump1_001</code>).</li>
+  <li>Deploying a parent <strong>automatically deploys</strong> all contained children.</li>
+  <li>The Mixer model demonstrates <strong>all Module 4 concepts together</strong>: templates, inheritance, containment, and attribute configuration.</li>
+  <li>Use containment for integral components; use <strong>references</strong> for data links between independent objects.</li>
+</ol>
+
+<p class="source">Next: Lesson 15 — Module 5</p>
+
+</body>
+</html>

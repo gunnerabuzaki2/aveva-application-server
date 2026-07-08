@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 12: Lab 6 — Modeling Meters</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0011-lesson.html">← Lesson 11: App Objects + Attributes</a> &nbsp;|&nbsp;
+  <a href="0013-lesson.html">Lesson 13: Change Control →</a>
+</nav>
+
+<h1>Lesson 12: Lab 6 — Modeling Meters</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 4, Lab 6 (pages 4-17 to 4-30)</p>
+<p class="page-ref">Hands-on lab — create derived templates for meter devices, configure attributes, create instances, and deploy them.</p>
+
+<!-- ============================================================ -->
+<h2>12.1 Overview</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-17 to 4-18)</p>
+
+<div class="lab">
+  <strong>Lab Objective:</strong> In this lab you will create derived templates for meter devices (meters, level transmitters, temperature sensors), configure their PV attributes, create instances, and deploy them to a running System Platform runtime. This lab brings together all the template and attribute concepts from earlier lessons.
+</div>
+
+<p>The lab follows this sequence:</p>
+<ol>
+  <li>Create a <code>$Meter</code> derived template from <code>$UserDefined</code></li>
+  <li>Configure the PV attribute (Float, I/O Read)</li>
+  <li>Create specialized templates (<code>$Level</code>, <code>$Temperature</code>) derived from <code>$Meter</code></li>
+  <li>Create instances (L1, T1) from the specialized templates</li>
+  <li>Configure IO device mapping (Autobind)</li>
+  <li>Deploy and verify at runtime</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>12.2 Creating the $Meter Derived Template</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-17 to 4-19)</p>
+
+<h3>Step 1: Navigate to Templates</h3>
+<p>In the IDE, open the <strong>Templates</strong> pane. You should see the Application folder with the default templates: <code>$AnalogDevice</code>, <code>$DiscreteDevice</code>, <code>$Sequencer</code>, <code>$SQLData</code>, and <code>$UserDefined</code>. The Training > Global folder also contains derived templates from earlier labs.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0160_0.png" alt="Templates pane showing $UserDefined and Application folder">
+  <div class="caption">Templates pane — right-click $UserDefined to create a new Derived Template (page 4-17)</div>
+</div>
+
+<h3>Step 2: Create $Meter Derived Template</h3>
+<p>Right-click <code>$UserDefined</code> → <strong>New → Derived Template</strong>. Name it <code>$Meter</code>. This makes <code>$UserDefined</code> the parent template of <code>$Meter</code>, meaning <code>$Meter</code> inherits all attributes from <code>$UserDefined</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0161_0.png" alt="Creating $Meter derived template">
+  <div class="caption">Creating the $Meter derived template — enter the name and confirm (page 4-18)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Template Inheritance:</strong> When you create a derived template, the child inherits all attributes, scripts, and alarms from the parent. You can override or add attributes in the child. This is the core of template reusability in Application Server.
+</div>
+
+<!-- ============================================================ -->
+<h2>12.3 Configuring the PV Attribute</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-19 to 4-20)</p>
+
+<p>Open the <code>$Meter</code> template in the <strong>Object Editor</strong>. The PV attribute needs to be configured to read a floating-point value from an IO device.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0162_0.png" alt="$Meter Object Editor — PV attribute configuration">
+  <div class="caption">$Meter Object Editor — PV attribute set to Float type with I/O Read source (page 4-19)</div>
+</div>
+
+<table>
+  <tr><th>Property</th><th>Value</th><th>Why</th></tr>
+  <tr><td><strong>Attribute Type</strong></td><td>Float</td><td>Meters produce continuous analog values (flow, pressure, etc.)</td></tr>
+  <tr><td><strong>I/O Source</strong></td><td>I/O Read</td><td>The PV reads its value from a field device via an IO device</td></tr>
+  <tr><td><strong>I/O Name</strong></td><td><code>IODev1_...</code></td><td>Maps to the IO device and tag for this attribute</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Why Float and not Integer?</strong> Meter readings are typically continuous values (e.g., 123.456 gallons/min). Float attributes support decimal precision, which is essential for accurate process measurement.
+</div>
+
+<!-- ============================================================ -->
+<h2>12.4 Check-in and Template Completion</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-20 to 4-21)</p>
+
+<p>After configuring the PV attribute, check in the <code>$Meter</code> template. Check-in saves the template to the Galaxy database and makes it available for deriving further templates or creating instances.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0163_0.png" alt="Check-in dialog for $Meter template">
+  <div class="caption">Check-in confirmation — the $Meter template is now saved in the Galaxy (page 4-20)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Common Mistake:</strong> Forgetting to check in after making changes. Unchecked-in templates exist only in your IDE session. Other users cannot see them, and deployment cannot use them. Always check in your work.
+</div>
+
+<!-- ============================================================ -->
+<h2>12.5 Creating Specialized Templates ($Level, $Temperature)</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-21 to 4-23)</p>
+
+<p>Now create two specialized templates derived from <code>$Meter</code>. These represent specific types of metering instruments.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0164_0.png" alt="Creating $Level and $Temperature derived templates">
+  <div class="caption">Creating $Level and $Temperature as derived templates from $Meter (page 4-21)</div>
+</div>
+
+<table>
+  <tr><th>Template</th><th>Derived From</th><th>Purpose</th></tr>
+  <tr><td><code>$Level</code></td><td><code>$Meter</code></td><td>Level transmitter — measures liquid level in a tank</td></tr>
+  <tr><td><code>$Temperature</code></td><td><code>$Meter</code></td><td>Temperature sensor — measures process temperature</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Template Hierarchy:</strong><br>
+  <code>$UserDefined</code> → <code>$Meter</code> → <code>$Level</code> / <code>$Temperature</code><br><br>
+  Each level inherits from its parent. <code>$Level</code> and <code>$Temperature</code> both get the PV attribute from <code>$Meter</code>, which got it from <code>$UserDefined</code>. You can add template-specific attributes (e.g., engineering units) in the child templates.
+</div>
+
+<!-- ============================================================ -->
+<h2>12.6 Creating Instances</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-23 to 4-25)</p>
+
+<p>Instances are the actual runtime objects that represent real equipment. Create:</p>
+<ul>
+  <li><code>L1</code> — an instance of <code>$Level</code> (representing a real level transmitter)</li>
+  <li><code>T1</code> — an instance of <code>$Temperature</code> (representing a real temperature sensor)</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0165_0.png" alt="Creating L1 and T1 instances">
+  <div class="caption">Creating instances — L1 from $Level and T1 from $Temperature (page 4-23)</div>
+</div>
+
+<p>Instances are created in the <strong>Application</strong> folder (or a subfolder). Each instance has a unique name and its own attribute values, but shares the template's structure (attributes, scripts, alarms).</p>
+
+<table>
+  <tr><th>Instance</th><th>Template</th><th>PV Value (example)</th><th>Represents</th></tr>
+  <tr><td><code>L1</code></td><td><code>$Level</code></td><td>75.3</td><td>Level transmitter on Tank 1</td></tr>
+  <tr><td><code>T1</code></td><td><code>$Temperature</code></td><td>185.6</td><td>Temperature sensor on Heat Exchanger</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>12.7 IO Device Mapping (Autobind)</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-25 to 4-27)</p>
+
+<p>The IO Devices view is where you map template attributes to real field device tags. Application Server uses <strong>Autobind</strong> to automatically match attribute names to IO tags.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0166_0.png" alt="IO Devices view">
+  <div class="caption">IO Devices view — showing configured IO devices and tag mappings (page 4-25)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0167_0.png" alt="IO device Autobind configuration">
+  <div class="caption">IO device mapping — Autobind configuration connecting PV attributes to field tags (page 4-26)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Autobind:</strong> When you configure an IO Source on an attribute (e.g., <code>IODev1_L1_PV</code>), Autobind automatically resolves the tag path at deployment time. This means you don't have to manually map each attribute — the naming convention handles it.
+</div>
+
+<h3>How Autobind Works</h3>
+<ol>
+  <li>The attribute's <strong>IO Name</strong> follows a pattern: <code>&lt;IODevice&gt;_&lt;Instance&gt;_&lt;Attribute&gt;</code></li>
+  <li>At deployment, the runtime resolves the full tag path using the IO device configuration</li>
+  <li>The PV attribute then reads its value from the resolved tag in real-time</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>12.8 Deploying to Runtime</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-27 to 4-29)</p>
+
+<p>With templates, instances, and IO mapping configured, the final step is <strong>deployment</strong>. Deployment pushes your galaxy objects to the Application Server runtime.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0168_0.png" alt="Deploy dialog">
+  <div class="caption">Deploy dialog — selecting objects and target runtime for deployment (page 4-27)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0169_0.png" alt="Deployment completion">
+  <div class="caption">Deployment in progress / completion — objects are now running on the runtime engine (page 4-28)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Deployment Prerequisite:</strong> All templates and instances must be checked in before deployment. If you see errors during deployment, verify that your work is checked in and there are no attribute configuration errors.
+</div>
+
+<h3>Deployment Steps</h3>
+<ol>
+  <li>Select the objects to deploy (instances L1, T1)</li>
+  <li>Choose the target runtime (Application Server node)</li>
+  <li>Confirm the deployment</li>
+  <li>Wait for deployment to complete — the runtime engine instantiates the objects</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>12.9 Verifying at Runtime</h2>
+<p class="page-ref">Reference: Module 4, Lab 6 (pages 4-29 to 4-30)</p>
+
+<p>After deployment, use the <strong>Object Viewer</strong> to verify that your instances are running and reading live values.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0170_0.png" alt="Object Viewer showing runtime meter values">
+  <div class="caption">Object Viewer — L1 and T1 instances showing live PV values from field devices (page 4-29)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0171_0.png" alt="Monitoring attributes at runtime">
+  <div class="caption">Monitoring attributes — verifying that PV values update in real-time (page 4-30)</div>
+</div>
+
+<div class="key-concept">
+  <strong>What to Verify:</strong>
+  <ul>
+    <li>Instances appear in the Object Viewer with status "Running"</li>
+    <li>PV values are updating (not stuck at 0 or stale)</li>
+    <li>IO quality is "Good" (not "Bad" or "Uncertain")</li>
+    <li>Attribute values match what you expect from the field devices</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>12.10 Lab Summary</h2>
+
+<table>
+  <tr><th>Step</th><th>Action</th><th>Key Concept</th></tr>
+  <tr><td>1</td><td>Create $Meter from $UserDefined</td><td>Template inheritance</td></tr>
+  <tr><td>2</td><td>Configure PV as Float / I/O Read</td><td>Attribute configuration</td></tr>
+  <tr><td>3</td><td>Create $Level, $Temperature from $Meter</td><td>Template hierarchy</td></tr>
+  <tr><td>4</td><td>Create instances L1, T1</td><td>Instance vs. Template</td></tr>
+  <tr><td>5</td><td>Configure IO device Autobind</td><td>IO mapping to field devices</td></tr>
+  <tr><td>6</td><td>Deploy to runtime</td><td>Check-in → Deploy → Verify</td></tr>
+  <tr><td>7</td><td>Verify in Object Viewer</td><td>Runtime monitoring</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<div class="quiz">
+  <h3>Knowledge Check</h3>
+
+  <p><strong>Q1:</strong> What is the parent template of <code>$Meter</code> in this lab?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">$UserDefined — $Meter is a derived template with $UserDefined as its parent.</p></details>
+
+  <p><strong>Q2:</strong> Why is the PV attribute configured as Float rather than Integer?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">Meter readings are continuous analog values (e.g., 123.456) that require decimal precision. Float supports fractional values; Integer does not.</p></details>
+
+  <p><strong>Q3:</strong> What is the relationship between <code>$Meter</code>, <code>$Level</code>, and <code>$Temperature</code>?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">$Level and $Temperature are both derived from $Meter. They form a three-level hierarchy: $UserDefined → $Meter → $Level/$Temperature. Both $Level and $Temperature inherit the PV attribute from $Meter.</p></details>
+
+  <p><strong>Q4:</strong> What must you do before deploying objects to the runtime?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">You must check in all templates and instances. Unchecked-in objects exist only in the IDE session and cannot be deployed.</p></details>
+
+  <p><strong>Q5:</strong> What does Autobind do in the IO device configuration?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">Autobind automatically resolves attribute IO names (following a naming convention) to actual field device tags at deployment time, eliminating the need for manual tag mapping.</p></details>
+</div>
+
+</body>
+</html>

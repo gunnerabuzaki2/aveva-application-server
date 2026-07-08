@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 11: Module 4 — Application Objects + Attributes</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0010-lesson.html">← Lesson 10: Data Simulation</a> &nbsp;|&nbsp;
+  <a href="0012-lesson.html">Lesson 12: Lab 6 — Modeling Meters →</a>
+</nav>
+
+<h1>Lesson 11: Module 4 — Application Objects + Attributes</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 4, Sections 1-2 (pages 4-3 to 4-16)</p>
+<p class="page-ref">Understanding the core building blocks of an Application Server project — objects, their attributes, and how they model real-world equipment.</p>
+
+<!-- ============================================================ -->
+<h2>11.1 Introduction to Application Objects</h2>
+<p class="page-ref">Reference: Module 4, Section 1 (pages 4-3 to 4-8)</p>
+
+<div class="key-concept">
+  <strong>Application Objects</strong> are the fundamental building blocks of any Application Server project. Every piece of equipment, every control point, every device in your plant is represented as an <strong>object</strong> in the Galaxy.
+</div>
+
+<h3>What is an Application Object?</h3>
+<p>An Application Object is a self-contained entity in the Galaxy that represents something in the real world — a motor, a valve, a sensor, a controller, or an entire unit operation. Each object has:</p>
+<ul>
+  <li><strong>A unique name</strong> — every object must have a name within its parent container</li>
+  <li><strong>A type</strong> — determines the attributes and behaviors the object has</li>
+  <li><strong>Attributes</strong> — properties that hold data (values, configurations, states)</li>
+  <li><strong>A position</strong> — its location in the Galaxy hierarchy</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0143_0.jpeg" alt="Module 4 Title — Application Objects">
+  <div class="caption">Module 4 introduces the core concept of Application Objects — the building blocks of every System Platform project (page 4-1)</div>
+</div>
+
+<h3>The Object Model — Objects Within Objects</h3>
+<p>One of the most powerful features of Application Server is its <strong>nested object model</strong>. Objects can contain other objects, creating a hierarchy that mirrors your plant's physical structure:</p>
+
+<table>
+  <tr><th>Level</th><th>Example</th><th>Description</th></tr>
+  <tr>
+    <td><strong>Galaxy</strong></td>
+    <td><code>MyPlant_Galaxy</code></td>
+    <td>The top-level container for everything</td>
+  </tr>
+  <tr>
+    <td><strong>Area</strong></td>
+    <td><code>Water_Treatment</code></td>
+    <td>Logical grouping of related equipment</td>
+  </tr>
+  <tr>
+    <td><strong>Unit</strong></td>
+    <td><code>Pump_Station_01</code></td>
+    <td>A specific functional unit in the plant</td>
+  </tr>
+  <tr>
+    <td><strong>Equipment</strong></td>
+    <td><code>Meter_01</code></td>
+    <td>An individual piece of equipment with I/O points</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Think of it like a file system:</strong> The Galaxy is the root drive, Areas are folders, Units are sub-folders, and Equipment objects are the files. Each level can contain multiple children.
+</div>
+
+<h3>Objects vs. Templates</h3>
+<p>There are two distinct kinds of objects in the Galaxy:</p>
+
+<table>
+  <tr><th>Object Type</th><th>Purpose</th><th>When to Use</th></tr>
+  <tr>
+    <td><strong>Templates</strong></td>
+    <td>Reusable definitions (like class definitions in programming)</td>
+    <td>Created once, instantiated many times</td>
+  </tr>
+  <tr>
+    <td><strong>Instances</strong></td>
+    <td>Actual working objects (like objects created from a class)</td>
+    <td>Created from templates, deployed to run</td>
+  </tr>
+</table>
+
+<div class="pitfall">
+  <strong>Common mistake:</strong> Editing an instance's attributes directly doesn't change the template. If you want all meters to have the same behavior, edit the template — the changes propagate to all instances automatically.
+</div>
+
+<!-- ============================================================ -->
+<h2>11.2 Object Attributes</h2>
+<p class="page-ref">Reference: Module 4, Section 2 (pages 4-8 to 4-16)</p>
+
+<div class="key-concept">
+  <strong>Attributes</strong> are the properties that define an object's behavior and data. Every object type has a predefined set of attributes — some are standard across all objects, others are specific to the object's type.
+</div>
+
+<h3>How to View Object Attributes</h3>
+<p>To see an object's attributes, right-click the object in the Galaxy Editor and select <strong>Edit</strong>. This opens the Object Editor, which has an <strong>Attributes</strong> tab showing all available attributes for that object type.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0150_0.png" alt="$Meter Object Editor — Attributes Tab">
+  <div class="caption">The $Meter Object Editor showing the Attributes tab — PV is the primary value attribute with Data type=Float and Initial value=0.0 (Module 4, Section 2)</div>
+</div>
+
+<h3>Understanding Attribute Properties</h3>
+<p>Each attribute in the list has several properties that control how it behaves:</p>
+
+<table>
+  <tr><th>Property</th><th>Description</th><th>Example from $Meter</th></tr>
+  <tr>
+    <td><strong>Name</strong></td>
+    <td>The identifier for this attribute</td>
+    <td><code>PV</code></td>
+  </tr>
+  <tr>
+    <td><strong>Data Type</strong></td>
+    <td>What kind of data it holds (Float, Integer, Boolean, String, etc.)</td>
+    <td><code>Float</code></td>
+  </tr>
+  <tr>
+    <td><strong>Writeability</strong></td>
+    <td>Whether the value can be changed at runtime</td>
+    <td><code>Object writeable</code></td>
+  </tr>
+  <tr>
+    <td><strong>Initial Value</strong></td>
+    <td>The default value when the object deploys</td>
+    <td><code>0.0</code></td>
+  </tr>
+  <tr>
+    <td><strong>Source</strong></td>
+    <td>Where the value comes from (I/O device, derived, etc.)</td>
+    <td><code>&lt;IODevice&gt;.$Meter.PV</code></td>
+  </tr>
+</table>
+
+<h3>I/O Configuration — Connecting Attributes to Real Data</h3>
+<p>The most critical attribute configuration is <strong>I/O binding</strong> — telling an attribute where to get its value from in the real world. In the Object Editor, you can configure I/O auto-assignment:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0156_0.jpeg" alt="I/O Auto Assignment Configuration">
+  <div class="caption">I/O Auto Assignment — configuring how attributes connect to real-world I/O devices (Module 4, Section 2)</div>
+</div>
+
+<p>The <strong>Read from</strong> field specifies the I/O address. The syntax follows the pattern:</p>
+<p><code>&lt;IODevice&gt;.$Meter.PV</code></p>
+
+<table>
+  <tr><th>Part</th><th>Meaning</th></tr>
+  <tr><td><code>&lt;IODevice&gt;</code></td><td>The name of the communication driver object</td></tr>
+  <tr><td><code>.$Meter</code></td><td>The device or register group on that driver</td></tr>
+  <tr><td><code>.PV</code></td><td>The specific register or point within that device</td></tr>
+</table>
+
+<h3>Attribute Categories</h3>
+<p>The Attributes tab typically organizes attributes into logical groups:</p>
+
+<table>
+  <tr><th>Category</th><th>Purpose</th><th>Example Attributes</th></tr>
+  <tr>
+    <td><strong>General / Core</strong></td>
+    <td>Basic object properties</td>
+    <td>PV, SP (setpoint), Mode, Status</td>
+  </tr>
+  <tr>
+    <td><strong>History</strong></td>
+    <td>Historian data logging configuration</td>
+    <td>Historical Logging, Logging Interval</td>
+  </tr>
+  <tr>
+    <td><strong>Limit Alarms</strong></td>
+    <td>High/low alarm thresholds</td>
+    <td>HiHi, Hi, Lo, LoLo alarm limits</td>
+  </tr>
+  <tr>
+    <td><strong>ROC Alarms</strong></td>
+    <td>Rate-of-change alarm settings</td>
+    <td>ROC Limit, ROC Time</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>From the $Meter screenshot:</strong> Notice that History, Limit alarms, and ROC alarms are all <strong>disabled</strong> by default. You must explicitly enable and configure them for each object type as needed.
+</div>
+
+<h3>Writeability States</h3>
+<p>Attributes can have different writeability levels:</p>
+
+<table>
+  <tr><th>Writeability</th><th>Meaning</th></tr>
+  <tr>
+    <td><strong>Object writeable</strong></td>
+    <td>The value can be changed by users or scripts at runtime</td>
+  </tr>
+  <tr>
+    <td><strong>Object read-only</strong></td>
+    <td>The value is set by the system and cannot be manually changed</td>
+  </tr>
+  <tr>
+    <td><strong>Derived</strong></td>
+    <td>The value is calculated from other attributes or expressions</td>
+  </tr>
+</table>
+
+<div class="pitfall">
+  <strong>Watch out:</strong> If an attribute is set to "Object read-only" or "Derived," you cannot write to it directly. Attempting to do so will result in an error. Always check the writeability before trying to change a value.
+</div>
+
+<h3>Total Attribute Count</h3>
+<p>The $Meter object shown has <strong>75 total attributes</strong>. This is typical for equipment objects — they have many configuration options to cover different use cases. Not all attributes will be used in every deployment, but they are all available if needed.</p>
+
+<!-- ============================================================ -->
+<h2>11.3 Quiz</h2>
+
+<div class="quiz">
+  <h3>Knowledge Check</h3>
+  
+  <p><strong>1.</strong> What is the fundamental difference between a template and an instance in the Galaxy?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">A template is a reusable definition — like a class in programming. An instance is a working object created from that template. Changes to templates propagate to all instances, but changes to individual instances do not affect the template or other instances.</p></details>
+  
+  <p><strong>2.</strong> In the $Meter object, what data type is the PV attribute?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">Float — meaning it can hold decimal/floating-point values, which is appropriate for a process variable like flow rate, temperature, or pressure.</p></details>
+  
+  <p><strong>3.</strong> What does the I/O source <code>&lt;IODevice&gt;.$Meter.PV</code> represent?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">This is the path to read the PV value from an external I/O device. &lt;IODevice&gt; is the communication driver object name, $Meter is the device or register group, and PV is the specific register or point being read.</p></details>
+  
+  <p><strong>4.</strong> Why might an attribute be set to "Object read-only"?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">An attribute is read-only when its value is controlled by the system, derived from other values, or read from an external I/O source. Making it read-only prevents users or scripts from accidentally overwriting a value that should only come from a specific source.</p></details>
+  
+  <p><strong>5.</strong> What are the three alarm categories visible in the $Meter Attributes tab, and what are their default states?</p>
+  <details><summary>Click to reveal answer</summary><p class="answer">The three alarm categories are History, Limit alarms, and ROC alarms. All three are disabled by default — you must explicitly enable and configure them for each object as needed.</p></details>
+</div>
+
+<!-- ============================================================ -->
+<h2>11.4 Summary</h2>
+
+<div class="lab">
+  <strong>Key Takeaways from Module 4, Sections 1-2:</strong>
+  <ul>
+    <li><strong>Application Objects</strong> are the building blocks of every System Platform project — they represent real-world equipment and processes</li>
+    <li>The Galaxy uses a <strong>nested object hierarchy</strong> that mirrors your plant structure (Galaxy → Area → Unit → Equipment)</li>
+    <li><strong>Templates</strong> are reusable definitions; <strong>instances</strong> are working objects created from templates</li>
+    <li><strong>Attributes</strong> define an object's properties — each has a name, data type, writeability, initial value, and optional I/O source</li>
+    <li><strong>I/O binding</strong> connects attributes to real-world data via communication drivers</li>
+    <li>Attributes are organized into categories: General, History, Limit Alarms, ROC Alarms, etc.</li>
+    <li><strong>Writeability</strong> controls whether an attribute can be changed at runtime (writeable, read-only, or derived)</li>
+  </ul>
+</div>
+
+</body>
+</html>

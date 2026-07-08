@@ -46,7 +46,7 @@
 <p>The <strong>Operations Control Management Console (OCMC)</strong> is the primary runtime management tool for Application Server. It is a separate application from the IDE — you use it after the Galaxy has been developed and deployed, when you need to manage and monitor live systems.</p>
 
 <div class="screenshot">
-  <img src="images/page_0105_0.png" alt="OCMC main window with tree navigation and configuration pane">
+  <img src="../images/page_0105_0.png" alt="OCMC main window with tree navigation and configuration pane">
   <div class="caption">The OCMC window — the left pane shows the management tree (Historian, Galaxy Database Manager, Operations Integration Server Manager, Log Viewer, Platform Manager). The right pane shows the selected node's details — here the PLC_TEST configuration under OI.SIM.1 (Module 3, page 3-29)</div>
 </div>
 
@@ -89,7 +89,7 @@
 <p>The <strong>Galaxy Database Manager</strong> is the OCMC tool for backing up, restoring, and creating Galaxy databases. It is the first node under the OCMC tree and the most operationally critical.</p>
 
 <div class="screenshot">
-  <img src="images/page_0106_0.png" alt="Galaxy Database Manager showing backup, restore, and create options">
+  <img src="../images/page_0106_0.png" alt="Galaxy Database Manager showing backup, restore, and create options">
   <div class="caption">The Galaxy Database Manager — Full Backup, Incremental Backup, Restore, and Create Galaxy from Backup file (Module 3, page 3-30)</div>
 </div>
 
@@ -184,7 +184,7 @@
 <p>Once objects are deployed to a platform, they execute within the <strong>runtime scan cycle</strong>. The platform allocates a fixed time window for each scan cycle. Within that window, the runtime engine processes all active tasks — data acquisition, script execution, alarm evaluation — and then performs housekeeping before the next cycle begins.</p>
 
 <div class="screenshot">
-  <img src="images/page_0113_0.png" alt="Scan cycle diagram showing normal scan vs scan overrun">
+  <img src="../images/page_0113_0.png" alt="Scan cycle diagram showing normal scan vs scan overrun">
   <div class="caption">Normal scan vs. scan overrun — In a normal scan, tasks A, B, and C complete within the allocated time window, leaving idle time for housekeeping. In a scan overrun, the tasks extend past the window, cutting into the housekeeping period (Module 3, page 3-37)</div>
 </div>
 
@@ -205,7 +205,7 @@
 <p>Deployed objects communicate with each other through <strong>attribute references</strong>. When one object needs data from another, it references the source object's attribute. Application Server supports three types of references.</p>
 
 <div class="screenshot">
-  <img src="images/page_0114_0.png" alt="Attribute reference types: direct, indirect, and expression-based">
+  <img src="../images/page_0114_0.png" alt="Attribute reference types: direct, indirect, and expression-based">
   <div class="caption">Three types of attribute references — direct (hardcoded object.attribute path), indirect (string attribute holds the path), and expression-based (runtime evaluation) (Module 3, page 3-38)</div>
 </div>
 
@@ -282,7 +282,7 @@
 <p><strong>I/O referencing</strong> is how object attributes connect to real-world data from field devices (PLCs, RTUs, DCS) through communication drivers. There are two methods: autobinding and manual binding.</p>
 
 <div class="screenshot">
-  <img src="images/page_0115_0.png" alt="I/O referencing — autobinding vs manual binding">
+  <img src="../images/page_0115_0.png" alt="I/O referencing — autobinding vs manual binding">
   <div class="caption">I/O referencing methods — Autobinding automatically maps attributes to I/O tags by matching names; Manual binding explicitly assigns each I/O tag to a specific attribute (Module 3, page 3-41)</div>
 </div>
 

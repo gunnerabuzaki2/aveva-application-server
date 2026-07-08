@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 13: Change Control and Propagation + Lab 7</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0012-lesson.html">← Lesson 12: Lab 6 — Modeling Meters</a> | <a href="0014-lesson.html">Lesson 14: Containment + Mixer →</a>
+</nav>
+
+<h1>Lesson 13: Change Control and Propagation + Lab 7</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 4, Section 3 + Lab 7 (pages 4-31 to 4-44)</p>
+<p class="page-ref">How template changes propagate through the object hierarchy — the locking mechanism that protects derived objects and the change control workflow that keeps multi-developer environments organized.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>13.1 Change Control Overview</h2>
+<p class="page-ref">Reference: Module 4, Section 3 (pages 4-31 to 4-33)</p>
+
+<p>In a multi-developer environment, many engineers may work on the same Galaxy simultaneously. <strong>Change control</strong> is the system that manages who can modify what, and ensures that template changes propagate correctly through the object hierarchy without causing unintended side effects.</p>
+
+<div class="key-concept">
+  <strong>Change Control</strong> in Application Server governs how template changes flow down to derived objects. It uses a <strong>locking mechanism</strong> to protect objects from unwanted changes, and a <strong>check-out/check-in</strong> workflow to manage multi-user access. When you modify a template, you control exactly which attributes propagate and which remain locked.
+</div>
+
+<p>The change control system addresses a fundamental challenge: templates are shared. When you change a template, every object derived from it could be affected. Without change control, a single template edit could break dozens or hundreds of deployed objects.</p>
+
+<!-- ============================================================ -->
+<h2>13.2 The Object Hierarchy and Locking</h2>
+<p class="page-ref">Reference: Module 4, Section 3 (pages 4-31 to 4-32)</p>
+
+<p>Application Server uses a hierarchical template structure where derived objects inherit attributes from their parent templates. The <strong>lock state</strong> of each attribute determines whether changes from the parent template will propagate down.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0173_0.jpeg" alt="Change Control Hierarchy Diagram">
+  <div class="caption">The Change Control hierarchy — $DiscreteDevice → $Valve (unlocked) → $Inlet and $Outlet (locked in parent) → CV101, CV102, CV103, CV104 (all locked in parent). Each lock state is visually indicated (Module 4, page 4-31)</div>
+</div>
+
+<p>The hierarchy shown in the diagram illustrates a typical equipment model:</p>
+
+<table>
+  <tr><th>Level</th><th>Object</th><th>Lock State</th><th>Meaning</th></tr>
+  <tr>
+    <td>Base Template</td>
+    <td><code>$DiscreteDevice</code></td>
+    <td>Root</td>
+    <td>The base — changes here can propagate to all descendants</td>
+  </tr>
+  <tr>
+    <td>Area Template</td>
+    <td><code>$Valve</code></td>
+    <td><strong>Unlocked</strong> (green)</td>
+    <td>Receives changes from parent; can also propagate changes downward</td>
+  </tr>
+  <tr>
+    <td>Equipment Group</td>
+    <td><code>$Inlet</code>, <code>$Outlet</code></td>
+    <td><strong>Locked in Parent</strong> (grey with person icon)</td>
+    <td>Protected from parent changes — attributes locked so upstream edits don't overwrite local customizations</td>
+  </tr>
+  <tr>
+    <td>Object Instances</td>
+    <td>CV101, CV102, CV103, CV104</td>
+    <td><strong>Locked in Parent</strong> (grey with person icon)</td>
+    <td>Each instance is locked — protecting their specific I/O and configuration from template-level changes</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Locking prevents propagation.</strong> When an attribute is <em>locked</em>, changes made to that attribute in a parent template will NOT flow down to the locked object. This is essential for protecting local customizations — such as unique I/O references, scaling values, or alarm setpoints that differ from the template defaults.
+</div>
+
+<!-- ============================================================ -->
+<h2>13.3 Lock States — Unlocked vs. Locked vs. Locked in Parent</h2>
+<p class="page-ref">Reference: Module 4, Section 3 (pages 4-32 to 4-33)</p>
+
+<p>Every attribute on every object exists in one of three lock states. Understanding these states is critical for managing change propagation:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0174_0.jpeg" alt="Locking and Unlocking Attributes">
+  <div class="caption">Locking and unlocking attributes — the mechanism for controlling whether parent template changes propagate to derived objects (Module 4, page 4-32)</div>
+</div>
+
+<table>
+  <tr><th>Lock State</th><th>Icon</th><th>Behavior</th></tr>
+  <tr>
+    <td><strong>Unlocked</strong></td>
+    <td>Green open lock</td>
+    <td>The attribute is <em>synchronized</em> with the parent template. Any change to the parent's value will automatically propagate to this object. The object's value matches the template value.</td>
+  </tr>
+  <tr>
+    <td><strong>Locked</strong></td>
+    <td>Grey/person icon</td>
+    <td>The attribute is <em>protected</em> from parent changes. The attribute has been locally modified (or explicitly locked) so that parent template updates will NOT overwrite it. The value is "frozen" at the object level.</td>
+  </tr>
+  <tr>
+    <td><strong>Locked in Parent</strong></td>
+    <td>Grey/person icon</td>
+    <td>The attribute was locked by the parent template, so this object inherits the locked state. The attribute cannot be changed from this level — it can only be modified by unlocking at the template level where the lock was applied.</td>
+  </tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0175_0.jpeg" alt="Attribute Lock States Details">
+  <div class="caption">Attribute lock states in detail — showing how the lock mechanism appears in the attribute editor and what each state means for propagation (Module 4, page 4-33)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Common mistake:</strong> Locking an attribute is not the same as locking the entire object. You can lock individual attributes while leaving others unlocked. This gives you fine-grained control — for example, you might lock the I/O reference (which is unique to each device) but leave the alarm limits unlocked (so they propagate from the template).
+</div>
+
+<h3>How to Lock and Unlock Attributes</h3>
+<ul>
+  <li><strong>To lock an attribute:</strong> Right-click the attribute in the Object Editor and select <strong>Lock</strong>. The attribute's lock icon changes to the locked state, and it will no longer receive updates from the parent template.</li>
+  <li><strong>To unlock an attribute:</strong> Right-click the locked attribute and select <strong>Unlock</strong>. The attribute immediately reverts to the parent template's value and becomes synchronized again.</li>
+  <li><strong>Bulk locking:</strong> You can lock or unlock multiple attributes at once by selecting them and applying the lock/unlock action to the selection.</li>
+</ul>
+
+<div class="tip">
+  <strong>Best practice:</strong> When creating derived objects from templates, lock attributes that will be unique to each instance (I/O references, tag names, scaling) and leave shared attributes (alarm limits, engineering units, descriptions) unlocked so they propagate template changes automatically.
+</div>
+
+<!-- ============================================================ -->
+<h2>13.4 Attribute Propagation Rules</h2>
+<p class="page-ref">Reference: Module 4, Section 3 (pages 4-33 to 4-34)</p>
+
+<p>Propagation follows predictable rules that determine whether a template change reaches its derived objects:</p>
+
+<table>
+  <tr><th>Template Attribute State</th><th>Derived Attribute State</th><th>What Happens</th></tr>
+  <tr>
+    <td>Modified in template</td>
+    <td>Unlocked in derived</td>
+    <td>✅ Change propagates — derived attribute updates to match template</td>
+  </tr>
+  <tr>
+    <td>Modified in template</td>
+    <td>Locked in derived</td>
+    <td>❌ Change blocked — derived attribute retains its local value</td>
+  </tr>
+  <tr>
+    <td>Modified in template</td>
+    <td>Locked in Parent (derived)</td>
+    <td>❌ Change blocked — lock was inherited from a higher-level template</td>
+  </tr>
+  <tr>
+    <td>Unchanged in template</td>
+    <td>Any state in derived</td>
+    <td>No change — nothing to propagate</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Propagation is one-way:</strong> Changes flow from parent template → derived object, never the reverse. If you modify an attribute on a derived object, it does NOT push the change up to the parent template. This ensures template changes are always intentional and controlled.
+</div>
+
+<h3>Visual Feedback in the IDE</h3>
+<p>The IDE provides clear visual cues about lock states:</p>
+<ul>
+  <li><strong>Green open lock icon:</strong> Unlocked — synchronized with parent, changes will propagate</li>
+  <li><strong>Grey lock/person icon:</strong> Locked — protected from parent changes</li>
+  <li><strong>Bold attribute name:</strong> The attribute has been locally modified (different from parent value)</li>
+  <li><strong>Normal attribute name:</strong> The attribute matches the parent template value</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>13.5 Check-Out / Check-In Workflow</h2>
+<p class="page-ref">Reference: Module 4, Section 3 (pages 4-34 to 4-36)</p>
+
+<p>In a multi-developer environment, the Galaxy Repository manages concurrent access through a <strong>check-out/check-in</strong> system. This prevents two developers from editing the same object simultaneously.</p>
+
+<div class="key-concept">
+  <strong>Check-out/Check-in</strong> is Application Server's version control mechanism. When you check out an object, you gain exclusive editing rights. When you check it in, your changes are saved to the Galaxy Repository and others can check it out again.
+</div>
+
+<h3>The Workflow</h3>
+<table>
+  <tr><th>Step</th><th>Action</th><th>Result</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>Check Out</strong> an object</td>
+    <td>You gain exclusive editing rights. The object is locked for other developers. You can modify attributes, scripts, and configuration.</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><strong>Make changes</strong> in the Object Editor</td>
+    <td>Your modifications are stored locally in the IDE. They are not yet visible to other developers or to runtime.</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><strong>Check In</strong> the object</td>
+    <td>Changes are saved to the Galaxy Repository. The object is unlocked for other developers. The IDE shows the updated object.</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><strong>Deploy</strong> (if needed)</td>
+    <td>Checked-in changes are pushed to runtime. Check-in and deployment are separate steps — you can check in without deploying.</td>
+  </tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0181_0.png" alt="Check-In Dialog">
+  <div class="caption">The Check-In dialog — confirming changes before saving them to the Galaxy Repository and releasing the object lock (Module 4, page 4-38)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Don't forget to check in!</strong> If you check out an object and walk away, no one else can edit it. The Galaxy Repository tracks checked-out objects. If a developer leaves without checking in, an administrator may need to force-check the object back in.
+</div>
+
+<!-- ============================================================ -->
+<h2>13.6 Lab 7 — Change Control and Propagation</h2>
+<p class="page-ref">Reference: Module 4, Lab 7 (pages 4-37 to 4-44)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Lock specific attributes in a template to prevent propagation</li>
+    <li>Modify a template and observe which changes propagate and which are blocked</li>
+    <li>Configure I/O scaling on derived objects</li>
+    <li>Use the check-out/check-in workflow for change management</li>
+    <li>Verify propagation results after template modifications</li>
+  </ul>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0178_0.png" alt="Lab 7 Introduction">
+  <div class="caption">Lab 7 introduction — objectives for understanding change control and attribute propagation (Module 4, page 4-37)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>13.7 Lab 7 Step 1 — Lock Attributes in the Valve Template</h2>
+<p class="page-ref">Reference: Module 4, Lab 7 (pages 4-38 to 4-39)</p>
+
+<p>The first step is to lock specific attributes in the <code>$Valve</code> template so that downstream objects are protected from changes to those attributes. This simulates a real-world scenario where certain valve properties are customized per-instance and should not be overwritten by template updates.</p>
+
+<p><strong>Step 1a:</strong> Open the <code>$Valve</code> template in the Object Editor. Navigate to the attributes you want to protect.</p>
+
+<p><strong>Step 1b:</strong> Select the attributes that should be unique to each valve instance — typically the I/O reference, tag name, and device-specific scaling values.</p>
+
+<p><strong>Step 1c:</strong> Right-click the selected attributes and choose <strong>Lock</strong>. The lock icons change to indicate the locked state.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0179_0.png" alt="Lock Attributes in Template Step 1">
+  <div class="caption">Locking attributes in the $Valve template — selecting attributes that will be protected from propagation (Module 4, page 4-38)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0179_1.png" alt="Lock Attributes in Template Step 2">
+  <div class="caption">Attributes now show locked state — these attributes will not be overwritten when the template is modified later (Module 4, page 4-38)</div>
+</div>
+
+<p><strong>Step 1d:</strong> Verify the lock states. Locked attributes should display the grey lock/person icon. Unlocked attributes retain the green open lock icon.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0179_3.png" alt="Lock Attributes Verification">
+  <div class="caption">Verifying lock states — confirming which attributes are locked (grey) and which remain unlocked (green) in the template (Module 4, page 4-39)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0179_4.png" alt="Lock Attributes Final State">
+  <div class="caption">Final lock state configuration — the $Valve template now has specific attributes locked to protect downstream objects (Module 4, page 4-39)</div>
+</div>
+
+<div class="tip">
+  <strong>Think about what you're locking:</strong> In this lab, you're locking attributes like the I/O reference and tag path — these are unique to each physical valve. If you left them unlocked, every template change would overwrite the individual valve's connection to its PLC tag, breaking runtime communication.
+</div>
+
+<!-- ============================================================ -->
+<h2>13.8 Lab 7 Step 2 — Configure I/O Scaling</h2>
+<p class="page-ref">Reference: Module 4, Lab 7 (page 4-39)</p>
+
+<p>Before testing propagation, configure I/O scaling on the derived valve objects. I/O scaling converts raw PLC values into meaningful engineering units — for example, converting a 0–100% signal into a 0–100% open position or a flow rate in GPM.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0180_0.png" alt="I/O Scaling Configuration Step 1">
+  <div class="caption">Configuring I/O scaling on a valve object — setting raw-to-engineered value conversion parameters (Module 4, page 4-39)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0180_1.png" alt="I/O Scaling Configuration Step 2">
+  <div class="caption">I/O scaling parameters — defining the input range and output engineering units for the valve's process variable (Module 4, page 4-39)</div>
+</div>
+
+<p>Key I/O scaling parameters typically include:</p>
+<table>
+  <tr><th>Parameter</th><th>Description</th></tr>
+  <tr><td><strong>Raw High / Raw Low</strong></td><td>The input range from the PLC (e.g., 0–4095 for a 12-bit ADC, or 0–100 for a percentage signal)</td></tr>
+  <tr><td><strong>EU High / EU Low</strong></td><td>The output engineering units range (e.g., 0–100% open, 0–500 GPM flow rate)</td></tr>
+  <tr><td><strong>Clamping</strong></td><td>Whether values outside the raw range are clamped to the EU limits or allowed to exceed them</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>13.9 Lab 7 Step 3 — Modify the Template and Observe Propagation</h2>
+<p class="page-ref">Reference: Module 4, Lab 7 (pages 4-40 to 4-41)</p>
+
+<p>Now the critical test: modify an attribute in the <code>$Valve</code> template and observe which derived objects receive the change and which are protected by the locks.</p>
+
+<p><strong>Step 3a:</strong> Open the <code>$Valve</code> template and modify an <strong>unlocked</strong> attribute — for example, change an alarm limit or description text.</p>
+
+<p><strong>Step 3b:</strong> Check in the template change.</p>
+
+<p><strong>Step 3c:</strong> Open one of the derived valve objects (e.g., CV101). Verify that:</p>
+<ul>
+  <li>✅ The <strong>unlocked</strong> attribute now shows the updated value from the template</li>
+  <li>❌ The <strong>locked</strong> attributes still show their original local values — the template change was blocked</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0182_0.png" alt="Propagation Verification Step 1">
+  <div class="caption">Verifying propagation — checking which attributes on derived objects received the template change (Module 4, page 4-40)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0182_1.png" alt="Propagation Verification Step 2">
+  <div class="caption">Comparing locked vs. unlocked attributes — locked attributes retain their local values while unlocked attributes updated to match the template (Module 4, page 4-40)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0182_2.png" alt="Propagation Verification Step 3">
+  <div class="caption">Propagation results confirmed — the visual lock indicators show exactly which attributes were affected by the template change (Module 4, page 4-41)</div>
+</div>
+
+<div class="key-concept">
+  <strong>This is the core lesson:</strong> The locking mechanism gives you precise control over which template changes reach your deployed objects. Without locking, every template edit would cascade to every derived object — potentially breaking unique configurations. With locking, you can confidently update shared settings (alarm limits, descriptions, scaling defaults) while protecting instance-specific data (I/O references, tag paths, unique setpoints).
+</div>
+
+<!-- ============================================================ -->
+<h2>13.10 Lab 7 Step 4 — Check-Out/Check-In Workflow</h2>
+<p class="page-ref">Reference: Module 4, Lab 7 (pages 4-41 to 4-42)</p>
+
+<p>Practice the multi-developer check-out/check-in workflow:</p>
+
+<p><strong>Step 4a:</strong> Check out an object (right-click → Check Out). Notice the visual indicator showing the object is checked out to you.</p>
+
+<p><strong>Step 4b:</strong> Attempt to check out the same object from a different IDE session (if available). The system should prevent this — the object is locked.</p>
+
+<p><strong>Step 4c:</strong> Make your modifications to the checked-out object.</p>
+
+<p><strong>Step 4d:</strong> Check in the object. The lock is released and other developers can now check it out.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0183_0.png" alt="Change Control Check-Out">
+  <div class="caption">Check-out workflow — marking an object as checked out for exclusive editing (Module 4, page 4-41)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0183_1.png" alt="Change Control Modification">
+  <div class="caption">Making modifications to a checked-out object — changes are stored locally until check-in (Module 4, page 4-42)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0183_2.png" alt="Change Control Check-In">
+  <div class="caption">Checking in the modified object — changes are saved to the Galaxy Repository and the lock is released (Module 4, page 4-42)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>13.11 Lab 7 Step 5 — Final Verification</h2>
+<p class="page-ref">Reference: Module 4, Lab 7 (pages 4-42 to 4-44)</p>
+
+<p>Complete the lab by deploying the modified objects and verifying everything works correctly at runtime.</p>
+
+<p><strong>Step 5a:</strong> Deploy the objects that were modified. Verify deployment completes successfully.</p>
+
+<p><strong>Step 5b:</strong> Open Object Viewer and inspect the deployed valve objects. Confirm that:</p>
+<ul>
+  <li>Attributes that were unlocked received the template updates</li>
+  <li>Attributes that were locked retained their local values</li>
+  <li>I/O scaling is functioning correctly — raw values are being converted to engineering units</li>
+  <li>Communication quality is good (no Unknown or Bad quality)</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0184_0.png" alt="Lab 7 Final Verification Step 1">
+  <div class="caption">Final verification — checking deployed objects after change control modifications (Module 4, page 4-43)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0184_1.png" alt="Lab 7 Final Verification Step 2">
+  <div class="caption">Verifying runtime behavior — confirming that locked attributes preserved their values and unlocked attributes received template updates (Module 4, page 4-43)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0184_2.png" alt="Lab 7 Completion">
+  <div class="caption">Lab 7 complete — all change control and propagation concepts verified (Module 4, page 4-44)</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="quiz">
+  <h3>Quiz — Test Your Understanding</h3>
+
+  <p><strong>Q1:</strong> What does it mean when an attribute is "Locked" in Application Server?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">A locked attribute is protected from parent template changes. Modifications made to the attribute in the parent template will NOT propagate to the derived object — the attribute retains its local value.</p></details>
+
+  <p><strong>Q2:</strong> What is the difference between "Locked" and "Locked in Parent"?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">"Locked" means the attribute was explicitly locked on this object. "Locked in Parent" means the lock was inherited from a higher-level template — the attribute was locked at a parent template level, and this object inherits that locked state.</p></details>
+
+  <p><strong>Q3:</strong> You modify an alarm limit on a base template. A derived object has that alarm limit attribute locked. What happens to the derived object's alarm limit?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Nothing — the derived object's alarm limit retains its current value. The lock prevents the template change from propagating. The derived object keeps its locally-set alarm limit.</p></details>
+
+  <p><strong>Q4:</strong> In the check-out/check-in workflow, what happens if you check out an object but never check it back in?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The object remains locked and no other developer can check it out or edit it. An administrator may need to force-check the object back in to release the lock.</p></details>
+
+  <p><strong>Q5:</strong> Why would you lock the I/O reference attribute on a derived valve object but leave the alarm limit attribute unlocked?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The I/O reference is unique to each physical valve — it connects the object to a specific PLC tag. If unlocked, a template change would overwrite it, breaking communication. The alarm limit is a shared setting that should propagate from the template so all valves use the same alarm thresholds.</p></details>
+
+  <p><strong>Q6:</strong> What does I/O scaling do, and why is it configured on derived objects rather than templates?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">I/O scaling converts raw PLC values (e.g., 0–4095 ADC counts) into meaningful engineering units (e.g., 0–100% or 0–500 GPM). It is often configured on derived objects because different instruments may have different ranges, scales, or calibration — even if they use the same template.</p></details>
+
+  <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+<ol>
+  <li><strong>Change control</strong> manages how template modifications propagate through the object hierarchy — protecting deployed objects from unintended changes.</li>
+  <li>Three lock states exist: <strong>Unlocked</strong> (synchronized with parent), <strong>Locked</strong> (protected from parent changes), and <strong>Locked in Parent</strong> (lock inherited from a higher-level template).</li>
+  <li><strong>Lock individual attributes</strong> for fine-grained control — lock instance-specific data (I/O references, tag paths) and leave shared settings (alarm limits, descriptions) unlocked.</li>
+  <li>Propagation is <strong>one-way</strong>: parent template → derived object, never the reverse.</li>
+  <li>The <strong>check-out/check-in</strong> workflow prevents concurrent editing conflicts in multi-developer environments.</li>
+  <li><strong>I/O scaling</strong> converts raw PLC values to engineering units and is often configured per-instance due to instrument-specific ranges.</li>
+  <li>Always <strong>check in</strong> objects after editing — unchecked-out objects block other developers.</li>
+</ol>
+
+<p class="source">Next: Lesson 14 — Containment and Mixer configuration.</p>
+
+</body>
+</html>
