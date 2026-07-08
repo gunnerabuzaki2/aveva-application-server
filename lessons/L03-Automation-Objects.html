@@ -32,9 +32,34 @@
 <body>
 
 <nav>
-  <a href="0002-lesson.html">← Lesson 2: The IDE</a> | <a href="0004-lesson.html">Lesson 4: Lab 2 — Derived Templates →</a>
+  <a href="L02-IDE-Tools-Views.html">← Lesson 2: The IDE</a> | <a href="L04-Lab2-Derived-Templates.html">Lesson 4: Lab 2 — Derived Templates →</a>
 </nav>
 
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+</div>
+</details>
+</nav>
 <h1>Lesson 3: Automation Objects — Types, Templates, and the Object Editor</h1>
 <p class="source">Based on Module 1, Section 5: Automation Objects (pages 1-31 to 1-42)</p>
 
@@ -70,7 +95,7 @@
 </table>
 
 <div class="screenshot">
-  <img src="images/as_page_0035.png" alt="Templates pane showing System, Device Integration, and Application categories">
+  <img src="../images/as_page_0035.png" alt="Templates pane showing System, Device Integration, and Application categories">
   <div class="caption">The Templates pane in the IDE showing the three categories: System, Device Integration, and Application objects.</div>
 </div>
 
@@ -102,7 +127,7 @@
 </table>
 
 <div class="screenshot">
-  <img src="images/as_page_0036.png" alt="Object encapsulation radial diagram showing 7 functions around a valve">
+  <img src="../images/as_page_0036.png" alt="Object encapsulation radial diagram showing 7 functions around a valve">
   <div class="caption">Encapsulation diagram: every automation object — like this valve — contains I/O, Scripting, History, Security, Alarms, Version/Documentation, and Graphics all within it.</div>
 </div>
 
@@ -132,7 +157,7 @@
 </ol>
 
 <div class="screenshot">
-  <img src="images/as_page_0037.png" alt="Template-instance diagram showing $Valve template deriving CV101, CV102, CV103">
+  <img src="../images/as_page_0037.png" alt="Template-instance diagram showing $Valve template deriving CV101, CV102, CV103">
   <div class="caption">The template-instance model: $Valve is the template, and CV101, CV102, CV103 are instances. Each instance inherits the template's attributes but can have its own values.</div>
 </div>
 
@@ -177,7 +202,7 @@
 </table>
 
 <div class="screenshot">
-  <img src="images/as_page_0038.png" alt="Pre-built application objects list in the Templates pane">
+  <img src="../images/as_page_0038.png" alt="Pre-built application objects list in the Templates pane">
   <div class="caption">The pre-built application object templates available in the IDE's Templates pane.</div>
 </div>
 
@@ -220,7 +245,7 @@
 </table>
 
 <div class="screenshot">
-  <img src="images/as_page_0039.png" alt="Device Integration objects and System objects in the Templates pane">
+  <img src="../images/as_page_0039.png" alt="Device Integration objects and System objects in the Templates pane">
   <div class="caption">Device Integration objects ($DDESuiteLinkClient, $OPCClient, etc.) and System objects ($Area, $WinPlatform, etc.) in the Templates pane.</div>
 </div>
 
@@ -326,7 +351,7 @@ $Valve              ← Base Template (read-only, built into the system)
 </pre>
 
 <div class="screenshot">
-  <img src="images/as_page_0042.png" alt="Derivation hierarchy diagram showing base template, derived template, and instances">
+  <img src="../images/as_page_0042.png" alt="Derivation hierarchy diagram showing base template, derived template, and instances">
   <div class="caption">The derivation hierarchy: base templates at the top, derived templates in the middle, and runtime instances at the bottom.</div>
 </div>
 
@@ -372,7 +397,7 @@ $Valve              ← Base Template (read-only, built into the system)
 </ul>
 
 <div class="screenshot">
-  <img src="images/as_page_0043.png" alt="Object Editor interface showing Attributes, Scripts, and Object Information tabs">
+  <img src="../images/as_page_0043.png" alt="Object Editor interface showing Attributes, Scripts, and Object Information tabs">
   <div class="caption">The Object Editor with its three tabs: Attributes (configuration), Scripts (logic), and Object Information (metadata and check-out).</div>
 </div>
 
@@ -424,7 +449,7 @@ $Valve              ← Base Template (read-only, built into the system)
 </table>
 
 <div class="screenshot">
-  <img src="images/as_page_0045.png" alt="Deployment and configuration status indicators in the Object Viewer">
+  <img src="../images/as_page_0045.png" alt="Deployment and configuration status indicators in the Object Viewer">
   <div class="caption">The Object Viewer showing various deployment, configuration, and check-out status indicators next to each object.</div>
 </div>
 
@@ -495,7 +520,7 @@ $Valve              ← Base Template (read-only, built into the system)
 <p style="margin-top: 3em; text-align: center; color: #999; font-size: 0.85em;">End of Lesson 3 — AVEVA Application Server Training</p>
 
 <nav>
-  <a href="0002-lesson.html">← Lesson 2: The IDE</a> | <a href="0004-lesson.html">Lesson 4: Lab 2 — Derived Templates →</a>
+  <a href="L02-IDE-Tools-Views.html">← Lesson 2: The IDE</a> | <a href="L04-Lab2-Derived-Templates.html">Lesson 4: Lab 2 — Derived Templates →</a>
 </nav>
 
 </body>
