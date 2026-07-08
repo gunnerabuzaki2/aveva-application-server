@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5: Module 2 — Application Planning + Case Study</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0004-lesson.html">← Lesson 4: Lab 2 + Licensing</a> | <a href="0006-lesson.html">Lesson 6: Plant + Deployment Models →</a>
+</nav>
+
+<h1>Lesson 5: Module 2 — Application Planning + Case Study</h1>
+
+<p class="source">Source: AVEVA Application Server Training Manual — Module 2: Application Planning (Sections 1 &amp; 2, pages 2-1 to 2-8)</p>
+<p>This lesson covers the complete Module 2 of the AVEVA Application Server course. We begin with the structured project workflow that guides every successful Galaxy deployment, then apply it to a real-world case study involving a mixer system in a fictitious manufacturing plant. Proper planning is the foundation upon which a robust, maintainable Galaxy is built.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- PART A: SECTION 1 — PROJECT WORKFLOW -->
+<!-- ============================================================ -->
+
+<h2>Part A: Section 1 — Project Workflow</h2>
+<p class="page-ref">Reference: Module 2, Section 1 (pages 2-1 to 2-4)</p>
+
+<h3>Why Planning Matters</h3>
+
+<p>Before you create a single object in the Galaxy, you need a plan. A production Galaxy can contain <strong>hundreds or even thousands of objects</strong> — each with attributes, relationships, scripts, and deployments. If you start building without a clear roadmap, you will inevitably need to backtrack: renaming objects, restructuring templates, reassigning deployments, and correcting security. Every change costs time and risks introducing inconsistencies.</p>
+
+<div class="key-concept">
+  <strong>Key Concept:</strong> In an AVEVA Application Server Galaxy, the cost of making changes increases dramatically after the initial design phase. Investing time upfront in planning templates, naming conventions, and hierarchy structure saves enormous effort later. The derivation hierarchy — the chain from base templates to derived objects — is especially costly to rework once objects are in production.
+</div>
+
+<p>The course teaches a structured <strong>6-step workflow</strong> that addresses all major design decisions before implementation begins. This workflow ensures you think through every layer of the application systematically.</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0071.png" alt="6-step project workflow flowchart showing the sequential planning stages from identifying requirements through deployment">
+  <div class="caption">Figure 2-1: The 6-step Application Server project workflow — each step builds upon the previous one (Module 2, page 2-3)</div>
+</div>
+
+<h3>The 6-Step Workflow</h3>
+
+<p>The flowchart illustrates a sequential planning process. Each step feeds the next, and together they cover every aspect of the Galaxy application design.</p>
+
+<h3>Step 1: Identify Field Devices and Functional Requirements</h3>
+
+<p>This is the starting point of any project. You must gather all the documentation that defines what the system needs to control and monitor:</p>
+<ul>
+  <li><strong>P&amp;IDs (Piping and Instrumentation Diagrams)</strong> — show the physical equipment, piping, valves, instruments, and their interconnections</li>
+  <li><strong>Equipment lists</strong> — enumerate every field device (pumps, valves, transmitters, sensors, motors, etc.)</li>
+  <li><strong>Functional requirements</strong> — describe what each device does, what signals it has, and how devices interact</li>
+  <li><strong>I/O mapping documents</strong> — define which I/O channels connect to which field devices</li>
+</ul>
+
+<p>The output of this step is a complete inventory of every object that must exist in the Galaxy, along with their attributes and behaviors. In the case study for this course, for example, the equipment list identifies 8 devices (3 valves, 2 pumps, 1 agitator, 2 transmitters) that together form a mixer system.</p>
+
+<h3>Step 2: Define Naming Conventions</h3>
+
+<p>Before creating any objects, establish a consistent naming standard that will be used across the entire Galaxy. This includes:</p>
+<ul>
+  <li><strong>Tag naming format</strong> — the structure for object names (e.g., <code>MixerX00.[Equipment].[Signal]</code>)</li>
+  <li><strong>Area hierarchy naming</strong> — the convention for the <code>$Area</code> plant model structure</li>
+  <li><strong>Template naming</strong> — how base and derived templates are labeled in the Model hierarchy</li>
+  <li><strong>Attribute naming</strong> — any custom attribute or property names that follow a project standard</li>
+</ul>
+
+<div class="pitfall">
+  <strong>Pitfall:</strong> Naming conventions must be decided and documented BEFORE creating any objects. If you rename objects later, every reference — including scripts, graphic displays, historian tags, and alarm configurations — must be updated. In large projects, a single naming inconsistency can cascade into hours of rework.
+</div>
+
+<h3>Step 3: Plan Templates (Derivation Hierarchy)</h3>
+
+<p>This is the <strong>most critical planning step</strong>. Templates define the object types and their inheritance chain — the derivation hierarchy. You must decide:</p>
+<ul>
+  <li><strong>Base templates</strong> — what fundamental object types exist (e.g., Valve, Pump, Transmitter)</li>
+  <li><strong>Derived templates</strong> — how templates inherit and specialize (e.g., a 2-way valve derived from a base Valve, a control valve derived from that)</li>
+  <li><strong>Attribute composition</strong> — which attributes each template level provides</li>
+  <li><strong>Script attachment</strong> — where behavior logic lives in the hierarchy</li>
+</ul>
+
+<div class="pitfall">
+  <strong>Critical Warning:</strong> The derivation hierarchy is the <strong>hardest thing to change later</strong>. Once you derive objects from templates and those objects are in use, reorganizing the inheritance tree requires moving every affected object, re-pointing every derivation, and verifying that attributes and scripts still resolve correctly. Plan this carefully and completely before proceeding.
+</div>
+
+<h3>Step 4: Define the Plant Model ($Area Hierarchy)</h3>
+
+<p>Define the area structure that mirrors your physical plant layout. The <code>$Area</code> object serves as the root of a hierarchical tree that organizes objects by their physical location or functional area. For example:</p>
+<ul>
+  <li><code>$Area</code> → <code>Plant1</code> → <code>Production</code> → <code>Mixer100</code></li>
+  <li><code>$Area</code> → <code>Plant1</code> → <code>Packaging</code> → <code>Packer1</code></li>
+</ul>
+
+<p>This hierarchy is used for object navigation, alarm grouping, security scoping, and display organization. It is flexible and can be updated as the project evolves.</p>
+
+<h3>Step 5: Define the Security Model</h3>
+
+<p>Configure the permission structure that controls who can view, modify, and operate objects. This includes:</p>
+<ul>
+  <li><strong>User groups</strong> — roles such as Operator, Engineer, Administrator</li>
+  <li><strong>Object-level permissions</strong> — read/write/operate access for specific objects or areas</li>
+  <li><strong>Attribute-level security</strong> — which attributes can be modified by which roles</li>
+</ul>
+
+<p>The security model can also be refined after initial deployment as operational needs become clearer.</p>
+
+<h3>Step 6: Define the Deployment Model ($WinPlatform Placement)</h3>
+
+<p>Finally, plan how objects are deployed across platforms. The <code>$WinPlatform</code> objects represent the runtime servers where Galaxy objects execute. You must decide:</p>
+<ul>
+  <li>Which objects run on which platform</li>
+  <li>How load is distributed across multiple platforms</li>
+  <li>Fault tolerance and failover requirements</li>
+  <li>Network topology between platforms and field devices</li>
+</ul>
+
+<p>Like the plant model and security model, the deployment model is flexible and can be adjusted post-deployment.</p>
+
+<h3>Critical Asymmetry: Steps 1-3 vs. Steps 4-6</h3>
+
+<div class="key-concept">
+  <strong>Key Takeaway:</strong> The 6 steps are NOT equally difficult to revise later:
+  <ul style="margin-bottom: 0;">
+    <li><strong>Steps 1-3</strong> (Identify Requirements, Define Naming Conventions, Plan Templates): Extremely difficult and costly to change after implementation. These are the <em>hard</em> decisions — get them right the first time.</li>
+    <li><strong>Steps 4-6</strong> (Define Plant Model, Define Security Model, Define Deployment Model): Much more flexible. These can be updated, restructured, and refined as the project progresses and requirements evolve.</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- PART B: SECTION 2 — CASE STUDY -->
+<!-- ============================================================ -->
+
+<h2>Part B: Section 2 — Case Study</h2>
+<p class="page-ref">Reference: Module 2, Section 2 (pages 2-5 to 2-8)</p>
+
+<p>To make the planning workflow concrete, the course introduces a case study based on a fictitious manufacturing plant. We will use this plant throughout the course to build, configure, and test our Galaxy application.</p>
+
+<h3>Factory Layout</h3>
+
+<p>The fictitious factory is organized into four main functional areas arranged in a linear process flow. The <strong>Production</strong> area contains two mixer lines (Line1 and Line2), and the <strong>Packaging</strong> area handles finished product packaging. These two areas are the focus of our case study.</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0073.png" alt="Factory layout diagram showing Receiving, Production with Line1 and Line2, Packaging, and Shipping arranged in sequence, with Production and Packaging highlighted as the focus area">
+  <div class="caption">Figure 2-2: Factory layout — Receiving → Production (Line1 + Line2) → Packaging → Shipping. The red dotted line highlights the Production and Packaging areas as the focus of our case study (Module 2, page 2-5)</div>
+</div>
+
+<ol>
+  <li><strong>Receiving</strong> — Raw materials arrive and are staged for production</li>
+  <li><strong>Production</strong> — Materials are processed and mixed. Contains two production lines (Line1 and Line2), each with mixer systems</li>
+  <li><strong>Packaging</strong> — Finished products are packaged for shipment</li>
+  <li><strong>Shipping</strong> — Packaged products are loaded and dispatched</li>
+</ol>
+
+<p>For our course, we focus on the <strong>Production</strong> and <strong>Packaging</strong> areas. Specifically, we model the <strong>mixer systems</strong> in Production that combine raw materials into finished products.</p>
+
+<h3>The Mixer System</h3>
+
+<p>The mixer is the primary piece of equipment we will model in the Galaxy. Each mixer consists of <strong>8 field devices</strong> that work together to perform a batch mixing process:</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0074.png" alt="Mixer system diagram showing the tank with inlet valves, pumps, outlet valve, agitator motor, level transmitter, and temperature transmitter, along with an equipment and signal table">
+  <div class="caption">Figure 2-3: Mixer system diagram — the 8 devices that make up one mixer unit, with the equipment and signal tag naming table (Module 2, page 2-6)</div>
+</div>
+
+<table>
+  <tr>
+    <th>Device</th>
+    <th>Type</th>
+    <th>Tag Format</th>
+    <th>Signals</th>
+  </tr>
+  <tr>
+    <td>Inlet1</td>
+    <td>Valve</td>
+    <td><code>MixerX00.Inlet1.[Signal]</code></td>
+    <td>CMD, LSClosed, LSOpen</td>
+  </tr>
+  <tr>
+    <td>Inlet2</td>
+    <td>Valve</td>
+    <td><code>MixerX00.Inlet2.[Signal]</code></td>
+    <td>CMD, LSClosed, LSOpen</td>
+  </tr>
+  <tr>
+    <td>Outlet</td>
+    <td>Valve</td>
+    <td><code>MixerX00.Outlet.[Signal]</code></td>
+    <td>CMD, LSClosed, LSOpen</td>
+  </tr>
+  <tr>
+    <td>Pump1</td>
+    <td>Pump</td>
+    <td><code>MixerX00.Pump1.[Signal]</code></td>
+    <td>CMD, LSClosed</td>
+  </tr>
+  <tr>
+    <td>Pump2</td>
+    <td>Pump</td>
+    <td><code>MixerX00.Pump2.[Signal]</code></td>
+    <td>CMD, LSClosed</td>
+  </tr>
+  <tr>
+    <td>Agitator</td>
+    <td>Motor</td>
+    <td><code>MixerX00.Agitator.[Signal]</code></td>
+    <td>CMD, PV, Speed.PV, Speed.SP</td>
+  </tr>
+  <tr>
+    <td>Level</td>
+    <td>Transmitter</td>
+    <td><code>MixerX00.Level.[Signal]</code></td>
+    <td>PV (range: 0–250 Liters)</td>
+  </tr>
+  <tr>
+    <td>Temperature</td>
+    <td>Transmitter</td>
+    <td><code>MixerX00.Temperature.[Signal]</code></td>
+    <td>PV (range: 0–250 °C)</td>
+  </tr>
+</table>
+
+<p>Where <strong>X</strong> is replaced by the mixer number (1 for Mixer100, 2 for Mixer200, etc.). The tag format follows the general structure: <code>MixerX00.[Equipment].[Signal]</code></p>
+
+<h3>Signal Definitions</h3>
+
+<p>The following page provides the complete signal definitions for each device in the mixer system, including analog ranges for the transmitters:</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0075.png" alt="Signal definitions table showing Outlet (LSClosed, LSOpen, CMD), Pump1 (LSClosed, CMD), Pump2 (LSClosed, CMD), Agitator (PV, CMD, Speed.PV, Speed.SP), Level (0-250 Liters), Temperature (0-250 Celsius)">
+  <div class="caption">Figure 2-4: Complete signal definitions for the mixer system — note the analog ranges for Level (0–250 Liters) and Temperature (0–250 °C) (Module 2, page 2-7)</div>
+</div>
+
+<h4>Signal Naming Detail</h4>
+
+<table>
+  <tr>
+    <th>Signal Name</th>
+    <th>Meaning</th>
+    <th>Applies To</th>
+  </tr>
+  <tr>
+    <td><code>CMD</code></td>
+    <td>Command — the control signal to start/stop or open/close the device</td>
+    <td>All devices (valves, pumps, agitator)</td>
+  </tr>
+  <tr>
+    <td><code>LSClosed</code></td>
+    <td>Limit Switch Closed — indicates the valve is closed or pump has stopped</td>
+    <td>Inlet1, Inlet2, Outlet (valves); Pump1, Pump2</td>
+  </tr>
+  <tr>
+    <td><code>LSOpen</code></td>
+    <td>Limit Switch Open — indicates the valve is open</td>
+    <td>Inlet1, Inlet2, Outlet (valves only)</td>
+  </tr>
+  <tr>
+    <td><code>PV</code></td>
+    <td>Process Value — the current reading from the transmitter or motor status</td>
+    <td>Agitator, Level, Temperature</td>
+  </tr>
+  <tr>
+    <td><code>Speed.PV</code></td>
+    <td>Speed Process Value — the actual running speed of the agitator</td>
+    <td>Agitator only</td>
+  </tr>
+  <tr>
+    <td><code>Speed.SP</code></td>
+    <td>Speed Setpoint — the target speed for the agitator</td>
+    <td>Agitator only</td>
+  </tr>
+</table>
+
+<h4>Analog Ranges</h4>
+
+<table>
+  <tr>
+    <th>Transmitter</th>
+    <th>Range</th>
+    <th>Units</th>
+  </tr>
+  <tr>
+    <td>Level</td>
+    <td>0 – 250</td>
+    <td>Liters</td>
+  </tr>
+  <tr>
+    <td>Temperature</td>
+    <td>0 – 250</td>
+    <td>°C (Celsius)</td>
+  </tr>
+</table>
+
+<p>Note that the level range is <strong>0–250 Liters</strong> (not a percentage), and the temperature range is <strong>0–250 °C</strong>. These ranges define the scaling for the simulated process values.</p>
+
+<h3>Naming Convention Examples</h3>
+
+<p>The tag format <code>MixerX00.[Equipment].[Signal]</code> produces concrete tags like the following for Mixer100 (where X=1):</p>
+
+<table>
+  <tr>
+    <th>Full Tag</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Inlet1.CMD</code></td>
+    <td>Command signal for Inlet1 valve</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Inlet1.LSClosed</code></td>
+    <td>Limit switch closed feedback for Inlet1 valve</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Inlet1.LSOpen</code></td>
+    <td>Limit switch open feedback for Inlet1 valve</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Outlet.CMD</code></td>
+    <td>Command signal for Outlet valve</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Outlet.LSClosed</code></td>
+    <td>Limit switch closed feedback for Outlet valve</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Pump1.CMD</code></td>
+    <td>Command signal for Pump1</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Pump1.LSClosed</code></td>
+    <td>Limit switch closed feedback for Pump1</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Agitator.CMD</code></td>
+    <td>Command signal for Agitator motor</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Agitator.PV</code></td>
+    <td>Agitator process value (running status)</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Agitator.Speed.PV</code></td>
+    <td>Agitator actual speed</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Agitator.Speed.SP</code></td>
+    <td>Agitator speed setpoint</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Level.PV</code></td>
+    <td>Level process value (0–250 Liters)</td>
+  </tr>
+  <tr>
+    <td><code>Mixer100.Temperature.PV</code></td>
+    <td>Temperature process value (0–250 °C)</td>
+  </tr>
+</table>
+
+<p>For Mixer200, simply replace <code>Mixer100</code> with <code>Mixer200</code> — the same equipment and signal structure applies identically.</p>
+
+<div class="tip">
+  <strong>Tip:</strong> The dot-separated naming convention (<code>Area.Equipment.Signal</code>) mirrors the object hierarchy in the Galaxy. The dots represent parent-child relationships — <code>Mixer100</code> is the parent object, <code>Inlet1</code> is a child of Mixer100, and <code>CMD</code> is an attribute of Inlet1. This makes navigation intuitive and scripts readable.
+</div>
+
+<h3>Simulated Process</h3>
+
+<p>The mixer performs a continuous <strong>4-step batch process</strong> that repeats indefinitely. This simulated process provides realistic behavior for testing our Galaxy application.</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0076.png" alt="Simulated process flowchart showing the four steps: Add first material, Add second material, Mix, and Drain in a repeating cycle, with level rising to 60%, then 100%, then agitator running, then draining to 0%">
+  <div class="caption">Figure 2-5: Simulated mixer process — the 4-step batch cycle that repeats continuously (Module 2, page 2-8)</div>
+</div>
+
+<p><strong>Step 1: Add First Material</strong></p>
+<ul>
+  <li>Inlet1 valve opens (<code>CMD = ON</code>, <code>LSClosed = OFF</code>, <code>LSOpen = ON</code>)</li>
+  <li>Pump1 starts (<code>CMD = ON</code>, <code>LSClosed = OFF</code>)</li>
+  <li>Level rises from 0 to <strong>60% of capacity</strong> (approximately 150 Liters)</li>
+  <li>When level reaches 60%, Inlet1 closes and Pump1 stops (<code>LSClosed = ON</code>)</li>
+</ul>
+
+<p><strong>Step 2: Add Second Material</strong></p>
+<ul>
+  <li>Inlet2 valve opens (<code>CMD = ON</code>, <code>LSClosed = OFF</code>, <code>LSOpen = ON</code>)</li>
+  <li>Pump2 starts (<code>CMD = ON</code>, <code>LSClosed = OFF</code>)</li>
+  <li>Level rises from 60% to <strong>100% of capacity</strong> (250 Liters)</li>
+  <li>When level reaches 100%, Inlet2 closes and Pump2 stops (<code>LSClosed = ON</code>)</li>
+</ul>
+
+<p><strong>Step 3: Mix</strong></p>
+<ul>
+  <li>Agitator starts (<code>CMD = ON</code>, <code>PV = running</code>)</li>
+  <li>Agitator speed set to the configured setpoint (<code>Speed.SP</code>)</li>
+  <li>Agitator runs for a configured number of seconds</li>
+  <li>When the mixing time elapses, agitator stops (<code>CMD = OFF</code>, <code>PV = stopped</code>)</li>
+</ul>
+
+<p><strong>Step 4: Drain</strong></p>
+<ul>
+  <li>Outlet valve opens (<code>CMD = ON</code>, <code>LSClosed = OFF</code>, <code>LSOpen = ON</code>)</li>
+  <li>Level drops from 100% to <strong>0</strong> (empty)</li>
+  <li>When level reaches 0, Outlet valve closes (<code>LSClosed = ON</code>)</li>
+  <li>The cycle then <strong>restarts at Step 1</strong></li>
+</ul>
+
+<div class="lab">
+  <strong>Lab Preview:</strong> In subsequent lessons, you will create this exact process using scripts attached to objects in the Galaxy. The step sequencing, level simulation, and device control logic will all be implemented as part of your Application Server application.
+</div>
+
+<h3>Analog Value Behavior</h3>
+
+<p>The simulated process includes realistic analog value behavior with built-in variability:</p>
+
+<ul>
+  <li><strong>Level</strong> — proportional to temperature. As temperature rises, the effective level reading reflects thermal expansion. The level value is the primary indicator of process progress (0 → 60% → 100% → 0).</li>
+  <li><strong>Temperature</strong> — varies based on a <strong>random coefficient</strong>, simulating real-world temperature fluctuations. This ensures each cycle produces slightly different values, making the simulated data realistic rather than perfectly repetitive.</li>
+  <li><strong>Agitator Speed</strong> — binary behavior: either <strong>0</strong> (stopped) or the configured <strong>setpoint value</strong> (<code>Speed.SP</code>). There is no ramp-up or ramp-down — it is on or off.</li>
+</ul>
+
+<p>The random coefficient used in the temperature simulation adds variability so that each cycle produces unique data points. This is important for testing graphics, trends, and alarms that need to respond to changing values.</p>
+
+<div class="tip">
+  <strong>Tip:</strong> The analog simulation approach — using a random coefficient to add variability — is a common technique in training environments. It allows you to see how graphics, trends, and alarms respond to changing values without needing actual field hardware.
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- PART C: MODULE 2 SUMMARY + QUIZ -->
+<!-- ============================================================ -->
+
+<h2>Part C: Module 2 Summary + Quiz</h2>
+
+<h3>Key Takeaways from Module 2</h3>
+
+<div class="key-concept">
+  <strong>Summary:</strong>
+  <ol>
+    <li><strong>Planning is not optional.</strong> A Galaxy with hundreds or thousands of objects demands a structured approach. The 6-step workflow provides that structure.</li>
+    <li><strong>Steps 1-3 are high-stakes.</strong> Identifying requirements, defining naming conventions, and planning the template hierarchy are difficult to change after implementation. Invest heavily in getting these right.</li>
+    <li><strong>Steps 4-6 are flexible.</strong> Plant model, security, and deployment can be refined iteratively as the project evolves.</li>
+    <li><strong>Consistent naming saves time everywhere.</strong> The <code>MixerX00.[Equipment].[Signal]</code> format used in the case study is a model of clarity and consistency.</li>
+    <li><strong>The case study provides a complete, realistic test scenario.</strong> The 4-step mixer process exercises valves, pumps, transmitters, limit switches, scripts, and analog simulation — covering the full range of Application Server capabilities.</li>
+    <li><strong>Template design is the foundation of reuse.</strong> A well-designed derivation hierarchy lets you create new mixers (Mixer200, Mixer300) by simply deriving new instances rather than building from scratch.</li>
+    <li><strong>Level and Temperature are analog values with defined ranges.</strong> Level is 0–250 Liters; Temperature is 0–250 °C. Both are proportional and include a random coefficient for realistic variability.</li>
+  </ol>
+</div>
+
+<h3>Quiz: Module 2 — Application Planning</h3>
+
+<div class="quiz">
+  <h3>Question 1: Workflow Steps</h3>
+  <p>What are the six steps of the Application Server project workflow, in order?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">1. Identify Field Devices and Functional Requirements → 2. Define Naming Conventions → 3. Plan Templates (Derivation Hierarchy) → 4. Define the Plant Model ($Area) → 5. Define the Security Model → 6. Define the Deployment Model ($WinPlatform)</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 2: Hardest to Change</h3>
+  <p>Which steps in the 6-step workflow are the most difficult and costly to change after implementation, and why?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">Steps 1-3 (Identify Requirements, Define Naming Conventions, Plan Templates) are the most difficult to change. The derivation hierarchy in Step 3 is especially hard to restructure because every derived object depends on its parent template. Changing the hierarchy requires moving, re-pointing, and re-verifying every affected object, including their attributes, scripts, and deployments.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 3: Mixer Components</h3>
+  <p>How many devices make up the mixer system in the case study? List them.</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">The mixer system has <strong>8 devices</strong>: Inlet1 (valve), Inlet2 (valve), Outlet (valve), Pump1, Pump2, Agitator (motor), Level (transmitter), and Temperature (transmitter).</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 4: Signal Differences</h3>
+  <p>What signals does a valve have versus a pump? How does the Agitator differ from both?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Valves</strong> (Inlet1, Inlet2, Outlet) have three signals: CMD (command), LSClosed (limit switch closed), and LSOpen (limit switch open). <strong>Pumps</strong> (Pump1, Pump2) have two signals: CMD and LSClosed — no LSOpen because pumps are binary devices (running or stopped). The <strong>Agitator</strong> is more complex: CMD (command), PV (process value / running status), Speed.PV (actual speed), and Speed.SP (speed setpoint).</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 5: Analog Ranges</h3>
+  <p>What are the ranges and units for the Level and Temperature transmitters in the mixer system?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Level:</strong> 0–250 Liters. <strong>Temperature:</strong> 0–250 °C (Celsius). Both are analog signals with the Level value being proportional to Temperature (thermal expansion simulation).</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 6: Batch Process</h3>
+  <p>Describe the four steps of the mixer's simulated batch process and the level after each step.</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Step 1 — Add First Material:</strong> Inlet1 opens and Pump1 runs, level rises from 0 to 60% capacity (~150 Liters). <strong>Step 2 — Add Second Material:</strong> Inlet2 opens and Pump2 runs, level rises from 60% to 100% capacity (250 Liters). <strong>Step 3 — Mix:</strong> Agitator runs at setpoint speed for a configured duration, level stays at 100%. <strong>Step 4 — Drain:</strong> Outlet valve opens, level drops from 100% to 0 (empty), then the cycle restarts at Step 1.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 7: Naming Convention</h3>
+  <p>Using the case study's naming convention, what is the full tag for the speed setpoint of the agitator on Mixer300?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><code>Mixer300.Agitator.Speed.SP</code> — following the <code>MixerX00.[Equipment].[Signal]</code> format where X=3 for the third mixer. The Speed.SP signal is specific to the Agitator device and controls the target rotation speed.</p>
+  </details>
+</div>
+
+<hr>
+
+<p style="text-align: center; color: #999; font-size: 0.9em; margin-top: 3em;">
+  <em>End of Lesson 5 — Module 2: Application Planning + Case Study</em>
+</p>
+
+<nav>
+  <a href="0004-lesson.html">← Lesson 4: Lab 2 + Licensing</a> | <a href="0006-lesson.html">Lesson 6: Plant + Deployment Models →</a>
+</nav>
+
+</body>
+</html>

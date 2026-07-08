@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 8: Operations Control Management Console &amp; Runtime Environment</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0007-lesson.html">← Lesson 7: Lab 3</a> | <a href="0009-lesson.html">Lesson 9: Lab 4 — Object Viewer →</a>
+</nav>
+
+<h1>Lesson 8: Operations Control Management Console &amp; Runtime Environment</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 3, Sections 3-4 (pages 3-29 to 3-42)</p>
+<p class="page-ref">The OCMC is the runtime management hub — Galaxy Database Manager, Logger, and Platform Manager. The runtime environment defines how deployed objects communicate via attribute references and scan cycles.</p>
+
+<!-- ============================================================ -->
+<h2>1. The OCMC at a Glance</h2>
+<p class="page-ref">Reference: Module 3, Section 3 (page 3-29)</p>
+
+<p>The <strong>Operations Control Management Console (OCMC)</strong> is the primary runtime management tool for Application Server. It is a separate application from the IDE — you use it after the Galaxy has been developed and deployed, when you need to manage and monitor live systems.</p>
+
+<div class="screenshot">
+  <img src="images/page_0105_0.png" alt="OCMC main window with tree navigation and configuration pane">
+  <div class="caption">The OCMC window — the left pane shows the management tree (Historian, Galaxy Database Manager, Operations Integration Server Manager, Log Viewer, Platform Manager). The right pane shows the selected node's details — here the PLC_TEST configuration under OI.SIM.1 (Module 3, page 3-29)</div>
+</div>
+
+<p>The OCMC has a tree-based navigation structure on the left. When you connect to a Galaxy, you see the following tools in the tree:</p>
+
+<table>
+  <tr><th>Node in the Tree</th><th>What It Manages</th></tr>
+  <tr>
+    <td><strong>Historian</strong></td>
+    <td>Integration with AVEVA Historian — connection status and configuration</td>
+  </tr>
+  <tr>
+    <td><strong>Galaxy Database Manager</strong></td>
+    <td>Backup, restore, and create Galaxy databases</td>
+  </tr>
+  <tr>
+    <td><strong>Operations Integration Server Manager</strong></td>
+    <td>Manage OI Server nodes and their I/O device configurations — the tree expands as <code>TrainingGalaxy &gt; ProdPlatform &gt; OI &gt; OI.SIM.1 &gt; PLC</code></td>
+  </tr>
+  <tr>
+    <td><strong>Log Viewer</strong></td>
+    <td>Browse and filter Application Server runtime events and log entries</td>
+  </tr>
+  <tr>
+    <td><strong>Platform Manager</strong></td>
+    <td>Monitor platform status, start/stop engines, and manage deployments at runtime</td>
+  </tr>
+</table>
+
+<p>When you select a node in the tree, the right pane shows the details for that node. In the screenshot above, <code>PLC_TEST</code> is selected under the OI.SIM.1 driver — the right pane displays its configuration: Algorithm set to <strong>Random</strong>, Rate of <strong>200 ms</strong>, Range of <strong>20</strong>, Force Quality set to <strong>Good</strong>, and <strong>Unsolicited Updates</strong> checked. This is a simulated I/O device used for training.</p>
+
+<div class="tip">
+  <strong>Tip:</strong> You can launch the OCMC from the Windows Start menu under <strong>AVEVA</strong>. Before opening it, make sure you know the SQL Server name and Galaxy Database name — the OCMC needs to connect to the Galaxy Database to function.
+</div>
+
+<!-- ============================================================ -->
+<h2>2. Galaxy Database Manager</h2>
+<p class="page-ref">Reference: Module 3, Section 3 (page 3-30)</p>
+
+<p>The <strong>Galaxy Database Manager</strong> is the OCMC tool for backing up, restoring, and creating Galaxy databases. It is the first node under the OCMC tree and the most operationally critical.</p>
+
+<div class="screenshot">
+  <img src="images/page_0106_0.png" alt="Galaxy Database Manager showing backup, restore, and create options">
+  <div class="caption">The Galaxy Database Manager — Full Backup, Incremental Backup, Restore, and Create Galaxy from Backup file (Module 3, page 3-30)</div>
+</div>
+
+<h3>2.1 Backup Options</h3>
+<p>The Galaxy Database Manager offers two types of backup:</p>
+
+<table>
+  <tr><th>Backup Type</th><th>What It Captures</th><th>When to Use</th></tr>
+  <tr>
+    <td><strong>Full Backup</strong></td>
+    <td>The entire Galaxy database — all objects, attributes, scripts, deployment configuration, and history</td>
+    <td>Before major changes, software upgrades, scheduled maintenance windows</td>
+  </tr>
+  <tr>
+    <td><strong>Incremental Backup</strong></td>
+    <td>Only the changes since the last backup</td>
+    <td>Frequent backups between full backups — faster but requires a base full backup to restore from</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Best practice:</strong> Establish a regular backup schedule — for example, a weekly full backup with daily incremental backups. Store backup files in a safe, off-system location. Always perform a backup before deploying major configuration changes.
+</div>
+
+<h3>2.2 Restoring a Galaxy</h3>
+<p>Restore replaces the current Galaxy database entirely with the contents of a backup file. The Galaxy Database Manager presents a <strong>Restore</strong> option that lets you browse to the backup file and apply it.</p>
+
+<div class="pitfall">
+  <strong>Warning:</strong> Restoring is a <em>destructive</em> operation — the current Galaxy is completely overwritten. There is no undo. Always create a fresh backup of the current Galaxy before restoring from an older backup.
+</div>
+
+<h3>2.3 Creating a Galaxy from Backup</h3>
+<p>The Galaxy Database Manager also provides a <strong>Create Galaxy from Backup</strong> option. This creates an entirely new Galaxy from a backup file — it does not overwrite an existing Galaxy but instead creates a new one. This is useful for:</p>
+<ul>
+  <li>Setting up a development or test environment from a production backup</li>
+  <li>Migrating a Galaxy to a new server</li>
+  <li>Recovering from a corrupted Galaxy</li>
+</ul>
+
+<table>
+  <tr><th>Action</th><th>Key Consideration</th></tr>
+  <tr><td><strong>Full Backup</strong></td><td>Complete snapshot — slower but self-contained for restore</td></tr>
+  <tr><td><strong>Incremental Backup</strong></td><td>Faster — but requires the base full backup plus all subsequent incrementals to restore fully</td></tr>
+  <tr><td><strong>Restore</strong></td><td>Overwrites the current Galaxy — backup the current state first</td></tr>
+  <tr><td><strong>Create Galaxy from Backup</strong></td><td>Creates a new, separate Galaxy — does not replace the existing one</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>3. Log Viewer</h2>
+<p class="page-ref">Reference: Module 3, Section 3 (pages 3-33 to 3-35)</p>
+
+<p>The <strong>Log Viewer</strong> reads events from the Galaxy database and displays them in the OCMC. Application Server generates log entries for platform lifecycle events, object deployments, script execution results, alarm activity, and system errors. The Log Viewer lets you filter and search these events to troubleshoot issues or audit activity.</p>
+
+<h3>3.1 What Gets Logged</h3>
+<ul>
+  <li><strong>Platform events</strong> — engine start, stop, status changes</li>
+  <li><strong>Deployment events</strong> — object deploy, undeploy, redeploy results</li>
+  <li><strong>Script events</strong> — execution errors, timeout warnings</li>
+  <li><strong>Alarm events</strong> — alarm generation, acknowledgment, return-to-normal</li>
+  <li><strong>System events</strong> — database connection issues, communication failures</li>
+</ul>
+
+<h3>3.2 Filtering Events</h3>
+<p>The Log Viewer provides filters by time range, event type, severity (Information, Warning, Error), and source object or platform. This makes it possible to narrow down thousands of entries to the ones relevant to your investigation.</p>
+
+<div class="tip">
+  <strong>Troubleshooting workflow:</strong> Start by filtering to <strong>Error</strong> severity events within the relevant time window. Errors surface first during failures — warnings appear as conditions degrade. Once you identify the error, widen the filter to see related warnings and information entries for full context.
+</div>
+
+<!-- ============================================================ -->
+<h2>4. Platform Manager</h2>
+<p class="page-ref">Reference: Module 3, Section 3 (pages 3-35 to 3-36)</p>
+
+<p>The <strong>Platform Manager</strong> lets you monitor and control platforms at runtime. A <em>platform</em> is a host machine running the Application Server runtime engine — it is the machine that executes deployed objects.</p>
+
+<table>
+  <tr><th>Capability</th><th>Description</th></tr>
+  <tr><td><strong>View status</strong></td><td>See which platforms are online, offline, or in error</td></tr>
+  <tr><td><strong>Start / Stop</strong></td><td>Start or stop the runtime engine on a specific platform</td></tr>
+  <tr><td><strong>Engine status</strong></td><td>View the status of individual engines (AppEngine, Alarm Engine) on each platform</td></tr>
+  <tr><td><strong>Redeploy</strong></td><td>Trigger a redeployment of objects to a platform</td></tr>
+</table>
+
+<div class="pitfall">
+  <strong>Warning:</strong> Stopping a platform halts all runtime activity for objects deployed to it — data acquisition, script execution, and alarm monitoring all stop. Never stop a production platform without understanding the full impact on downstream systems (HMI displays, Historian data collection, etc.).
+</div>
+
+<!-- ============================================================ -->
+<h2>5. The Runtime Scan Cycle</h2>
+<p class="page-ref">Reference: Module 3, Section 4 (page 3-37)</p>
+
+<p>Once objects are deployed to a platform, they execute within the <strong>runtime scan cycle</strong>. The platform allocates a fixed time window for each scan cycle. Within that window, the runtime engine processes all active tasks — data acquisition, script execution, alarm evaluation — and then performs housekeeping before the next cycle begins.</p>
+
+<div class="screenshot">
+  <img src="images/page_0113_0.png" alt="Scan cycle diagram showing normal scan vs scan overrun">
+  <div class="caption">Normal scan vs. scan overrun — In a normal scan, tasks A, B, and C complete within the allocated time window, leaving idle time for housekeeping. In a scan overrun, the tasks extend past the window, cutting into the housekeeping period (Module 3, page 3-37)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Two scenarios illustrated in the scan cycle diagram:</strong>
+  <ul>
+    <li><strong>Normal scan:</strong> Tasks A, B, and C all complete well within the time window. The remaining time is available for housekeeping (internal bookkeeping, garbage collection, housekeeping tasks). The system is healthy and predictable.</li>
+    <li><strong>Scan overrun:</strong> Tasks A, B, and C take longer than expected and extend past the allocated window into the housekeeping period. When overruns occur frequently, the platform may fail to keep up with its scan rate, leading to delayed data updates, missed deadlines, and degraded performance.</li>
+  </ul>
+</div>
+
+<p>A scan overrun can be caused by too many objects on a single platform, scripts that take too long to execute, or excessive I/O communication. If overruns are persistent, consider distributing objects across multiple platforms or optimizing scripts.</p>
+
+<!-- ============================================================ -->
+<h2>6. Attribute Referencing — How Objects Share Data</h2>
+<p class="page-ref">Reference: Module 3, Section 4 (pages 3-38 to 3-40)</p>
+
+<p>Deployed objects communicate with each other through <strong>attribute references</strong>. When one object needs data from another, it references the source object's attribute. Application Server supports three types of references.</p>
+
+<div class="screenshot">
+  <img src="images/page_0114_0.png" alt="Attribute reference types: direct, indirect, and expression-based">
+  <div class="caption">Three types of attribute references — direct (hardcoded object.attribute path), indirect (string attribute holds the path), and expression-based (runtime evaluation) (Module 3, page 3-38)</div>
+</div>
+
+<h3>6.1 Direct References</h3>
+<p>A <strong>direct reference</strong> is a hardcoded path written as:</p>
+<p><code>\GalaxyName\ObjectPath.AttributeName</code></p>
+<p>For example: <code>\TrainingGalaxy\Area1\Tank1.PV</code> — this directly references the <code>PV</code> attribute of <code>Tank1</code>.</p>
+
+<div class="key-concept">
+  <strong>Direct references are:</strong>
+  <ul>
+    <li>Simple to write and easy to read</li>
+    <li>Immediate — no runtime resolution needed</li>
+    <li>Fragile — if the referenced object is renamed or moved, the reference breaks</li>
+    <li>Best for stable, fixed relationships between objects</li>
+  </ul>
+</div>
+
+<h3>6.2 Indirect References</h3>
+<p>An <strong>indirect reference</strong> stores the target path in a string attribute. At runtime, the system reads the string and resolves the reference dynamically.</p>
+<p>For example, a string attribute might contain <code>\TrainingGalaxy\Area1\Tank1.PV</code>, and the actual attribute references that string instead of the path directly.</p>
+
+<div class="key-concept">
+  <strong>Indirect references are:</strong>
+  <ul>
+    <li>Flexible — the target can be changed at runtime without redeployment</li>
+    <li>Useful in templates where each instance references different equipment</li>
+    <li>Slightly more complex to set up and debug</li>
+  </ul>
+</div>
+
+<h3>6.3 Expression-Based References</h3>
+<p>An <strong>expression-based reference</strong> uses an expression that evaluates to a path at runtime. This combines string manipulation with path construction — for example, building a reference from a base path plus a variable component like an instance number.</p>
+
+<div class="key-concept">
+  <strong>Expression-based references are:</strong>
+  <ul>
+    <li>The most flexible — paths are constructed dynamically at runtime</li>
+    <li>Useful when the target varies based on logic or configuration</li>
+    <li>Harder to trace during debugging because the final path is not visible in the IDE</li>
+  </ul>
+</div>
+
+<table>
+  <tr><th>Reference Type</th><th>Path Is Defined…</th><th>Best For</th><th>Drawback</th></tr>
+  <tr>
+    <td><strong>Direct</strong></td>
+    <td>Hardcoded in the attribute</td>
+    <td>Stable, fixed relationships</td>
+    <td>Breaks if object moves or is renamed</td>
+  </tr>
+  <tr>
+    <td><strong>Indirect</strong></td>
+    <td>Stored in a string attribute</td>
+    <td>Templates where instances differ</td>
+    <td>More setup; runtime resolution overhead</td>
+  </tr>
+  <tr>
+    <td><strong>Expression-Based</strong></td>
+    <td>Evaluated at runtime</td>
+    <td>Fully dynamic scenarios</td>
+    <td>Complex; hard to debug</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Rule of thumb:</strong> Use direct references by default. Only use indirect or expression-based references when you have a concrete need for dynamic targeting — for example, a template that must reference different equipment depending on the instance.
+</div>
+
+<!-- ============================================================ -->
+<h2>7. I/O Referencing — Connecting to Field Devices</h2>
+<p class="page-ref">Reference: Module 3, Section 4 (pages 3-41 to 3-42)</p>
+
+<p><strong>I/O referencing</strong> is how object attributes connect to real-world data from field devices (PLCs, RTUs, DCS) through communication drivers. There are two methods: autobinding and manual binding.</p>
+
+<div class="screenshot">
+  <img src="images/page_0115_0.png" alt="I/O referencing — autobinding vs manual binding">
+  <div class="caption">I/O referencing methods — Autobinding automatically maps attributes to I/O tags by matching names; Manual binding explicitly assigns each I/O tag to a specific attribute (Module 3, page 3-41)</div>
+</div>
+
+<h3>7.1 Autobinding</h3>
+<p><strong>Autobinding</strong> automatically maps object attributes to I/O tags based on naming conventions. When an object's attribute name matches an I/O tag name available through a configured driver, Application Server creates the binding without manual intervention.</p>
+
+<div class="key-concept">
+  <strong>How autobinding works:</strong>
+  <ul>
+    <li>An I/O Device integration object is configured with a driver connection and scan group</li>
+    <li>The scan group defines polling rate and which tags to collect</li>
+    <li>When an object is deployed and its attribute name matches an available I/O tag, the binding is created automatically</li>
+    <li>This eliminates tedious manual mapping in large deployments</li>
+  </ul>
+</div>
+
+<h3>7.2 Manual Binding</h3>
+<p><strong>Manual binding</strong> explicitly assigns an I/O tag to a specific object attribute by name, regardless of naming conventions. You specify the exact I/O tag path in the object's I/O configuration.</p>
+
+<table>
+  <tr><th>Method</th><th>Requires</th><th>Best For</th><th>Trade-off</th></tr>
+  <tr>
+    <td><strong>Autobinding</strong></td>
+    <td>Consistent naming conventions across the project</td>
+    <td>Large deployments with disciplined tag naming</td>
+    <td>Fast setup — but breaks if naming is inconsistent</td>
+  </tr>
+  <tr>
+    <td><strong>Manual Binding</strong></td>
+    <td>Explicit I/O tag assignment per attribute</td>
+    <td>Small projects, exceptions, non-standard tag names</td>
+    <td>Full control — but more manual effort per attribute</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Tip:</strong> Use the <strong>Mapping view</strong> in the IDE to review all I/O bindings in one place. It shows which attributes are bound, whether the binding is automatic or manual, and whether the binding is valid.
+</div>
+
+<!-- ============================================================ -->
+<h2>8. Knowledge Check</h2>
+
+<div class="quiz">
+  <h3>Quiz: OCMC &amp; Runtime Environment</h3>
+
+  <p><strong>1.</strong> What are the five main nodes visible in the OCMC left pane when connected to a Galaxy?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">Historian, Galaxy Database Manager, Operations Integration Server Manager, Log Viewer, and Platform Manager.</p>
+  </details>
+
+  <p><strong>2.</strong> What are the two types of backup available in the Galaxy Database Manager, and how do they differ?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Full Backup</strong> captures the entire Galaxy database. <strong>Incremental Backup</strong> captures only changes since the last backup. Incremental is faster but requires a full backup as a base for restore.</p>
+  </details>
+
+  <p><strong>3.</strong> What happens during a scan overrun, and what can cause it?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">During a scan overrun, the runtime tasks (data acquisition, scripts, alarm evaluation) extend past the allocated time window, cutting into the housekeeping/idle period. This causes delayed updates and degraded performance. Common causes include too many objects on one platform, slow scripts, or excessive I/O communication.</p>
+  </details>
+
+  <p><strong>4.</strong> Name the three types of attribute references and describe the key difference between them.</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Direct</strong> references hardcode the full path (e.g., <code>\Galaxy\Path.Attr</code>) — simple but break if the object moves. <strong>Indirect</strong> references store the path in a string attribute — flexible and changeable at runtime. <strong>Expression-based</strong> references evaluate an expression at runtime to build the path — the most dynamic but hardest to debug.</p>
+  </details>
+
+  <p><strong>5.</strong> What is the difference between autobinding and manual binding for I/O referencing?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Autobinding</strong> automatically maps attributes to I/O tags when names match — fast for large deployments but requires consistent naming. <strong>Manual binding</strong> explicitly assigns each I/O tag to a specific attribute — more control and works with any naming scheme, but requires more effort.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<nav>
+  <a href="0007-lesson.html">← Lesson 7: Lab 3</a> | <a href="0009-lesson.html">Lesson 9: Lab 4 — Object Viewer →</a>
+</nav>
+
+</body>
+</html>
