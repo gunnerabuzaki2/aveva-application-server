@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 10: Data Simulation + Module 3 Summary</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0009-lesson.html">← Lesson 9: Lab 4 — Object Viewer</a> &nbsp;|&nbsp;
+  <a href="0011-lesson.html">Lesson 11: Module 4 →</a>
+</nav>
+
+<h1>Lesson 10: Data Simulation + Module 3 Summary</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 3, Section 5 + Lab 5 (pages 3-55 to 3-63)</p>
+<p class="page-ref">Simulating real-world process data — using the OI Simulation Server and $OPCClient to build a realistic test environment without physical PLC hardware.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>10.1 Data Simulation Overview</h2>
+<p class="page-ref">Reference: Module 3, Section 5 (pages 3-55 to 3-56)</p>
+
+<p>In a production environment, Application Server objects communicate with real hardware — PLCs, RTUs, sensors, and actuators via communication drivers. During development and testing, however, you typically do not have physical I/O available at your workstation. <strong>Data simulation</strong> solves this problem.</p>
+
+<div class="key-concept">
+  <strong>OI Simulation Server (OI.SIM)</strong> is a software-based OPC DA server that generates simulated process data — analog values, digital states, and more. It produces realistic data patterns (ramp, sine, step, random, constant) so you can fully test your Galaxy objects, scripts, and alarms without connecting to any physical devices.
+</div>
+
+<p>The simulation architecture connects three components:</p>
+
+<div class="screenshot">
+  <img src="images/page_0131_0.png" alt="Data Simulation Architecture Overview">
+  <div class="caption">Data simulation overview — OI.SIM generates simulated data; $OPCClient reads it into the Galaxy via OPC DA (Module 3, page 3-55)</div>
+</div>
+
+<ol>
+  <li><strong>OI Simulation Server (OI.SIM)</strong> — runs locally as a Windows service, exposing simulated tags as an OPC DA server. Each tag is configured with an algorithm (ramp, sine, step, random, or constant) and parameters like update rate and value range.</li>
+  <li><strong>$OPCClient</strong> — the built-in Galaxy OPC client object that connects to OI.SIM by specifying the OPC server name. It translates OPC tags into Galaxy-accessible attributes.</li>
+  <li><strong>I/O References on object attributes</strong> — you link individual object attributes to specific OI.SIM tag paths, so the attribute receives the simulated value at runtime.</li>
+</ol>
+
+<h3>Why Simulate?</h3>
+<table>
+  <tr><th>Benefit</th><th>Description</th></tr>
+  <tr><td><strong>No hardware required</strong></td><td>Develop and test without physical PLCs or field I/O at your desk</td></tr>
+  <tr><td><strong>Reproducible scenarios</strong></td><td>Generate consistent data patterns for repeatable testing</td></tr>
+  <tr><td><strong>Safe testing</strong></td><td>Test alarm conditions, scripting logic, and edge cases without risk to real equipment</td></tr>
+  <tr><td><strong>Rapid iteration</strong></td><td>Change simulation parameters instantly — no waiting for field-side modifications</td></tr>
+  <tr><td><strong>Full stack validation</strong></td><td>Verify the entire data path: OI.SIM → OPC → $OPCClient → I/O Reference → Object Attribute → Visualization</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>10.2 Lab 5 — Data Simulation: Connecting OI.SIM to Your Galaxy</h2>
+<p class="page-ref">Reference: Module 3, Lab 5 (pages 3-57 to 3-63)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Configure OI.SIM PLC simulation parameters (algorithm, rate, range)</li>
+    <li>Configure $OPCClient to connect to OI.SIM as its OPC server</li>
+    <li>Set up I/O references linking object attributes to OI.SIM tag paths</li>
+    <li>Deploy the Galaxy and verify simulated data using Object Viewer</li>
+  </ul>
+</div>
+
+<div class="screenshot">
+  <img src="images/page_0133_0.png" alt="Lab 5 Introduction">
+  <div class="caption">Lab 5 introduction — objectives for connecting OI.SIM simulator to the Galaxy (Module 3, page 3-57)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>10.3 Step 1 — Configure OI.SIM Simulation Parameters</h2>
+<p class="page-ref">Reference: Module 3, Lab 5 (page 3-58)</p>
+
+<div class="tip">
+  <strong>Prerequisite:</strong> Ensure the OI Simulation Server is installed and running on your machine. It typically runs as a Windows service. Open the OCMC (Operations Control Management Console) to view and configure its nodes.
+</div>
+
+<p>Before connecting $OPCClient to OI.SIM, you should review and configure the simulation parameters for the PLC node. Open the <strong>OCMC</strong> and expand the OI.SIM server tree to locate the PLC configuration.</p>
+
+<div class="screenshot">
+  <img src="images/page_0134_0.png" alt="OCMC PLC Configuration">
+  <div class="caption">OCMC showing PLC_TEST configuration — Algorithm set to Random, Rate = 200 ms, Range = 20, Force Quality = Good (Module 3, page 3-58)</div>
+</div>
+
+<p>Key simulation parameters for each PLC tag:</p>
+
+<table>
+  <tr><th>Parameter</th><th>Example Value</th><th>Description</th></tr>
+  <tr><td><strong>Algorithm</strong></td><td>Random</td><td>The pattern the simulated value follows: Random, Ramp, Sine, Step, or Constant</td></tr>
+  <tr><td><strong>Rate</strong></td><td>200 ms</td><td>How often the simulated value updates (update interval)</td></tr>
+  <tr><td><strong>Range</strong></td><td>20</td><td>The spread of values for random/ramp simulations (e.g., 0 to Range)</td></tr>
+  <tr><td><strong>Force Quality</strong></td><td>Good</td><td>Sets the quality field on the OPC data — "Good" simulates healthy field communication</td></tr>
+</table>
+
+<div class="pitfall">
+  <strong>Watch out:</strong> If "Force Quality" is set to Bad or Uncertain, your objects will see bad-quality data even though the values themselves look correct. This is useful for testing bad-quality handling in scripts, but can cause confusion if unintentional.
+</div>
+
+<p>In this lab, the PLC is configured with <strong>Algorithm = Random</strong>, <strong>Rate = 200 ms</strong>, <strong>Range = 20</strong>, and <strong>Force Quality = Good</strong>. This produces a randomly varying value that updates five times per second with good quality — a realistic simulation of a noisy sensor reading.</p>
+
+<!-- ============================================================ -->
+<h2>10.4 Step 2 — Configure $OPCClient to Connect to OI.SIM</h2>
+<p class="page-ref">Reference: Module 3, Lab 5 (page 3-59)</p>
+
+<p>The next step is to tell the Galaxy's <code>$OPCClient</code> object to use OI.SIM as its data source. The $OPCClient is a built-in system object that handles OPC DA communication.</p>
+
+<p><strong>Step 2a:</strong> In the IDE, open your Galaxy and navigate to the <code>$OPCClient</code> object in the Galaxy hierarchy (it resides under the platform's system area).</p>
+
+<p><strong>Step 2b:</strong> Double-click <code>$OPCClient</code> to open its configuration properties. Locate the OPC server connection settings.</p>
+
+<p><strong>Step 2c:</strong> Set the <strong>OPC Server Name</strong> field to <code>OI.SIM</code>. This is the registered OPC server name that OI.SIM exposes to the system.</p>
+
+<div class="screenshot">
+  <img src="images/page_0135_0.png" alt="$OPCClient OPC Server Configuration">
+  <div class="caption">$OPCClient configuration — setting the OPC Server Name to OI.SIM so the Galaxy reads simulated data via OPC DA (Module 3, page 3-59)</div>
+</div>
+
+<p><strong>Step 2d:</strong> Apply and save the configuration. The $OPCClient will now attempt to connect to OI.SIM when the Galaxy runs.</p>
+
+<div class="pitfall">
+  <strong>Common error:</strong> If OI.SIM is not running or the OPC server name is misspelled, the $OPCClient connection will fail. All attributes with I/O references through $OPCClient will show <strong>Unknown</strong> quality and stale values. Always verify OI.SIM is running in OCMC before troubleshooting further.
+</div>
+
+<!-- ============================================================ -->
+<h2>10.5 Step 3 — Set Up I/O References for Simulated Data</h2>
+<p class="page-ref">Reference: Module 3, Lab 5 (page 3-60)</p>
+
+<p>With $OPCClient connected to OI.SIM, the next step is to link your object attributes to specific simulated data points. This is done through <strong>I/O References</strong> — each reference specifies the OPC tag path that an attribute should read from.</p>
+
+<p><strong>Step 3a:</strong> Open the object that will receive simulated data (for example, an object under the <code>Simulator</code> area of your Galaxy model). Navigate to the attributes you want to link to simulation data.</p>
+
+<p><strong>Step 3b:</strong> For each attribute, set the <strong>I/O Reference</strong> field to the appropriate OI.SIM tag path. The tag path format follows OPC tag naming conventions — it typically includes the PLC name and tag name as configured in OI.SIM.</p>
+
+<div class="screenshot">
+  <img src="images/page_0136_0.png" alt="I/O Reference Configuration">
+  <div class="caption">Configuring I/O references — linking object attributes to OI.SIM tag paths so they receive simulated values at runtime (Module 3, page 3-60)</div>
+</div>
+
+<p><strong>Step 3c:</strong> Verify the I/O references are correct. Each reference should point to a valid tag path in the OI.SIM server. A mismatch will result in Unknown quality at runtime.</p>
+
+<div class="tip">
+  <strong>Tip:</strong> You can use the OCMC to browse the OI.SIM tag tree and confirm exact tag paths before entering them as I/O references. This avoids typos and ensures the paths match what OI.SIM actually exposes.
+</div>
+
+<!-- ============================================================ -->
+<h2>10.6 Step 4 — Organize the Galaxy Model for Simulation</h2>
+<p class="page-ref">Reference: Module 3, Lab 5 (page 3-61)</p>
+
+<p>The Galaxy model view provides a visual hierarchy of all objects. In this lab, the simulated objects are organized under a dedicated area in the model.</p>
+
+<div class="screenshot">
+  <img src="images/page_0137_0.png" alt="Galaxy Model View with Simulator Area">
+  <div class="caption">Galaxy model view — Plant > ControlSystem > Simulator area highlighted, alongside AppEngine1, GRPlatform, ProdPlatform, Packaging, Production areas (Module 3, page 3-61)</div>
+</div>
+
+<p>The model tree shows the full organizational hierarchy:</p>
+<ul>
+  <li><strong>Plant</strong> — the top-level container
+    <ul>
+      <li><strong>ControlSystem</strong> — communication and control objects
+        <ul>
+          <li><strong>Simulator</strong> — objects receiving data from OI.SIM (highlighted)</li>
+        </ul>
+      </li>
+      <li><strong>AppEngine1</strong> — the application engine platform</li>
+      <li><strong>GRPlatform</strong>, <strong>ProdPlatform</strong> — platform objects</li>
+      <li><strong>Packaging</strong> — packaging area objects</li>
+      <li><strong>Production</strong> — contains Line1, Line2, Receiving, Shipping</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="key-concept">
+  <strong>Why a dedicated Simulator area?</strong> Keeping simulation objects in their own area makes it easy to deploy and undeploy them independently. When you connect to a real PLC later, you can remove the Simulator area and update the I/O references to point to actual hardware — without disturbing the rest of the model.
+</div>
+
+<!-- ============================================================ -->
+<h2>10.7 Step 5 — Deploy and Verify Simulated Data</h2>
+<p class="page-ref">Reference: Module 3, Lab 5 (pages 3-62 to 3-63)</p>
+
+<p>With all configuration complete, deploy the objects to runtime and verify the data flow.</p>
+
+<p><strong>Step 5a:</strong> Right-click the modified objects (or the Simulator area) and select <strong>Deploy</strong>. Wait for deployment to complete successfully.</p>
+
+<div class="screenshot">
+  <img src="images/page_0138_0.png" alt="Deploying Simulated Objects">
+  <div class="caption">Deploying simulated objects to runtime — the IDE pushes the updated configuration to the Application Engine (Module 3, page 3-62)</div>
+</div>
+
+<p><strong>Step 5b:</strong> After deployment completes, open the <strong>OCMC</strong> to verify that OI.SIM is communicating correctly. Expand the OI.SIM server node to see the PLC structure.</p>
+
+<div class="screenshot">
+  <img src="images/page_0139_0.png" alt="OCMC OI.SIM Node Structure">
+  <div class="caption">OCMC showing OI.SIM.1 expanded — Configuration > PORT > PLC hierarchy visible; Platform Manager showing TrainingGalaxy(DefaultUser) (Module 3, page 3-63)</div>
+</div>
+
+<p>The OCMC confirms:</p>
+<ul>
+  <li><strong>OI.SIM.1</strong> is the running OPC server instance</li>
+  <li>Under it: <strong>Configuration > PORT > PLC</strong> — the hierarchical structure of simulated endpoints</li>
+  <li>The <strong>Platform Manager</strong> shows <code>TrainingGalaxy(DefaultUser)</code> — confirming the Galaxy is connected and active</li>
+</ul>
+
+<p><strong>Step 5c:</strong> Open <strong>Object Viewer</strong> on one of the deployed simulator objects. You should see live values updating at the configured rate (e.g., every 200 ms for the Random algorithm).</p>
+
+<div class="tip">
+  <strong>Verification checklist:</strong>
+  <ul>
+    <li>Are attribute values changing? — If yes, the OPC data path is working end to end</li>
+    <li>Is the quality field "Good"? — Confirms Force Quality = Good in OI.SIM</li>
+    <li>Are values within the expected range? — Confirms the Range parameter</li>
+    <li>Is the update frequency correct? — Confirms the Rate parameter</li>
+  </ul>
+</div>
+
+<div class="pitfall">
+  <strong>Troubleshooting — Object Viewer shows "Unknown" or stale values:</strong>
+  <ul>
+    <li>Verify OI.SIM is running (check OCMC or Windows Services)</li>
+    <li>Confirm the OPC server name in $OPCClient matches <code>OI.SIM</code> exactly</li>
+    <li>Verify the I/O reference tag paths match the OI.SIM tag structure</li>
+    <li>Ensure the object was deployed <strong>after</strong> making I/O reference changes</li>
+    <li>Check the <strong>Alarm Summary</strong> for OPC communication errors</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>10.8 Module 3 Summary — Complete Recap</h2>
+<p class="page-ref">Reference: Module 3 (all sections and labs)</p>
+
+<p>Module 3 has covered the fundamental building blocks of an Application Server Galaxy. Here is a complete summary of all five sections and five labs:</p>
+
+<table>
+  <tr><th>Topic</th><th>Key Concepts</th><th>Lesson</th></tr>
+  <tr>
+    <td><strong>Section 1: Object Templates</strong></td>
+    <td>Base templates, inheritance, derived objects, template hierarchy</td>
+    <td>Lesson 6</td>
+  </tr>
+  <tr>
+    <td><strong>Lab 2: Creating Objects</strong></td>
+    <td>Instantiating objects from templates, configuring attributes</td>
+    <td>Lesson 7</td>
+  </tr>
+  <tr>
+    <td><strong>Section 2: Attributes &amp; I/O</strong></td>
+    <td>Attribute types, I/O references, source configuration</td>
+    <td>Lesson 7</td>
+  </tr>
+  <tr>
+    <td><strong>Section 3: Deployment</strong></td>
+    <td>Deploy, undeploy, deployment hierarchy, status monitoring</td>
+    <td>Lesson 8</td>
+  </tr>
+  <tr>
+    <td><strong>Lab 3: Deploying Objects</strong></td>
+    <td>Hands-on deployment workflow, verifying deployment status</td>
+    <td>Lesson 8</td>
+  </tr>
+  <tr>
+    <td><strong>Section 4: Object Viewer</strong></td>
+    <td>Inspecting live object data, attribute values, communication status</td>
+    <td>Lesson 9</td>
+  </tr>
+  <tr>
+    <td><strong>Lab 4: Object Viewer</strong></td>
+    <td>Using Object Viewer to monitor deployed objects in real time</td>
+    <td>Lesson 9</td>
+  </tr>
+  <tr>
+    <td><strong>Section 5: Data Simulation</strong></td>
+    <td>OI Simulation Server, $OPCClient, simulation algorithms and parameters</td>
+    <td>Lesson 10</td>
+  </tr>
+  <tr>
+    <td><strong>Lab 5: Data Simulation</strong></td>
+    <td>Configuring OI.SIM, connecting $OPCClient, I/O references, deploying and verifying</td>
+    <td>Lesson 10</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Module 3 Key Takeaway:</strong> You now understand the complete object lifecycle in Application Server — from creating templates and objects (Section 1–2), to configuring attributes and I/O (Section 2), deploying to runtime (Section 3), monitoring with Object Viewer (Section 4), and testing with simulated data via OI.SIM (Section 5). These five skills form the foundation of every Application Server project.
+</div>
+
+<!-- ============================================================ -->
+<div class="quiz">
+  <h3>Quiz — Test Your Understanding</h3>
+
+  <p><strong>Q1:</strong> What is the OI Simulation Server (OI.SIM)?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">A software-based OPC DA server that generates simulated analog and digital data values, allowing you to test Galaxy objects without physical I/O hardware.</p></details>
+
+  <p><strong>Q2:</strong> What Galaxy object is configured to connect to OI.SIM, and what property do you change?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">$OPCClient — you set its OPC Server Name property to "OI.SIM" so it connects to the simulation server via OPC DA.</p></details>
+
+  <p><strong>Q3:</strong> In OCMC, if a PLC tag is configured with Algorithm = Random, Rate = 200 ms, and Range = 20, what does this produce?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">A randomly varying value within a range of 0 to 20, updating every 200 milliseconds (five times per second), simulating a noisy sensor reading.</p></details>
+
+  <p><strong>Q4:</strong> What must you configure on object attributes to link them to specific OI.SIM data points?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">I/O References — each attribute's I/O Reference field is set to the OI.SIM OPC tag path that provides the simulated value.</p></details>
+
+  <p><strong>Q5:</strong> What does "Force Quality = Good" in the OI.SIM PLC configuration mean?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">It forces the OPC data quality field to "Good" for all simulated values, simulating healthy field communication. If set to Bad or Uncertain, it allows testing bad-quality handling logic.</p></details>
+
+  <p><strong>Q6:</strong> If Object Viewer shows "Unknown" for an attribute after configuring I/O references, what should you check first?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Verify that OI.SIM is running (check OCMC or Windows Services), confirm the OPC server name in $OPCClient is "OI.SIM" (not misspelled), and ensure the object was redeployed after I/O reference changes.</p></details>
+
+  <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+<ol>
+  <li><strong>OI Simulation Server (OI.SIM)</strong> is a software OPC DA server that generates realistic process data without hardware.</li>
+  <li><strong>Simulation parameters</strong> — Algorithm, Rate, Range, and Force Quality — control how each simulated tag behaves.</li>
+  <li><strong>$OPCClient</strong> is configured with the OPC server name <code>OI.SIM</code> to read simulated data into the Galaxy.</li>
+  <li><strong>I/O References</strong> link individual object attributes to specific OI.SIM tag paths.</li>
+  <li><strong>OCMC</strong> confirms OI.SIM communication and shows the tag hierarchy (Configuration > PORT > PLC).</li>
+  <li><strong>Object Viewer</strong> verifies the complete data path: OI.SIM → OPC → $OPCClient → I/O Reference → Object Attribute.</li>
+  <li><strong>Module 3 is now complete</strong> — you have mastered the full object lifecycle: create templates, instantiate objects, configure attributes and I/O, deploy to runtime, monitor with Object Viewer, and test with simulated data.</li>
+</ol>
+<p class="source">Next: Lesson 11 — Module 4 begins.</p>
+
+</body>
+</html>

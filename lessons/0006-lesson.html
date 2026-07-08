@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6: Module 3 — Plant Model + Deployment Model</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="0005-lesson.html">← Lesson 5: Module 2</a> &nbsp;|&nbsp;
+  <a href="0007-lesson.html">Lesson 7: Lab 3 →</a>
+</nav>
+
+<h1>Lesson 6: Module 3 — Plant Model + Deployment Model</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 3, Sections 1-2 (pages 3-3 to 3-12)</p>
+<p class="page-ref">How Application Server organizes your plant into a logical hierarchy, and how objects move from design to live execution.</p>
+
+<!-- ============================================================ -->
+<h2>1. The Plant Model</h2>
+<p class="page-ref">Reference: Module 3, Section 1 (pages 3-3 to 3-5)</p>
+
+<div class="key-concept">
+  <strong>The Plant Model</strong> is Application Server's logical representation of your physical plant. It organizes objects into an <strong>area hierarchy</strong> that mirrors how your plant is actually structured. The Plant Model is built using the <strong>Model view</strong> in the IDE.
+</div>
+
+<h3>Area Hierarchy</h3>
+<p>The Plant Model organizes objects into a hierarchical tree. The training Galaxy demonstrates a typical five-level structure:</p>
+
+<pre>
+Plant
+  ├── Sections
+  │     ├── Areas
+  │     │     ├── Production Lines
+  │     │     │     └── Manufacturing Cells
+  │     │     └── ...
+  │     └── ...
+  └── ...
+</pre>
+
+<table>
+  <tr><th>Hierarchy Level</th><th>Training Galaxy Example</th><th>Description</th></tr>
+  <tr><td><strong>Plant</strong></td><td><code>Plant</code></td><td>Top-level container representing the entire facility</td></tr>
+  <tr><td><strong>Section</strong></td><td><code>Production</code>, <code>Packaging</code></td><td>Major functional divisions within the plant</td></tr>
+  <tr><td><strong>Area</strong></td><td><code>ControlSystem</code></td><td>Specific process areas within a section</td></tr>
+  <tr><td><strong>Production Line</strong></td><td><code>Line1</code>, <code>Line2</code></td><td>Individual production lines</td></tr>
+  <tr><td><strong>Manufacturing Cell</strong></td><td><code>Mixer100</code></td><td>Specific equipment groups or cells on a line</td></tr>
+</table>
+
+<p>The exact hierarchy levels you use depend on your plant layout. The key principle: <strong>structure your Plant Model to mirror your physical plant</strong> so operators and engineers can navigate it intuitively.</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0079.png" alt="Plant Model Area Hierarchy">
+  <div class="caption">The Plant Model — showing the area hierarchy from Plant down to Manufacturing Cells (Module 3, page 3-3)</div>
+</div>
+
+<h3>Alarm Distribution</h3>
+<p>One of the primary functions of the area hierarchy is <strong>alarm scoping</strong>. The hierarchy determines which alarms each user can see:</p>
+
+<table>
+  <tr><th>User Role</th><th>Alarm Visibility</th></tr>
+  <tr>
+    <td><strong>Operator</strong></td>
+    <td>Sees only alarms for <strong>their own area</strong> — focused on the equipment they are responsible for</td>
+  </tr>
+  <tr>
+    <td><strong>Supervisor</strong></td>
+    <td>Sees <strong>all alarms</strong> across the entire plant — overview of all areas</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Why this matters:</strong> An operator on Line1 doesn't need to see alarms from Line2 or Packaging — that would be distracting noise. A supervisor, on the other hand, needs the full picture. The area hierarchy makes this scoping automatic.
+</div>
+
+<!-- ============================================================ -->
+<h2>2. Plant Model in the IDE</h2>
+<p class="page-ref">Reference: Module 3, Section 1 (pages 3-4 to 3-5)</p>
+
+<h3>The Model-Tagname View</h3>
+<p>In the IDE, the Plant Model is visible in the <strong>Model</strong> pane. The Model-Tagname view shows the full hierarchy of all objects in your Galaxy, organized by area. This is where you build, configure, and navigate your plant structure.</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0080.png" alt="Model-Tagname View in IDE">
+  <div class="caption">The Model-Tagname view in the IDE — showing the TrainingGalaxy hierarchy with sub-areas and equipment (Module 3, page 3-4)</div>
+</div>
+
+<h3>TrainingGalaxy Hierarchy</h3>
+<p>The training Galaxy organizes its objects as follows:</p>
+
+<table>
+  <tr><th>Area</th><th>Contents</th></tr>
+  <tr>
+    <td><strong>Unassigned Area</strong></td>
+    <td>New objects that haven't been placed into the hierarchy yet — a temporary holding zone</td>
+  </tr>
+  <tr>
+    <td><strong>Plant</strong></td>
+    <td>Top-level area</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;↳ <strong>ControlSystem</strong></td>
+    <td>Control system objects</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;↳ <strong>Production</strong></td>
+    <td>Production-related areas</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ <strong>Line1</strong></td>
+    <td>Equipment on Production Line 1 (e.g., Mixer100, Mixer200)</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ <strong>Line2</strong></td>
+    <td>Equipment on Production Line 2</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;↳ <strong>Packaging</strong></td>
+    <td>Packaging area equipment</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;↳ <strong>Receiving</strong></td>
+    <td>Receiving area — inbound materials</td>
+  </tr>
+  <tr>
+    <td>&nbsp;&nbsp;↳ <strong>Shipping</strong></td>
+    <td>Shipping area — outbound products</td>
+  </tr>
+</table>
+
+<p>Equipment objects (like Mixer100, Mixer200) are nested under their respective areas. You can see them in the Model-Tagname view when you expand each area node.</p>
+
+<div class="tip">
+  <strong>Workflow tip:</strong> Set up your area hierarchy first, then create objects directly into their target areas. Avoid dumping everything into the Unassigned Area — it becomes cluttered quickly and objects there cannot be deployed.
+</div>
+
+<!-- ============================================================ -->
+<h2>3. The Deployment Model</h2>
+<p class="page-ref">Reference: Module 3, Section 2 (pages 3-7 to 3-10)</p>
+
+<div class="key-concept">
+  <strong>Deployment</strong> is the process of moving an object's configuration from the Galaxy Repository to a live runtime environment. When you deploy an object, it becomes <strong>live</strong> — executing logic, reading data, and generating alarms.
+</div>
+
+<h3>Deployment vs. Undeployment</h3>
+<p>Application Server uses a deliberate deployment model — changes don't go live automatically:</p>
+
+<table>
+  <tr><th>Concept</th><th>Description</th></tr>
+  <tr>
+    <td><strong>Deploy</strong></td>
+    <td>Object configuration is sent to the target platform. The object starts executing at runtime.</td>
+  </tr>
+  <tr>
+    <td><strong>Undeploy</strong></td>
+    <td>Object is removed from the runtime environment. It stops executing. The object still exists in the Galaxy (IDE) but is not running.</td>
+  </tr>
+  <tr>
+    <td><strong>Manual Update Required</strong></td>
+    <td>When you change an object in the IDE, the changes are <strong>not automatically pushed</strong> to the running environment. You must manually redeploy for changes to take effect.</td>
+  </tr>
+</table>
+
+<div class="screenshot">
+  <img src="images/as_page_0083.png" alt="Deployment Model Overview">
+  <div class="caption">The Deployment Model — deployment vs. undeployment, instances only, manual updates, and GR offline behavior (Module 3, page 3-7)</div>
+</div>
+
+<h3>Instances Only — Not Templates</h3>
+
+<div class="pitfall">
+  <strong>Critical rule:</strong> You can only deploy <strong>instances</strong>, not templates. Templates (like <code>$Area</code>, <code>$AppEngine</code>, <code>$WinPlatform</code>) are base classes — they define how objects work. You must create an <strong>instance</strong> of the template and deploy the instance. Templates themselves are never deployed.
+</div>
+
+<p>This is fundamental to how Application Server works:</p>
+<ol>
+  <li>You <strong>inherit</strong> from a template to create a new object (an instance)</li>
+  <li>You configure the instance with your specific settings</li>
+  <li>You deploy the <strong>instance</strong> — never the template</li>
+</ol>
+
+<h3>Manual Update Requirement</h3>
+
+<div class="key-concept">
+  <strong>Important:</strong> Changes made in the IDE are <strong>not automatically deployed</strong>. You must manually redeploy the object for the changes to take effect at runtime. This exists for safety — it prevents accidental changes from going live in a production environment.
+</div>
+
+<h3>Galaxy Repository Offline Behavior</h3>
+
+<div class="pitfall">
+  <strong>What happens when the GR goes offline?</strong>
+</div>
+
+<p>When the Galaxy Repository (GR) is unavailable, already-deployed objects <strong>continue running</strong> normally on the AppEngines. The GR is only needed for development operations (deploy, undeploy, configuration changes). The runtime executes independently — this means a GR failure does not stop your plant from running.</p>
+
+<div class="key-concept">
+  <strong>Key takeaway:</strong> The GR is needed for <strong>development</strong> operations (deploy, undeploy, modify). It is NOT needed for <strong>runtime</strong> — deployed objects keep running independently on the AppEngines. This separation of development and runtime is one of Application Server's strengths.
+</div>
+
+<!-- ============================================================ -->
+<h2>4. Deployment View — The Full Deployment Tree</h2>
+<p class="page-ref">Reference: Module 3, Section 2 (pages 3-8 to 3-10)</p>
+
+<p>The Deployment View shows the hierarchy of platforms and engines that host your deployed objects. The training Galaxy demonstrates a typical multi-platform deployment:</p>
+
+<div class="screenshot">
+  <img src="images/as_page_0085.png" alt="Deployment View">
+  <div class="caption">The Deployment View — showing the full deployment tree with platforms, engines, and hosted objects (Module 3, page 3-9)</div>
+</div>
+
+<h3>Deployment Tree Structure</h3>
+<p>The training Galaxy's deployment tree looks like this:</p>
+
+<pre>
+TrainingGalaxy
+  ├── Unassigned Host
+  │
+  ├── GRPlatform
+  │     ├── AppEngine1 Backup
+  │     └── DIO_Engine2
+  │           └── R_ProdPLC2
+  │
+  └── ProdPlatform
+        ├── AppEngine1
+        │     ├── ControlSystem
+        │     │     └── ...
+        │     ├── Line1
+        │     │     └── Mixer100 / Mixer200 / ...
+        │     └── ...
+        └── DIO_Engine1
+              └── R_ProdPLC1
+</pre>
+
+<h3>Key Objects in the Deployment Tree</h3>
+
+<table>
+  <tr><th>Object</th><th>Purpose</th></tr>
+  <tr>
+    <td><strong>GRPlatform</strong></td>
+    <td>The platform hosting the Galaxy Repository. Also hosts AppEngine1 Backup (redundancy) and DIO_Engine2 for I/O communication with R_ProdPLC2.</td>
+  </tr>
+  <tr>
+    <td><strong>ProdPlatform</strong></td>
+    <td>The main production platform. Hosts AppEngine1 (which executes the plant objects: ControlSystem, Line1, Mixer100, etc.) and DIO_Engine1 for I/O communication with R_ProdPLC1.</td>
+  </tr>
+  <tr>
+    <td><strong>AppEngine1</strong></td>
+    <td>The runtime engine that executes deployed objects — equipment, areas, and their logic.</td>
+  </tr>
+  <tr>
+    <td><strong>DIO_Engine1 / DIO_Engine2</strong></td>
+    <td>Data I/O engines that handle communication with physical controllers (PLCs) via drivers.</td>
+  </tr>
+  <tr>
+    <td><strong>R_ProdPLC1 / R_ProdPLC2</strong></td>
+    <td>Communication paths to the production PLCs — configured through the DIO engines.</td>
+  </tr>
+  <tr>
+    <td><strong>AppEngine1 Backup</strong></td>
+    <td>Redundant backup for AppEngine1 — provides failover capability.</td>
+  </tr>
+  <tr>
+    <td><strong>Unassigned Host</strong></td>
+    <td>Objects that haven't been assigned to a specific platform yet.</td>
+  </tr>
+</table>
+
+<h3>Hosting Rules — Parent Must Deploy First</h3>
+
+<div class="pitfall">
+  <strong>Critical rule:</strong> A child object <strong>cannot be deployed unless its parent is deployed first</strong>. For example, you cannot deploy an equipment object to AppEngine1 unless ProdPlatform (which hosts AppEngine1) is already deployed. Always deploy top-down: platform first, then engines, then objects.
+</div>
+
+<div class="key-concept">
+  <strong>Deployment order:</strong>
+  <ol>
+    <li>Deploy the <strong>platform</strong> (e.g., ProdPlatform) — this claims the physical computer</li>
+    <li>Deploy the <strong>engines</strong> (e.g., AppEngine1, DIO_Engine1) — these start running on the platform</li>
+    <li>Deploy the <strong>objects</strong> (e.g., Mixer100, ControlSystem) — these execute within the engines</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<div class="quiz">
+  <h3>Quiz — Test Your Understanding</h3>
+
+  <p><strong>Q1:</strong> What is the typical area hierarchy in the Plant Model, from top to bottom?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Plant → Sections → Areas → Production Lines → Manufacturing Cells. The hierarchy mirrors the physical plant layout.</p></details>
+
+  <p><strong>Q2:</strong> What is the difference between alarm visibility for an operator versus a supervisor?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">An operator sees only alarms for their own area — focused on the equipment they manage. A supervisor sees all alarms across the entire plant.</p></details>
+
+  <p><strong>Q3:</strong> Can you deploy a template directly to a live runtime environment? Why or why not?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">No. You can only deploy instances, not templates. Templates are base classes that define how objects work. You must create an instance of the template and deploy the instance.</p></details>
+
+  <p><strong>Q4:</strong> If you make a change to an object in the IDE, does the change take effect at runtime immediately?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">No. Changes are not automatically deployed. You must manually redeploy the object for the changes to take effect at runtime. This manual step exists for safety in production environments.</p></details>
+
+  <p><strong>Q5:</strong> What happens to running deployed objects if the Galaxy Repository goes offline?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Already-deployed objects continue running normally on the AppEngines. The GR is only needed for development operations (deploy, undeploy, modify). A GR failure does not stop the plant from operating.</p></details>
+
+  <p><strong>Q6:</strong> In the training Galaxy's deployment tree, what objects are hosted by ProdPlatform?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">ProdPlatform hosts AppEngine1 (which executes ControlSystem, Line1, Mixer100, and other plant objects) and DIO_Engine1 (which communicates with R_ProdPLC1).</p></details>
+
+  <p><strong>Q7:</strong> What is the hosting rule regarding deploying child objects?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">A child object cannot be deployed unless its parent is deployed first. You must deploy top-down: platform first, then engines, then objects.</p></details>
+
+  <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+<ol>
+  <li>The <strong>Plant Model</strong> organizes objects into a logical area hierarchy: Plant → Sections → Areas → Production Lines → Manufacturing Cells.</li>
+  <li>The hierarchy determines <strong>alarm scoping</strong>: operators see only their area's alarms; supervisors see all.</li>
+  <li>The <strong>Model-Tagname view</strong> in the IDE shows the full Galaxy hierarchy, with Unassigned Area for unplaced objects.</li>
+  <li>Deployment moves objects from the Galaxy Repository to live runtime. Only <strong>instances</strong> can be deployed — never templates.</li>
+  <li>Changes in the IDE require <strong>manual deployment</strong> — they do not auto-deploy to runtime.</li>
+  <li>The <strong>Deployment View</strong> shows the hosting tree: platforms host engines, engines execute objects.</li>
+  <li><strong>Parent must deploy before child</strong> — you cannot deploy an object to an engine unless the engine's platform is already deployed.</li>
+  <li>The GR can go offline without stopping running objects — <strong>runtime is independent of development</strong>.</li>
+</ol>
+
+<p class="source">Next: Lesson 7 — Lab 3</p>
+
+</body>
+</html>
