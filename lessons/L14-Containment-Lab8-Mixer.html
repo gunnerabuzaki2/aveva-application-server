@@ -202,11 +202,11 @@
   <div class="caption">Templates pane: SMixer expanded with Level and Temperature children. SValve selected.</div>
 </div>
 
-<p><strong>Step 1b:</strong> Examine the Project folder hierarchy. You will see: <code>$Inlet1</code>, <code>$Inlet2</code>, <code>$Mixer</code> (expanded to show Level and Temperature children), <code>$Outlet</code>, and <code>$Valve</code> — all at the top level of the Project folder.</p>
+<p><strong>Step 1b:</strong> Examine the Project folder hierarchy. At the top level you will see: <code>$Meter</code>, <code>$Mixer</code>, <code>$Motor</code>, and <code>$Valve</code>. Expand <code>$Mixer</code> to see its contained children: Agitator, Inlet1, Inlet2, Level, Outlet, Pump1, Pump2, and Temperature.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0197_0.png" alt="Project folder hierarchy showing all equipment templates">
-  <div class="caption">Project hierarchy: $Inlet1, $Inlet2, $Mixer (expanded: Level, Temperature), $Outlet, $Valve</div>
+  <img src="../images/rendered_page_206.png" alt="Project folder hierarchy showing all equipment templates">
+  <div class="caption">Project hierarchy: $Meter, $Mixer (expanded: Agitator, Inlet1, Inlet2, Level, Outlet, Pump1, Pump2, Temperature), $Motor, $Valve (page 4-64)</div>
 </div>
 
 <div class="tip">
@@ -248,11 +248,11 @@
 <h3>Step 3: Build the Containment Structure</h3>
 <p class="page-ref">Reference: Module 4, Lab 8 (pages 4-60 to 4-62)</p>
 
-<p>Now create the actual containment relationships. Expand <code>$Mixer</code> in the Project folder to verify all sub-components are properly contained: <code>Inlet1</code>, <code>Inlet2</code>, <code>Level</code>, <code>Outlet</code>, and <code>Temperature</code>.</p>
+<p>Now create the actual containment relationships. The image above shows the state before containment — $Inlet1, $Inlet2, $Outlet are still top-level siblings of $Mixer, with only Level and Temperature as $Mixer children. After building containment, Inlet1, Inlet2, Outlet, Pump1, and Pump2 will move inside $Mixer.</p>
 
 <div class="screenshot">
   <img src="../images/page_0199_0.png" alt="$Mixer containing all sub-objects in Project folder">
-  <div class="caption">Project hierarchy with $Mixer expanded: Inlet1, Inlet2, Level, Outlet, Temperature</div>
+  <div class="caption">Project hierarchy: $Inlet1, $Inlet2, $Meter, $Mixer (expanded: Level, Temperature only), $Outlet, $Valve — containment not yet built</div>
 </div>
 
 <div class="key-concept">
