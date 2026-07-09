@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 17: Connecting to Field Data + Lab 10-11</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../MISSION.md">← Mission</a> &nbsp;|&nbsp;
+  <a href="L16-Lab9-OI-Server.html">← Lesson 16: Lab 9</a> &nbsp;|&nbsp;
+  <a href="L18-History.html">Lesson 18: History →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Connectivity &amp; Field Data</strong><br>
+<a href="L15-OI-Server-Basics.html">L15: OI Server Basics</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: Lab 9 — OI Server Setup</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field Data + Lab 10-11</a><br>
+<a href="L18-History.html">L18: History</a><br>
+</div>
+</details>
+</nav>
+
+<h1>Lesson 17: Connecting Application Objects to Field Data + Lab 10-11</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 5, Section 3 + Labs 10-11 (pages 5-13 to 5-34)</p>
+<p class="page-ref">The critical link — binding your Galaxy objects to real-world I/O through OI Servers, deploying to the runtime engine, and verifying data flow.</p>
+
+<!-- ============================================================ -->
+<h2>17.1 Connecting Attributes to I/O — The Big Picture</h2>
+<p class="page-ref">Reference: Module 5, Section 3 (pages 5-13 to 5-20)</p>
+
+<p>Up to this point, your automation objects have been working with <strong>internal (simulated) values</strong>. In a real plant, those values need to come from — and be written back to — actual field devices: PLCs, RTUs, and sensors. This is where <strong>attribute I/O binding</strong> comes in.</p>
+
+<div class="key-concept">
+  <strong>I/O Binding</strong> is the process of linking an object's attribute (e.g., <code>Level1.PV</code>) to a real data point on a PLC or other field device, routed through an <strong>OI Server</strong>. Once bound, the attribute no longer holds a hardcoded simulation value — it reflects the live state of the physical process.
+</div>
+
+<p>The data flow works like this:</p>
+
+<table>
+  <tr><th>Step</th><th>Component</th><th>What Happens</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>Field Device</strong> (PLC/RTU)</td>
+    <td>The physical sensor or actuator produces a value (e.g., a pressure reading of 45.2 PSI)</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><strong>OI Server</strong> (Communication Driver)</td>
+    <td>Polls the field device over its native protocol (Modbus, EtherNet/IP, OPC, etc.) and holds the value in a topic-level tag</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><strong>Application Server</strong> (Galaxy)</td>
+    <td>The automation object's attribute is bound to the OI Server tag. Application Server reads/writes the value in real time.</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><strong>HMI Client</strong> (InTouch/OMI)</td>
+    <td>The operator screen displays the live value and can send commands (setpoints, alarms acknowledged, etc.)</td>
+  </tr>
+</table>
+
+<h3>How Binding Works in the IDE</h3>
+<p>In the Galaxy IDE, you configure I/O binding by editing the attribute's <strong>I/O Source</strong> property. The I/O source string follows a specific syntax that tells Application Server which OI Server, which topic, and which tag to connect to.</p>
+
+<div class="key-concept">
+  <strong>I/O Source Syntax:</strong> <code>TopicName.TagName</code><br><br>
+  For example, if your OI Server has a topic called <strong>Topic1</strong> and the PLC tag is <strong>Agitator_001</strong>, the I/O source would be:<br>
+  <code>Topic1.Agitator_001</code><br><br>
+  You simply type this into the I/O source field for whichever attribute needs the live data.
+</div>
+
+<h3>Object Types and I/O Binding</h3>
+<p>Different object types use I/O binding in different ways:</p>
+
+<table>
+  <tr><th>Object Type</th><th>Commonly Bound Attributes</th><th>Typical Use</th></tr>
+  <tr>
+    <td><strong>Discrete</strong></td>
+    <td><code>PV</code> (Process Value), <code>SP</code> (Setpoint)</td>
+    <td>On/off states: pump running, valve open/closed, motor on/off</td>
+  </tr>
+  <tr>
+    <td><strong>Analog</strong></td>
+    <td><code>PV</code>, <code>SP</code>, <code>SPH</code> (Setpoint High), <code>SPL</code> (Setpoint Low)</td>
+    <td>Continuous values: temperature, pressure, flow, level</td>
+  </tr>
+  <tr>
+    <td><strong>Motor</strong></td>
+    <td><code>PV</code> (Status), <code>SP</code> (Command), <code>AHSP</code> (Auto High Setpoint)</td>
+    <td>Motors with start/stop and status feedback</td>
+  </tr>
+  <tr>
+    <td><strong>Pump</strong></td>
+    <td><code>PV</code>, <code>SP</code>, <code>RunCmd</code></td>
+    <td>Pumps with run command and status</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Tip — Simulation vs. I/O:</strong> Before you bind an attribute to a real I/O source, it is running in <strong>simulation mode</strong> (using an internal expression or hardcoded value). This is extremely useful during development — you can build and test your entire application without any hardware. When you are ready to go live, you simply change the I/O source from the simulation expression to the real PLC tag address.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.2 The OI Server Connection in Your Galaxy</h2>
+<p class="page-ref">Reference: Module 5, Section 3 (pages 5-20 to 5-25)</p>
+
+<p>When you connected to the OI Server in Lesson 16 (Lab 9), you established a communication link between Application Server and the field devices. Now, let's look at how that link is structured within the Galaxy.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0246_0.png" alt="IO Devices View showing ProdPLC and Simulator topics">
+  <div class="caption">IO Devices view in the Galaxy: TrainingGalaxy contains the OI Server with ProdPLC (Topic1) providing tags like Agitator_001, Inlet1_001, Level1 — and Simulator providing tags L1 and T1. The right-click context menu shows available operations (Module 5, page 5-22)</div>
+</div>
+
+<p>In the <strong>IO Devices</strong> view, you can see the full communication hierarchy:</p>
+
+<table>
+  <tr><th>Level</th><th>Name in Our Galaxy</th><th>What It Represents</th></tr>
+  <tr>
+    <td><strong>Galaxy</strong></td>
+    <td>TrainingGalaxy</td>
+    <td>Your entire application container</td>
+  </tr>
+  <tr>
+    <td><strong>OI Server Node</strong></td>
+    <td>ProdPLC</td>
+    <td>A physical or virtual machine running the OI Server software</td>
+  </tr>
+  <tr>
+    <td><strong>Topic</strong></td>
+    <td>Topic1</td>
+    <td>A configured communication channel to a specific PLC or device</td>
+  </tr>
+  <tr>
+    <td><strong>Tags</strong></td>
+    <td>Agitator_001, Inlet1_001, Level1, etc.</td>
+    <td>Individual data points available from that PLC</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Topic = The Bridge:</strong> A Topic is the fundamental unit of communication. It defines <em>which PLC</em> to talk to, <em>what protocol</em> to use, and <em>what polling rate</em> to maintain. Multiple objects in your Galaxy can all point to the same topic — they just reference different tags within it.
+</div>
+
+<div class="tip">
+  <strong>Tip — Right-Click Operations:</strong> As shown in the screenshot, right-clicking a topic in the IO Devices view gives you options to Browse tags, Edit topic properties, or View current tag values — useful for debugging communication issues.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.3 Lab 10: Deploying and Undeploying Objects</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-25 to 5-30)</p>
+
+<div class="lab">
+  <h3>Lab 10 — Deploying Your Galaxy Objects</h3>
+  <p><strong>Objective:</strong> Understand the deploy/undeploy lifecycle and practice deploying and undeploying automation objects.</p>
+</div>
+
+<h3>What Does "Deploy" Mean?</h3>
+<p>In Application Server, <strong>deployment</strong> is the process of taking your objects from the development environment (the Galaxy IDE) and pushing them to the <strong>runtime engine</strong> on the target deployment node(s). Until an object is deployed, it exists only in the Galaxy database — it is not executing, not communicating with field devices, and not producing alarms or historian data.</p>
+
+<div class="key-concept">
+  <strong>Deploy vs. Save:</strong>
+  <ul>
+    <li><strong>Save</strong> = writes your changes to the Galaxy database (the development copy)</li>
+    <li><strong>Deploy</strong> = pushes the saved objects to the runtime nodes where they actually execute</li>
+  </ul>
+  You can save many times without deploying. But until you deploy, nothing changes in the running system.
+</div>
+
+<h3>Deploying Objects</h3>
+<p>To deploy objects in the Galaxy IDE:</p>
+<ol>
+  <li>In the <strong>Model View</strong> or <strong>Object Browser</strong>, select the object(s) you want to deploy</li>
+  <li>Right-click and select <strong>Deploy</strong></li>
+  <li>The deployment wizard will show you which nodes will receive the objects</li>
+  <li>Confirm the deployment</li>
+  <li>Application Server compiles, validates, and pushes the objects to the target nodes</li>
+</ol>
+
+<div class="tip">
+  <strong>Tip — Partial Deployment:</strong> You don't have to deploy everything at once. You can deploy individual objects, entire areas, or the whole Galaxy. This is useful for making incremental changes without disrupting the entire running system.
+</div>
+
+<h3>Undeploying Objects</h3>
+<p><strong>Undeployment</strong> is the reverse — removing objects from the runtime engine and returning them to development-only status. You might undeploy objects when:</p>
+<ul>
+  <li>An object is no longer needed in the running system</li>
+  <li>You need to make major changes and want a clean slate</li>
+  <li>Commissioning is complete and you're cleaning up test objects</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0244_0.png" alt="Right-click context menu showing Undeploy option on Mixer100">
+  <div class="caption">Right-clicking Mixer100 in the Model-Tagname view shows the Undeploy option highlighted in the context menu (Module 5, page 5-28)</div>
+</div>
+
+<p>To undeploy an object:</p>
+<ol>
+  <li>In the <strong>Model View</strong>, locate the object you want to undeploy</li>
+  <li>Right-click the object (e.g., <strong>Mixer100</strong>)</li>
+  <li>Select <strong>Undeploy</strong> from the context menu</li>
+  <li>Confirm the undeployment</li>
+  <li>The object is removed from all runtime nodes and returns to development-only status</li>
+</ol>
+
+<div class="screenshot">
+  <img src="../images/page_0245_0.png" alt="Undeploy completion dialog showing 13 objects undeployed">
+  <div class="caption">Undeploy completion dialog: "Undeploy complete. 13 objects undeployed successfully." — the objects are now removed from the runtime engine (Module 5, page 5-29)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0240_0.png" alt="Undeploy Objects dialog showing 11 automation and 2 area objects offscan">
+  <div class="caption">The Undeploy Objects dialog after completion: "Undeploy complete. 11 automation objects + 2 area objects offscan from Production and AppEngine1. SUCCESS" — showing that both the automation objects and their containing area objects are undeployed (Module 5, page 5-30)</div>
+</div>
+
+<div class="pitfall">
+  <strong>⚠ Pitfall — Undeploying Area Objects:</strong> Notice in the screenshot that undeploying automation objects also undeploys the <strong>area objects</strong> that contain them (2 area objects in this case). Be careful — undeploying a parent area may remove more objects than you intended. Always review the list before confirming.
+</div>
+
+<h3>Lab 10 — Practice Steps</h3>
+<div class="lab">
+  <p><strong>Step 1:</strong> In the Galaxy IDE, navigate to <strong>Model View</strong> and locate your Mixer100 object.</p>
+  <p><strong>Step 2:</strong> Right-click Mixer100 and select <strong>Deploy</strong>. Watch the deployment wizard and confirm the target nodes.</p>
+  <p><strong>Step 3:</strong> Verify the deployment by opening the <strong>Object Viewer</strong> (F12) and confirming the object's attributes are now live (not in simulation).</p>
+  <p><strong>Step 4:</strong> Now right-click Mixer100 again and select <strong>Undeploy</strong>. Confirm the undeployment.</p>
+  <p><strong>Step 5:</strong> Review the undeploy completion dialog. Note how many automation objects and area objects were removed.</p>
+  <p><strong>Step 6:</strong> Re-deploy Mixer100 so it is available for Lab 11.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>17.4 Lab 11: Modifying I/O Values and Verifying Data Flow</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-30 to 5-34)</p>
+
+<div class="lab">
+  <h3>Lab 11 — Verifying Field Data Connectivity</h3>
+  <p><strong>Objective:</strong> Modify I/O values through the Galaxy IDE and verify that data flows correctly between the Galaxy objects and the OI Server (simulated field devices).</p>
+</div>
+
+<h3>Modifying Numeric Values</h3>
+<p>Once your objects are deployed and connected to an OI Server, you can modify their values directly from the Galaxy IDE. This is useful for testing — you can write setpoint values to see if your logic responds correctly.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0247_0.png" alt="Modify Numeric Value dialog for Agitator_001.Speed.SP">
+  <div class="caption">The Modify Numeric Value dialog: setting Agitator_001.Speed.SP to 55. The Cancel/Apply/OK buttons allow you to commit or discard the change (Module 5, page 5-32)</div>
+</div>
+
+<p>To modify a numeric attribute value:</p>
+<ol>
+  <li>In the <strong>Object Browser</strong> or <strong>Object Viewer</strong>, locate the attribute you want to change</li>
+  <li>Double-click the value (or right-click and select <strong>Modify Value</strong>)</li>
+  <li>The <strong>Modify Numeric Value</strong> dialog opens</li>
+  <li>Enter the new value (e.g., <strong>55</strong> for Agitator_001.Speed.SP)</li>
+  <li>Click <strong>Apply</strong> to write the value without closing the dialog, or <strong>OK</strong> to write and close</li>
+  <li>The value is sent through the OI Server to the field device (or simulator)</li>
+</ol>
+
+<div class="key-concept">
+  <strong>Apply vs. OK:</strong>
+  <ul>
+    <li><strong>Apply</strong> — writes the value immediately but keeps the dialog open so you can make further changes</li>
+    <li><strong>OK</strong> — writes the value and closes the dialog</li>
+    <li><strong>Cancel</strong> — closes the dialog without writing any changes</li>
+  </ul>
+</div>
+
+<h3>Verifying Data Flow</h3>
+<p>After modifying a value, verify the data flow end-to-end:</p>
+
+<ol>
+  <li><strong>Write a value</strong> — Use the Modify Numeric Value dialog to write a new setpoint (e.g., Speed.SP = 55)</li>
+  <li><strong>Check the Object Viewer</strong> — The attribute should reflect the new value. If the attribute is bound to I/O, the value will also be visible in the OI Server's tag database</li>
+  <li><strong>Check the Simulator/PLC</strong> — If using the Simulator driver, you can verify the value appears in the simulator's tag list. If using a real PLC, use the PLC programming software to confirm</li>
+  <li><strong>Check the HMI</strong> — If you have InTouch or OMI connected, the operator screen should display the updated value</li>
+</ol>
+
+<div class="tip">
+  <strong>Tip — Bidirectional Communication:</strong> I/O binding is bidirectional. If the PLC changes a value (e.g., a sensor reading changes), Application Server will pick up the new value automatically. And if you write a setpoint from Application Server, the PLC receives it. This two-way flow is the foundation of industrial automation control.
+</div>
+
+<h3>Lab 11 — Practice Steps</h3>
+<div class="lab">
+  <p><strong>Step 1:</strong> Ensure your objects are deployed and connected to the OI Server (from Lab 10, Step 6).</p>
+  <p><strong>Step 2:</strong> Open the <strong>Object Browser</strong> and navigate to the <strong>IO Devices</strong> view. Confirm that your OI Server topics are visible and tags are populated.</p>
+  <p><strong>Step 3:</strong> In the Model View, find an analog object (e.g., a level or temperature object) and open its attributes.</p>
+  <p><strong>Step 4:</strong> Double-click on the <code>SP</code> (Setpoint) attribute to open the Modify Numeric Value dialog.</p>
+  <p><strong>Step 5:</strong> Enter a test value (e.g., <strong>55</strong>) and click <strong>Apply</strong>. The dialog stays open.</p>
+  <p><strong>Step 6:</strong> Verify the value was written — check the Object Viewer and the OI Server tag list.</p>
+  <p><strong>Step 7:</strong> Change the value again (e.g., to <strong>75</strong>) and click <strong>OK</strong> to close the dialog.</p>
+  <p><strong>Step 8:</strong> Open the <strong>Object Viewer</strong> (F12) and confirm the attribute shows the updated value and is no longer in simulation mode.</p>
+  <p><strong>Step 9:</strong> If using the Simulator, check the simulator window to confirm the tag value matches what you wrote.</p>
+  <p><strong>Step 10:</strong> Document your observations — what was the old value, what did you change it to, and did the change propagate correctly?</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>17.5 Deploy/Undeploy Lifecycle Summary</h2>
+<p class="page-ref">Reference: Module 5, Section 3 (pages 5-30 to 5-34)</p>
+
+<p>Understanding the full deploy/undeploy lifecycle is critical for managing a production Galaxy:</p>
+
+<table>
+  <tr><th>State</th><th>What It Means</th><th>Data Flow</th></tr>
+  <tr>
+    <td><strong>Development (Undeployed)</strong></td>
+    <td>Object exists only in the Galaxy database. You can edit, save, and modify it freely.</td>
+    <td>No data flow — attributes use simulation expressions or hardcoded values only.</td>
+  </tr>
+  <tr>
+    <td><strong>Deployed (Running)</strong></td>
+    <td>Object is pushed to the runtime engine. It is executing logic, communicating with I/O, and generating alarms.</td>
+    <td>Full data flow — attributes read from and write to field devices via OI Servers.</td>
+  </tr>
+  <tr>
+    <td><strong>Off-Scan (Undeployed)</strong></td>
+    <td>Object has been undeployed and is no longer running. It returns to development-only status.</td>
+    <td>Data flow stops. Attributes revert to simulation/internal values.</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Key Lifecycle Rules:</strong>
+  <ul>
+    <li>You <strong>must save</strong> before deploying — deploy pushes the saved version, not unsaved changes</li>
+    <li>Deploying an object that was already deployed <strong>updates</strong> it (hot deployment) — the running system picks up the changes without stopping</li>
+    <li>Undeploying removes the object from runtime but <strong>does not delete it</strong> from the Galaxy</li>
+    <li>You can undeploy individual objects, areas, or the entire Galaxy</li>
+    <li>Undeploying an area undeploys all objects within it</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>17.6 Key Terms</h2>
+
+<table>
+  <tr><th>Term</th><th>Definition</th></tr>
+  <tr>
+    <td><strong>I/O Binding</strong></td>
+    <td>The process of linking an automation object attribute to a real-world data point through an OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>I/O Source</strong></td>
+    <td>The string that identifies which OI Server topic and tag an attribute is connected to (e.g., <code>Topic1.Agitator_001</code>)</td>
+  </tr>
+  <tr>
+    <td><strong>Deploy</strong></td>
+    <td>Pushing objects from the Galaxy IDE to the runtime engine for execution</td>
+  </tr>
+  <tr>
+    <td><strong>Undeploy</strong></td>
+    <td>Removing objects from the runtime engine, returning them to development-only status</td>
+  </tr>
+  <tr>
+    <td><strong>Hot Deployment</strong></td>
+    <td>Updating a running object with new configuration without stopping the runtime engine</td>
+  </tr>
+  <tr>
+    <td><strong>Topic</strong></td>
+    <td>A configured communication channel within an OI Server that connects to a specific PLC or device</td>
+  </tr>
+  <tr>
+    <td><strong>Off-Scan</strong></td>
+    <td>The state of an object that has been undeployed — it is no longer executing in the runtime</td>
+  </tr>
+  <tr>
+    <td><strong>Simulation Mode</strong></td>
+    <td>When an attribute uses an internal expression or hardcoded value instead of live I/O data</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>17.7 Quiz</h2>
+
+<div class="quiz">
+  <h3>Question 1</h3>
+  <p>What is the difference between <strong>saving</strong> an object and <strong>deploying</strong> it?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">Saving</span> writes your changes to the Galaxy database (the development copy). <span class="answer">Deploying</span> pushes the saved objects to the runtime engine where they actually execute, communicate with field devices, and produce alarms and historian data. You can save many times without deploying — changes only take effect in the running system when you deploy.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 2</h3>
+  <p>If you undeploy a <strong>parent area object</strong> that contains three automation objects, what happens to the child objects?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p>All three child automation objects are <span class="answer">also undeployed</span>. Undeploying a parent area undeploys everything within it. This is why the completion dialog showed "11 automation objects + 2 area objects" — both the containers and their contents were removed from the runtime. Always review the undeploy list carefully before confirming.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 3</h3>
+  <p>What is the I/O source syntax for connecting an attribute to a tag called <code>Flow1</code> on <code>Topic2</code>?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">Topic2.Flow1</span></p>
+    <p>The I/O source string follows the format <code>TopicName.TagName</code>. Application Server uses this string to locate the correct OI Server, topic, and tag for the data binding.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 4</h3>
+  <p>When you click <strong>Apply</strong> in the Modify Numeric Value dialog versus clicking <strong>OK</strong>, what is the difference?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">Apply</span> writes the value immediately to the attribute (and through I/O binding to the field device) but keeps the dialog open so you can make further changes. <span class="answer">OK</span> writes the value and closes the dialog. <span class="answer">Cancel</span> closes the dialog without writing any changes.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 5</h3>
+  <p>Before you deploy an object, where does it exist? After you deploy it, where does it execute?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p>Before deployment, the object exists <span class="answer">only in the Galaxy database</span> (the development environment). It is not executing and has no data flow. After deployment, the object is pushed to the <span class="answer">runtime engine</span> on the target deployment node(s), where it executes logic, communicates with field devices through OI Servers, and produces alarms and historian data.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<h2>17.8 What You Learned</h2>
+
+<div class="key-concept">
+  <strong>In this lesson, you learned:</strong>
+  <ul>
+    <li>How I/O binding connects Galaxy object attributes to real-world field devices through OI Servers</li>
+    <li>The data flow path: Field Device → OI Server → Application Server → HMI Client</li>
+    <li>How the IO Devices view shows your OI Server hierarchy (Galaxy → Node → Topic → Tags)</li>
+    <li>How to deploy objects from the Galaxy IDE to the runtime engine</li>
+    <li>How to undeploy objects and the implications of undeploying parent areas</li>
+    <li>How to modify attribute values using the Modify Numeric Value dialog</li>
+    <li>The deploy/undeploy lifecycle: Development → Deployed (Running) → Off-Scan</li>
+    <li>The difference between simulation mode and live I/O binding</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+
+<nav style="margin-top: 2em; padding-top: 1em; border-top: 1px solid #ddd;">
+  <a href="L16-Lab9-OI-Server.html">← Lesson 16: Lab 9 — OI Server Setup</a> &nbsp;|&nbsp;
+  <a href="L18-History.html">Lesson 18: History →</a>
+</nav>
+
+</body>
+</html>
