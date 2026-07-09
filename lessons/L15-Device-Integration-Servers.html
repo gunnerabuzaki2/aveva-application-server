@@ -81,15 +81,19 @@
 <p>Your Application Server Galaxy objects need to talk to real-world field devices — PLCs, RTUs, DCS controllers — to read and write process data. But Application Server doesn't talk directly to field hardware. Instead, it uses a layered communication architecture with dedicated servers in between.</p>
 
 <div class="key-concept">
-  <strong>Communication architecture:</strong> Application Objects communicate with field devices through a chain of intermediaries: the application object uses DDE, SuiteLink, or OPC protocol to talk to an <strong>OI Server</strong> (Operations Integration Server), which in turn uses a PLC-specific proprietary protocol to talk to the actual field device.
+  <strong>Core idea:</strong> Application Objects never communicate with field devices directly. Instead, they use <strong>DDE</strong>, <strong>SuiteLink</strong>, or <strong>OPC</strong> to talk to an <strong>OI Server</strong> (Operations Integration Server), which in turn uses a PLC-specific proprietary protocol to talk to the actual field device.
 </div>
+
+<h3>The Communication Chain</h3>
+<p>The diagram below shows the complete communication path from an Application Object all the way down to the physical PLC:</p>
 
 <div class="screenshot">
   <img src="../images/page_0217_0.jpeg" alt="Communication Architecture Diagram">
   <div class="caption">Communication architecture: Application Object → DDESuiteLinkClient → OI Server → PLC. The OI Server bridges the gap between standard protocols (DDE, SuiteLink, OPC) and the PLC-specific proprietary protocol (page 5-4)</div>
 </div>
 
-<h3>The Communication Chain</h3>
+<p>Each layer in the chain has a specific responsibility:</p>
+
 <table>
   <tr><th>Layer</th><th>Component</th><th>Protocol(s)</th></tr>
   <tr>
@@ -115,10 +119,16 @@
 </table>
 
 <div class="tip">
-  <strong>Why a separate OI Server?</strong> Application Server focuses on application logic, alarming, and visualization. It doesn't need to know the details of every PLC manufacturer's proprietary protocol. The OI Server handles all the messy, device-specific communication details so Application Server stays clean and portable.
+  <strong>Why a separate OI Server?</strong> Application Server focuses on application logic, alarming, and visualization. It doesn't need to know the details of every PLC manufacturer's proprietary protocol. The OI Server handles all the device-specific communication details, so Application Server stays clean, portable, and protocol-independent.
 </div>
 
-<h3>Supported Communication Protocols</h3>
+<h3>Upstream vs. Downstream Protocols</h3>
+<p>It's important to understand that the OI Server speaks <em>two different languages</em> on two different sides:</p>
+
+<div class="pitfall">
+  <strong>Key point:</strong> The protocol between Application Server and the OI Server (DDE, SuiteLink, or OPC) is completely separate from the protocol between the OI Server and the PLC. The OI Server is the bridge — it translates on both sides.
+</div>
+
 <table>
   <tr><th>Protocol</th><th>Type</th><th>Notes</th></tr>
   <tr><td><strong>DDE</strong></td><td>Dynamic Data Exchange</td><td>Legacy Windows protocol. Simple but limited — no built-in diagnostics or quality indicators.</td></tr>
@@ -126,35 +136,51 @@
   <tr><td><strong>OPC</strong></td><td>Open Platform Communications</td><td>Industry-standard protocol. Most widely supported across different vendor systems.</td></tr>
 </table>
 
-<div class="pitfall">
-  <strong>Key point:</strong> The protocol between Application Server and the OI Server (DDE, SuiteLink, or OPC) is separate from the protocol between the OI Server and the PLC. The OI Server is the bridge — it speaks two different languages on two different sides.
-</div>
-
 <!-- ============================================================ -->
 <h2>1.2 Operations Integration (OI) Servers</h2>
 <p class="page-ref">Reference: Module 5, Section 1 (pages 5-4 to 5-5)</p>
 
-<p>An <strong>Operations Integration (OI) Server</strong> is a standalone software service that manages communication between Application Server and field devices. Each OI Server is designed for a specific family of devices (e.g., Modicon, Allen-Bradley, Siemens).</p>
+<p>An <strong>Operations Integration (OI) Server</strong> is a standalone software service that manages communication between Application Server and field devices. Each OI Server is designed for a specific family of devices (e.g., Modicon/Modbus, Allen-Bradley, Siemens).</p>
 
 <div class="key-concept">
   <strong>OI Server = Communication Manager.</strong> It maintains connections to PLCs, polls data at configured intervals, handles protocol translation, and makes data available to Application Server via DDE, SuiteLink, or OPC.
 </div>
 
 <h3>OI Server Hierarchy in OCMC</h3>
-<p>The Operations Control Management Console (OCMC) shows the hierarchical relationship between your Galaxy, the deployment platform, and the OI Servers configured on it:</p>
+<p>The Operations Control Management Console (OCMC) shows the hierarchical relationship between your Galaxy, the deployment platform, and the OI Servers configured on it. The hierarchy is read top-down, from the Galaxy down to the specific PLC device:</p>
 
 <div class="screenshot">
   <img src="../images/page_0218_0.png" alt="OCMC OI Server Hierarchy">
-  <div class="caption">OCMC showing the server hierarchy: Operations Integration Server Manager → TrainingGalaxy → ProdPlatform (S03PROD) → Modicon MBTCP → OI.MBTCP.1 → Configuration → PORT → PLC (selected) (page 5-5)</div>
+  <div class="caption">OCMC showing the server hierarchy: Operations Integration Server Manager → TrainingGalaxy → ProdPlatform → Modicon MBTCP → OI.MBTCP.1 → PORT → PLC (selected) (page 5-5)</div>
 </div>
 
 <table>
   <tr><th>Level</th><th>Example</th><th>Meaning</th></tr>
-  <tr><td><strong>Galaxy</strong></td><td>TrainingGalaxy</td><td>The application being served</td></tr>
-  <tr><td><strong>Platform</strong></td><td>ProdPlatform (S03PROD)</td><td>The physical computer hosting the OI Server</td></tr>
-  <tr><td><strong>OI Server Type</strong></td><td>Modicon MBTCP</td><td>The driver family — Modbus TCP for Modicon PLCs</td></tr>
-  <tr><td><strong>OI Server Instance</strong></td><td>OI.MBTCP.1</td><td>A specific configured instance of the driver</td></tr>
-  <tr><td><strong>Configuration</strong></td><td>PORT → PLC</td><td>The port and PLC device being managed</td></tr>
+  <tr>
+    <td><strong>Galaxy</strong></td>
+    <td>TrainingGalaxy</td>
+    <td>The application being served</td>
+  </tr>
+  <tr>
+    <td><strong>Platform</strong></td>
+    <td>ProdPlatform (S03PROD)</td>
+    <td>The physical computer hosting the OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>OI Server Type</strong></td>
+    <td>Modicon MBTCP</td>
+    <td>The driver family — Modbus TCP for Modicon PLCs</td>
+  </tr>
+  <tr>
+    <td><strong>OI Server Instance</strong></td>
+    <td>OI.MBTCP.1</td>
+    <td>A specific configured instance of the driver</td>
+  </tr>
+  <tr>
+    <td><strong>Configuration</strong></td>
+    <td>PORT → PLC</td>
+    <td>The port and PLC device being managed</td>
+  </tr>
 </table>
 
 <div class="tip">
@@ -174,17 +200,45 @@
 
 <table>
   <tr><th>Parameter</th><th>Example Value</th><th>Purpose</th></tr>
-  <tr><td><strong>Node Type</strong></td><td>ModbusPLC</td><td>The type of device — determines which protocol dialect to use</td></tr>
-  <tr><td><strong>IP Address</strong></td><td>1.1.1.1</td><td>Network address of the PLC</td></tr>
-  <tr><td><strong>Port</strong></td><td>502</td><td>Network port (502 is standard for Modbus TCP)</td></tr>
-  <tr><td><strong>Reply Timeout</strong></td><td>3 seconds</td><td>How long to wait for a PLC response before declaring a timeout</td></tr>
-  <tr><td><strong>Swap Bytes</strong></td><td>Checked</td><td>Whether to swap byte order — depends on PLC endianness</td></tr>
-  <tr><td><strong>Register Size</strong></td><td>6</td><td>Size of data registers to read</td></tr>
-  <tr><td><strong>Register Type</strong></td><td>Binary</td><td>How to interpret the register data</td></tr>
+  <tr>
+    <td><strong>Node Type</strong></td>
+    <td>ModbusPLC</td>
+    <td>The type of device — determines which protocol dialect to use</td>
+  </tr>
+  <tr>
+    <td><strong>IP Address</strong></td>
+    <td>1.1.1.1</td>
+    <td>Network address of the PLC</td>
+  </tr>
+  <tr>
+    <td><strong>Port</strong></td>
+    <td>502</td>
+    <td>Network port (502 is standard for Modbus TCP)</td>
+  </tr>
+  <tr>
+    <td><strong>Reply Timeout</strong></td>
+    <td>3 seconds</td>
+    <td>How long to wait for a PLC response before declaring a timeout</td>
+  </tr>
+  <tr>
+    <td><strong>Swap Bytes</strong></td>
+    <td>Checked</td>
+    <td>Whether to swap byte order — depends on PLC endianness</td>
+  </tr>
+  <tr>
+    <td><strong>Register Size</strong></td>
+    <td>6</td>
+    <td>Size of data registers to read</td>
+  </tr>
+  <tr>
+    <td><strong>Register Type</strong></td>
+    <td>Binary</td>
+    <td>How to interpret the register data</td>
+  </tr>
 </table>
 
 <div class="pitfall">
-  <strong>Common configuration error:</strong> If your data comes back garbled or byte-swapped, check the <strong>Swap Bytes</strong> setting. Different PLC manufacturers use different byte orders (big-endian vs. little-endian). Getting this wrong means every numeric value you read will be incorrect.
+  <strong>Common configuration error:</strong> If your data comes back garbled or byte-swapped, check the <strong>Swap Bytes</strong> setting first. Different PLC manufacturers use different byte orders (big-endian vs. little-endian). Getting this wrong means every numeric value you read will be incorrect.
 </div>
 
 <!-- ============================================================ -->
@@ -199,7 +253,7 @@
 </div>
 
 <div class="key-concept">
-  <strong>Device Groups</strong> organize your data items by refresh rate. For example, you might group critical process variables (temperature, pressure) at a fast update rate (500ms), while grouping status flags at a slower rate (5 seconds). This optimizes network bandwidth and PLC processor load.
+  <strong>Device Groups</strong> organize your data items by refresh rate. For example, you might group critical process variables (temperature, pressure) at a fast update rate (500 ms), while grouping status flags at a slower rate (5 seconds). This optimizes network bandwidth and reduces PLC processor load.
 </div>
 
 <h3>Device Items — The Actual Data Points</h3>
@@ -210,13 +264,15 @@
   <div class="caption">OCMC Device Items — address mapping for PLC data points, with right-click context menu showing options like "Activate Auto start after reboot" (page 5-6)</div>
 </div>
 
+<p>You can right-click a device item to access additional options such as <strong>Activate Auto start after reboot</strong>, which ensures the device communication starts automatically when the OI Server machine restarts.</p>
+
 <div class="tip">
   <strong>Device Items can be imported from a CSV file</strong> instead of being entered one by one. The file dialog below shows importing a pre-built list of PLC addresses — a massive time-saver for large plants with hundreds of tags.
 </div>
 
 <div class="screenshot">
   <img src="../images/page_0224_0.png" alt="CSV Import Dialog">
-  <div class="caption">Open file dialog for importing Device Items from a CSV file — C:\Modbus Simulation\PLCItemList_for_SystemPlatform2023.csv (page 5-6)</div>
+  <div class="caption">Open file dialog for importing Device Items from a CSV file — PLCItemList_for_SystemPlatform2023.csv (page 5-6)</div>
 </div>
 
 <!-- ============================================================ -->
@@ -271,17 +327,17 @@
   <p><strong>Q1:</strong> What is the role of an OI Server in the communication architecture?</p>
   <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The OI Server acts as a bridge between Application Server and field devices. It translates standard protocols (DDE, SuiteLink, OPC) used by Application Server into PLC-specific proprietary protocols used by field devices.</p></details>
 
-  <p><strong>Q2:</strong> What are the three communication protocols that Application Server uses to talk to an OI Server?</p>
+  <p><strong>Q2:</strong> What are the three communication protocols that Application Server can use to talk to an OI Server?</p>
   <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">DDE (Dynamic Data Exchange), SuiteLink (AVEVA proprietary), and OPC (Open Platform Communications).</p></details>
 
-  <p><strong>Q3:</strong> If your PLC data values appear garbled or incorrectly byte-ordered, which OI Server parameter should you check?</p>
+  <p><strong>Q3:</strong> If your PLC data values appear garbled or incorrectly byte-ordered, which OI Server parameter should you check first?</p>
   <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The Swap Bytes setting. Different PLC manufacturers use different byte orders (big-endian vs. little-endian), and swapping bytes incorrectly will produce wrong numeric values.</p></details>
 
   <p><strong>Q4:</strong> What is the purpose of Device Groups in OI Server configuration?</p>
   <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Device Groups organize data items by refresh rate. This lets you control how fast different types of data are polled from the PLC, optimizing network bandwidth and PLC processor load.</p></details>
 
   <p><strong>Q5:</strong> What file extensions are used for OI Server configuration, and why should you back them up?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">.AAcfg (configuration) and .AArul (rules). You should back them up because they contain the entire OI Server configuration — if the server fails or needs reinstalling, restoring these files gets you back up quickly.</p></details>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;"><code>.AAcfg</code> (configuration) and <code>.AArul</code> (rules). You should back them up because they contain the entire OI Server configuration — if the server fails or needs reinstalling, restoring these files gets you back up quickly.</p></details>
 
   <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
 </div>

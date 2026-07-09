@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 20: Lab 11 — Connecting the Mixer to the Field</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L19-Deploy-Undeploy-Lifecycle.html">← Lesson 19: Deploy/Undeploy</a> &nbsp;|&nbsp;
+  <a href="L21-History-Lab12.html">Lesson 21: History + Lab 12 →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: Lab 9 — OI Server Setup</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<a href="L19-Deploy-Undeploy-Lifecycle.html">L19: Deploy/Undeploy Lifecycle</a><br>
+<a href="L20-Lab11-Connecting-Mixer.html">L20: Lab 11 — Connecting the Mixer</a><br>
+<a href="L21-History-Lab12.html">L21: Historizing Data</a><br>
+</div>
+</details>
+</nav>
+
+<h1>Lesson 20: Lab 11 — Connecting the Mixer to the Field</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 5, Lab 11 (pages 5-29 to 5-34)</p>
+<p class="page-ref">This hands-on lab walks you through verifying that your deployed mixer objects are properly connected to the OI Server, modifying I/O values from the Galaxy IDE, and confirming end-to-end data flow between the application and the simulated field devices.</p>
+
+<!-- ============================================================ -->
+<h2>20.1 Lab 11 Prerequisites — Confirm Deployment Status</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-29 to 5-30)</p>
+
+<p>Before beginning Lab 11, ensure that your mixer objects have been successfully deployed from Lab 10. The deployment must be active — objects in the "Off-Scan" (undeployed) state cannot communicate with field devices.</p>
+
+<div class="key-concept">
+  <strong>Deployment Checklist — Before Starting Lab 11:</strong>
+  <ul>
+    <li>The Galaxy has been deployed to the target platform (e.g., <code>ProdPlatform → AppEngine1</code>)</li>
+    <li>The OI Server is running and its topics are populated with tags</li>
+    <li>The mixer objects (<code>Mixer100</code> and its children) show a "Running" state in the Model View</li>
+    <li>The IO Devices view in the Object Browser shows the OI Server hierarchy with visible tags</li>
+  </ul>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0244_0.png" alt="Model View showing Mixer100 deployed and running">
+  <div class="caption">The Model View showing Mixer100 with its child objects deployed. Right-clicking the object provides access to deployment actions and the Object Viewer.</div>
+</div>
+
+<p>If your objects are not yet deployed, return to <a href="L17-Lab10-DI-Object.html">Lesson 17 (Lab 10)</a> and complete the deployment steps before proceeding.</p>
+
+<!-- ============================================================ -->
+<h2>20.2 Reviewing the IO Devices View</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-29 to 5-31)</p>
+
+<p>The <strong>IO Devices</strong> view in the Object Browser shows the complete OI Server hierarchy — from the Galaxy root down through the platform, engine, topic, and individual tags. This is your primary tool for confirming that the OI Server is communicating with the application.</p>
+
+<p>To access the IO Devices view:</p>
+<ol>
+  <li>In the <strong>Galaxy IDE</strong>, open the <strong>Object Browser</strong> (if not already open)</li>
+  <li>Select the <strong>IO Devices</strong> view from the view selector</li>
+  <li>Navigate the tree: <code>TrainingGalaxy → ProdPlatform → AppEngine1 → Topic1 → Tags</code></li>
+  <li>Confirm that the tags (e.g., <code>Agitator_001</code>, <code>Inlet1_001</code>, <code>Level_001</code>, etc.) are listed and populated</li>
+</ol>
+
+<div class="tip">
+  <strong>Tip — Tag Population:</strong> If the tags appear empty or show "N/A" values, the OI Server may not be communicating with the simulator or PLC. Check that the OI Server service is running and that the topic configuration matches the expected device address.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0245_1.png" alt="IO Devices view showing OI Server topic hierarchy">
+  <div class="caption">The IO Devices view showing the OI Server topic hierarchy with tags visible. Each tag corresponds to an attribute on a deployed automation object.</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>20.3 Modifying I/O Values from the Galaxy IDE</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-31 to 5-33)</p>
+
+<p>One of the most powerful features of Application Server is the ability to <strong>write values directly to field devices</strong> from the Galaxy IDE. This is essential for testing setpoints, commissioning equipment, and troubleshooting control logic.</p>
+
+<h3>Opening the Modify Numeric Value Dialog</h3>
+<p>To modify a numeric attribute value:</p>
+<ol>
+  <li>In the <strong>Model View</strong> or <strong>Object Browser</strong>, navigate to the object whose attribute you want to change (e.g., <code>Mixer100 → Agitator_001</code>)</li>
+  <li>Double-click on the attribute's value cell (e.g., <code>Speed.SP</code>) — or right-click and select <strong>Modify Value</strong></li>
+  <li>The <strong>Modify Numeric Value</strong> dialog opens</li>
+</ol>
+
+<div class="screenshot">
+  <img src="../images/page_0247_0.png" alt="Modify Numeric Value dialog for Agitator_001.Speed.SP">
+  <div class="caption">The Modify Numeric Value dialog: <strong>Agitator_001.Speed.SP = 55</strong>. The three buttons at the bottom — <em>Cancel</em>, <em>Apply</em>, and <em>OK</em> — control how the value is committed.</div>
+</div>
+
+<h3>Understanding Apply, OK, and Cancel</h3>
+<p>The dialog provides three distinct actions:</p>
+
+<table>
+  <tr><th>Button</th><th>Behavior</th><th>When to Use</th></tr>
+  <tr>
+    <td><strong>Apply</strong></td>
+    <td>Writes the value to the attribute immediately but <strong>keeps the dialog open</strong></td>
+    <td>When you want to test a value change and then try another value without re-opening the dialog</td>
+  </tr>
+  <tr>
+    <td><strong>OK</strong></td>
+    <td>Writes the value to the attribute and <strong>closes the dialog</strong></td>
+    <td>When you are done making changes and want to commit and close</td>
+  </tr>
+  <tr>
+    <td><strong>Cancel</strong></td>
+    <td>Closes the dialog <strong>without writing any changes</strong></td>
+    <td>When you decide not to modify the value after all</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Key Concept — Write Path:</strong> When you click Apply or OK, the value flows through the following path:<br>
+  <code>Galaxy IDE → Application Server Runtime → OI Server → Simulator/PLC</code><br>
+  The value is written to the OI Server's tag, which then communicates it to the field device (or simulator). This is a <strong>write-down</strong> operation — you are sending a setpoint from the application to the field.
+</div>
+
+<!-- ============================================================ -->
+<h2>20.4 Verifying End-to-End Data Flow</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-32 to 5-34)</p>
+
+<p>After writing a value, you need to <strong>verify</strong> that the change propagated correctly through every layer of the system. This verification confirms that your I/O binding is working properly.</p>
+
+<h3>Step-by-Step Verification</h3>
+
+<table>
+  <tr><th>Step</th><th>What to Check</th><th>Where to Look</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>Write a value</strong> — Use the Modify Numeric Value dialog to set a test value (e.g., Speed.SP = 55)</td>
+    <td>Galaxy IDE — Modify Numeric Value dialog</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><strong>Check the Object Viewer</strong> — The attribute should reflect the new value</td>
+    <td>Object Viewer (F12) — attribute value column</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><strong>Check the OI Server</strong> — The tag value in the OI Server should match</td>
+    <td>OI Server tag browser or diagnostic window</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><strong>Check the Simulator/PLC</strong> — The simulated tag should show the updated value</td>
+    <td>Simulator window or PLC programming software</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><strong>Check the HMI</strong> — If InTouch or OMI is connected, the operator screen should display the new value</td>
+    <td>HMI client application</td>
+  </tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0246_0.png" alt="Object Viewer showing updated attribute values after write">
+  <div class="caption">The Object Viewer (F12) showing the updated attribute values after a write operation. The attribute values should reflect what you entered in the Modify Numeric Value dialog.</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0247_1.png" alt="Verification of data flow through the system">
+  <div class="caption">Verification view showing the data flow path. When values are written from the Galaxy IDE, they propagate through the runtime engine, OI Server, and ultimately to the field device or simulator.</div>
+</div>
+
+<div class="pitfall">
+  <strong>⚠ Common Pitfall — Stale Values:</strong> If the Object Viewer shows the old value after you wrote a new one, the attribute may not be properly bound to I/O. Check that:
+  <ul>
+    <li>The attribute's <strong>I/O Source</strong> is correctly configured (e.g., <code>Topic1.Agitator_001</code>)</li>
+    <li>The OI Server topic is running and the tag exists</li>
+    <li>The object is deployed (not in Off-Scan mode)</li>
+  </ul>
+  If the attribute is still in simulation mode, it will not communicate with the OI Server regardless of what you write.
+</div>
+
+<!-- ============================================================ -->
+<h2>20.5 Bidirectional Communication</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-33 to 5-34)</p>
+
+<p>I/O binding is <strong>bidirectional</strong> — data flows in both directions between the application and the field:</p>
+
+<table>
+  <tr><th>Direction</th><th>What Happens</th><th>Example</th></tr>
+  <tr>
+    <td><strong>Write-Down</strong> (App → Field)</td>
+    <td>The operator or application writes a setpoint value that travels through the OI Server to the PLC</td>
+    <td>Setting <code>Speed.SP = 55</code> from the Galaxy IDE sends the value to the agitator motor controller</td>
+  </tr>
+  <tr>
+    <td><strong>Read-Up</strong> (Field → App)</td>
+    <td>The PLC's sensor values are read by the OI Server and presented as attribute values in the application</td>
+    <td>A level sensor reading of <code>64.47</code> appears on <code>Level_001.PV</code> in the Galaxy</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Why Bidirectional Matters:</strong> In a real plant, the operator sends commands (setpoints, valve positions, motor starts) while sensors report back actual process conditions. Both directions must work reliably for the control system to function. Lab 11 lets you verify both directions are operational.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0245_2.png" alt="Data flow diagram showing bidirectional communication">
+  <div class="caption">Bidirectional data flow: values written from the Galaxy IDE travel down to the field device, while sensor readings from the field travel up to the application objects as live attribute values.</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>20.6 Lab 11 — Complete Practice Steps</h2>
+<p class="page-ref">Reference: Module 5, Lab 11 (pages 5-29 to 5-34)</p>
+
+<div class="lab">
+  <strong>Lab 11 Objective:</strong> Verify that deployed mixer objects are connected to the OI Server, modify I/O values through the Galaxy IDE, and confirm end-to-end data flow between the application and the simulated field devices.
+</div>
+
+<div class="lab">
+  <h3>Step 1: Confirm Deployment Status</h3>
+  <p>Open the <strong>Model View</strong> and verify that <code>Mixer100</code> and its child objects are deployed and running. If they show as undeployed (Off-Scan), deploy them first.</p>
+
+  <h3>Step 2: Inspect the IO Devices View</h3>
+  <p>Open the <strong>Object Browser</strong> and switch to the <strong>IO Devices</strong> view. Navigate the tree to confirm that your OI Server topic is visible and that tags (e.g., <code>Agitator_001</code>, <code>Level_001</code>, <code>Inlet1_001</code>) are populated with values.</p>
+
+  <h3>Step 3: Open the Object Viewer</h3>
+  <p>Select <code>Agitator_001</code> in the Model View and press <strong>F12</strong> to open the Object Viewer. Note the current values of all attributes — especially <code>Speed.SP</code> (setpoint) and <code>Speed.PV</code> (process variable).</p>
+
+  <h3>Step 4: Modify the Speed Setpoint</h3>
+  <p>Double-click on <code>Speed.SP</code> in the Object Viewer to open the Modify Numeric Value dialog. Enter <strong>55</strong> and click <strong>Apply</strong>. The dialog stays open — observe that the value has been written.</p>
+
+  <h3>Step 5: Verify the Write</h3>
+  <p>Check the Object Viewer — <code>Speed.SP</code> should now show <strong>55</strong>. Then check the OI Server tag browser and the simulator window to confirm the value propagated through the entire chain.</p>
+
+  <h3>Step 6: Change the Value Again</h3>
+  <p>In the still-open dialog, change the value to <strong>75</strong> and click <strong>OK</strong>. The dialog closes. Verify again that the value updated everywhere.</p>
+
+  <h3>Step 7: Test a Read-Up</h3>
+  <p>If using the Simulator, change a sensor value in the simulator (e.g., modify the level reading). Then check the Galaxy — the corresponding attribute (e.g., <code>Level_001.PV</code>) should update to reflect the new simulator value.</p>
+
+  <h3>Step 8: Document Your Results</h3>
+  <p>Record your observations in a table:</p>
+  <table>
+    <tr><th>Attribute</th><th>Original Value</th><th>Value Written</th><th>Confirmed in Object Viewer?</th><th>Confirmed in Simulator?</th></tr>
+    <tr><td>Speed.SP</td><td>___</td><td>55 → 75</td><td>☐</td><td>☐</td></tr>
+    <tr><td>Level_001.PV</td><td>___</td><td>___</td><td>☐</td><td>☐</td></tr>
+    <tr><td>Inlet1_001.CMD</td><td>___</td><td>___</td><td>☐</td><td>☐</td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<h2>20.7 Summary — What You Accomplished</h2>
+
+<table>
+  <tr><th>Task</th><th>Key Learning</th></tr>
+  <tr>
+    <td>Confirmed deployment status</td>
+    <td>Objects must be deployed (not Off-Scan) before they can communicate with field devices</td>
+  </tr>
+  <tr>
+    <td>Inspected the IO Devices view</td>
+    <td>The IO Devices tree shows the complete OI Server hierarchy and tag values</td>
+  </tr>
+  <tr>
+    <td>Modified attribute values</td>
+    <td>The Modify Numeric Value dialog writes setpoints through I/O binding to the field device</td>
+  </tr>
+  <tr>
+    <td>Used Apply vs. OK</td>
+    <td>Apply writes and keeps the dialog open; OK writes and closes; Cancel discards changes</td>
+  </tr>
+  <tr>
+    <td>Verified end-to-end data flow</td>
+    <td>Values must be confirmed at every layer: Galaxy → Runtime → OI Server → Simulator/PLC</td>
+  </tr>
+  <tr>
+    <td>Tested bidirectional communication</td>
+    <td>Data flows both ways — writes go down to the field, reads come up from the field</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>Quiz</h2>
+
+<div class="quiz">
+  <h3>Question 1</h3>
+  <p>What is the difference between clicking <strong>Apply</strong> and clicking <strong>OK</strong> in the Modify Numeric Value dialog?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><strong>Apply</strong> writes the value to the attribute immediately but keeps the dialog open, allowing you to make additional changes without re-opening it. <strong>OK</strong> writes the value and closes the dialog. <strong>Cancel</strong> closes the dialog without writing any changes.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 2</h3>
+  <p>Why must objects be <strong>deployed</strong> before you can modify their I/O values?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">Deployment pushes objects from the Galaxy database (development environment) to the <strong>runtime engine</strong>. Only deployed objects are executing and communicating with field devices through OI Servers. Undeployed (Off-Scan) objects exist only in the Galaxy database and have no I/O communication — they use simulation values or internal expressions only.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 3</h3>
+  <p>What does the <strong>IO Devices</strong> view in the Object Browser show you?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">The IO Devices view shows the complete <strong>OI Server hierarchy</strong> — from the Galaxy root through the platform, application engine, topic, and down to individual tags. It lets you confirm that the OI Server is running, that topics are configured, and that tags are populated with live values from the field devices.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 4</h3>
+  <p>If you write a value of 55 to <code>Agitator_001.Speed.SP</code> from the Galaxy IDE, trace the complete path that value takes to reach the field device.</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">The value follows this path: <strong>Galaxy IDE</strong> (Modify Numeric Value dialog) → <strong>Application Server Runtime Engine</strong> (attribute I/O binding resolves the I/O Source string) → <strong>OI Server</strong> (writes to the configured topic and tag) → <strong>Simulator/PLC</strong> (receives the new setpoint value). This is a "write-down" operation — from the application layer to the field layer.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 5</h3>
+  <p>What does it mean that I/O binding is <strong>bidirectional</strong>?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">Bidirectional means data flows in <strong>both directions</strong>: (1) <strong>Write-Down</strong> — the operator or application writes setpoint values that travel through the OI Server to the PLC/field device, and (2) <strong>Read-Up</strong> — sensor readings and process values from the PLC/field device travel through the OI Server and appear as live attribute values in the application. Both directions must work for the control system to function properly.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<nav style="margin-top:2em; padding-top:1em; border-top: 1px solid #ddd;">
+  <a href="L19-Deploy-Undeploy-Lifecycle.html">← Lesson 19: Deploy/Undeploy Lifecycle</a> &nbsp;|&nbsp;
+  <a href="L21-History-Lab12.html">Lesson 21: History + Lab 12 →</a>
+</nav>
+
+</body>
+</html>

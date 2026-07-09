@@ -86,7 +86,7 @@
 <p>The simulation architecture connects three components:</p>
 
 <div class="screenshot">
-  <img src="images/page_0131_0.png" alt="Data Simulation Architecture Overview">
+  <img src="../images/page_0131_0.png" alt="Data Simulation Architecture Overview">
   <div class="caption">Data simulation overview — OI.SIM generates simulated data; $OPCClient reads it into the Galaxy via OPC DA (Module 3, page 3-55)</div>
 </div>
 
@@ -121,7 +121,7 @@
 </div>
 
 <div class="screenshot">
-  <img src="images/page_0133_0.png" alt="Lab 5 Introduction">
+  <img src="../images/page_0133_0.png" alt="Lab 5 Introduction">
   <div class="caption">Lab 5 introduction — objectives for connecting OI.SIM simulator to the Galaxy (Module 3, page 3-57)</div>
 </div>
 
@@ -136,7 +136,7 @@
 <p>Before connecting $OPCClient to OI.SIM, you should review and configure the simulation parameters for the PLC node. Open the <strong>OCMC</strong> and expand the OI.SIM server tree to locate the PLC configuration.</p>
 
 <div class="screenshot">
-  <img src="images/page_0134_0.png" alt="OCMC PLC Configuration">
+  <img src="../images/page_0134_0.png" alt="OCMC PLC Configuration">
   <div class="caption">OCMC showing PLC_TEST configuration — Algorithm set to Random, Rate = 200 ms, Range = 20, Force Quality = Good (Module 3, page 3-58)</div>
 </div>
 
@@ -169,7 +169,7 @@
 <p><strong>Step 2c:</strong> Set the <strong>OPC Server Name</strong> field to <code>OI.SIM</code>. This is the registered OPC server name that OI.SIM exposes to the system.</p>
 
 <div class="screenshot">
-  <img src="images/page_0135_0.png" alt="$OPCClient OPC Server Configuration">
+  <img src="../images/page_0135_0.png" alt="$OPCClient OPC Server Configuration">
   <div class="caption">$OPCClient configuration — setting the OPC Server Name to OI.SIM so the Galaxy reads simulated data via OPC DA (Module 3, page 3-59)</div>
 </div>
 
@@ -190,7 +190,7 @@
 <p><strong>Step 3b:</strong> For each attribute, set the <strong>I/O Reference</strong> field to the appropriate OI.SIM tag path. The tag path format follows OPC tag naming conventions — it typically includes the PLC name and tag name as configured in OI.SIM.</p>
 
 <div class="screenshot">
-  <img src="images/page_0136_0.png" alt="I/O Reference Configuration">
+  <img src="../images/page_0136_0.png" alt="I/O Reference Configuration">
   <div class="caption">Configuring I/O references — linking object attributes to OI.SIM tag paths so they receive simulated values at runtime (Module 3, page 3-60)</div>
 </div>
 
@@ -207,7 +207,7 @@
 <p>The Galaxy model view provides a visual hierarchy of all objects. In this lab, the simulated objects are organized under a dedicated area in the model.</p>
 
 <div class="screenshot">
-  <img src="images/page_0137_0.png" alt="Galaxy Model View with Simulator Area">
+  <img src="../images/page_0137_0.png" alt="Galaxy Model View with Simulator Area">
   <div class="caption">Galaxy model view — Plant > ControlSystem > Simulator area highlighted, alongside AppEngine1, GRPlatform, ProdPlatform, Packaging, Production areas (Module 3, page 3-61)</div>
 </div>
 
@@ -241,14 +241,14 @@
 <p><strong>Step 5a:</strong> Right-click the modified objects (or the Simulator area) and select <strong>Deploy</strong>. Wait for deployment to complete successfully.</p>
 
 <div class="screenshot">
-  <img src="images/page_0138_0.png" alt="Deploying Simulated Objects">
+  <img src="../images/page_0138_0.png" alt="Deploying Simulated Objects">
   <div class="caption">Deploying simulated objects to runtime — the IDE pushes the updated configuration to the Application Engine (Module 3, page 3-62)</div>
 </div>
 
 <p><strong>Step 5b:</strong> After deployment completes, open the <strong>OCMC</strong> to verify that OI.SIM is communicating correctly. Expand the OI.SIM server node to see the PLC structure.</p>
 
 <div class="screenshot">
-  <img src="images/page_0139_0.png" alt="OCMC OI.SIM Node Structure">
+  <img src="../images/page_0139_0.png" alt="OCMC OI.SIM Node Structure">
   <div class="caption">OCMC showing OI.SIM.1 expanded — Configuration > PORT > PLC hierarchy visible; Platform Manager showing TrainingGalaxy(DefaultUser) (Module 3, page 3-63)</div>
 </div>
 

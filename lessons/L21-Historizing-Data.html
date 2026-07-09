@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 21: Historizing Data — Section 1</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L20-History-Attributes.html">← Lesson 20: History Attributes</a> &nbsp;|&nbsp;
+  <a href="L22-History-Configuration.html">Lesson 22: History Configuration →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<a href="L20-History-Attributes.html">L20: History Attributes</a><br>
+<a href="L21-Historizing-Data.html"><strong>L21: Historizing Data</strong></a><br>
+<a href="L22-History-Configuration.html">L22: History Configuration</a><br>
+</div>
+</details>
+</nav>
+<h1>Lesson 21: Historizing Data</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 6, Section 1 (pages 6-3 to 6-10)</p>
+<p class="page-ref">Module 6 introduces history — how data flows from Application Server into the Historian for long-term storage and analysis.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0249_0.jpeg" alt="Module 6 title page">
+  <div class="caption">Module 6 — Historizing Data</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>21.1 History Architecture — The Big Picture</h2>
+<p class="page-ref">Reference: Module 6, Section 1 (pages 6-3 to 6-5)</p>
+
+<p>Historizing data is one of the most important functions in any SCADA system. Without historical data, you cannot perform trending, root-cause analysis, regulatory reporting, or performance optimization. Application Server provides the bridge between live process data and a long-term Historian.</p>
+
+<div class="key-concept">
+  <strong>Key Concept — What is Historizing?</strong><br>
+  Historizing is the process of collecting attribute values over time and storing them in a time-series database (the Historian). It transforms real-time data points into a historical record that can be queried, trended, and analyzed.
+</div>
+
+<h3>The High-Level Architecture</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0251_0.jpeg" alt="History architecture overview">
+  <div class="caption">High-level history architecture: Area contains the AppEngine (CLIENT) which communicates with the Historian server. The WinPlatform sits at the bottom providing the platform-level services. (Module 6, page 6-4)</div>
+</div>
+
+<p>The history architecture has four key players:</p>
+
+<table>
+  <tr><th>Component</th><th>Role in History</th></tr>
+  <tr>
+    <td><strong>Area / AppEngine</strong></td>
+    <td>Runs the application objects. The AppEngine (acting as CLIENT) sends attribute change data to the Historian for collection.</td>
+  </tr>
+  <tr>
+    <td><strong>WinPlatform</strong></td>
+    <td>Hosts the Store and Forward (S&amp;F) cache. Buffers historical data locally on disk to prevent data loss during Historian outages.</td>
+  </tr>
+  <tr>
+    <td><strong>Historian</strong></td>
+    <td>Receives data from the AppEngine and writes it to the run-time database for permanent archival and retrieval.</td>
+  </tr>
+  <tr>
+    <td><strong>PLC / Device</strong></td>
+    <td>The source of raw process data that feeds into the system through data access servers.</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Why a separate Historian?</strong> Application Server is optimized for real-time control and alarming, not for storing millions of time-stamped data points. The Historian is purpose-built for time-series data — it handles compression, high-speed writes, and efficient retrieval of historical data. The two work together as a team.
+</div>
+
+<!-- ============================================================ -->
+<h2>21.2 The Complete Data Flow — From PLC to Historian</h2>
+<p class="page-ref">Reference: Module 6, Section 1 (pages 6-4 to 6-6)</p>
+
+<p>Understanding the complete data flow is essential for diagnosing problems and optimizing your history configuration.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0252_0.jpeg" alt="Full data flow from PLC to Historian">
+  <div class="caption">Complete data flow: PLC → DAServer/Proxy/DBObject → AppEngine (Application Object in Area) → WinPlatform (Store and Forward cache) → Historian (Storage Engine → Run-time Database) (Module 6, page 6-5)</div>
+</div>
+
+<p>Let's trace the data through each step:</p>
+
+<table>
+  <tr><th>Step</th><th>Component</th><th>What Happens</th></tr>
+  <tr>
+    <td><strong>1</strong></td>
+    <td>PLC / Device</td>
+    <td>The source of raw process data — temperature, pressure, level, etc.</td>
+  </tr>
+  <tr>
+    <td><strong>2</strong></td>
+    <td>DAServer / Proxy / DBObject</td>
+    <td>Data access layer — reads values from the PLC via DDE, SuiteLink, or OPC and exposes them as attributes that Application Server can consume.</td>
+  </tr>
+  <tr>
+    <td><strong>3</strong></td>
+    <td>AppEngine (Application Object in Area)</td>
+    <td>The running application engine inside an Area. Receives attribute updates, applies logic and scripting, and triggers history collection when values change (if history is enabled).</td>
+  </tr>
+  <tr>
+    <td><strong>4</strong></td>
+    <td>WinPlatform (Store and Forward)</td>
+    <td>Buffers historical data on local disk in the S&amp;F cache. Forwards data to the Historian when connectivity is available. Guarantees no data loss during temporary outages.</td>
+  </tr>
+  <tr>
+    <td><strong>5</strong></td>
+    <td>Historian</td>
+    <td>The Storage Engine writes data to the run-time database — the permanent time-series archive. Data is compressed and indexed for efficient querying.</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Store and Forward — The Safety Net:</strong> The WinPlatform does not write directly to the Historian. Instead, it writes data to a <strong>Store and Forward (S&amp;F)</strong> cache on local disk. If the Historian is temporarily unreachable, data is buffered locally and forwarded when connectivity is restored. This guarantees <strong>no data loss</strong> during network interruptions or Historian maintenance windows.
+</div>
+
+<div class="pitfall">
+  <strong>Common Pitfall:</strong> If the S&amp;F cache drive fills up and the Historian remains unreachable, data WILL be lost. In production, always monitor S&amp;F disk usage and configure a dedicated, high-capacity drive (not the OS drive).
+</div>
+
+<!-- ============================================================ -->
+<h2>21.3 Configuring History on an Attribute</h2>
+<p class="page-ref">Reference: Module 6, Section 1 (pages 6-7 to 6-10)</p>
+
+<p>To historize a tag, you simply enable the <strong>History</strong> feature on its attribute. The training manual uses a mixer malfunction alarm as an example to walk through the configuration.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0256_0.png" alt="Tag history configuration">
+  <div class="caption">Tag configuration for a history-enabled attribute: Name = Alarm.Condition, Description = "Mixer Malfunction", Data type = Integer, User writeable. History is enabled with Value deadband = 0.0, Trend High = 10.0, Trend Low = 0.0, and Force storage period = 0 ms (on-change only). (Module 6, page 6-8)</div>
+</div>
+
+<h3>Key History Configuration Parameters</h3>
+
+<table>
+  <tr><th>Parameter</th><th>Value in Example</th><th>What It Controls</th></tr>
+  <tr>
+    <td><strong>History</strong> (checkbox)</td>
+    <td>✅ Enabled</td>
+    <td>Master switch — without this checked, no data is collected regardless of other settings.</td>
+  </tr>
+  <tr>
+    <td><strong>Value Deadband</strong></td>
+    <td>0.0</td>
+    <td>Minimum change required to trigger storage. 0.0 = record every single change.</td>
+  </tr>
+  <tr>
+    <td><strong>Trend High</strong></td>
+    <td>10.0</td>
+    <td>Upper Y-axis display range for Historian Client trends.</td>
+  </tr>
+  <tr>
+    <td><strong>Trend Low</strong></td>
+    <td>0.0</td>
+    <td>Lower Y-axis display range for Historian Client trends.</td>
+  </tr>
+  <tr>
+    <td><strong>Force Storage Period</strong></td>
+    <td>0 ms</td>
+    <td>How often to store a value regardless of change. 0 = on-change only.</td>
+  </tr>
+</table>
+
+<h3>On-Change vs. Periodic Storage</h3>
+
+<div class="key-concept">
+  <strong>Two storage modes:</strong><br><br>
+  <strong>On-Change Storage</strong> (Force storage period = 0 ms):<br>
+  The Historian stores a new value <em>only when the attribute actually changes</em>. No periodic samples are recorded. This minimizes database size while capturing every meaningful transition. Best for digital/alarm states and slowly-changing analog values.<br><br>
+  <strong>Periodic Storage</strong> (Force storage period > 0 ms, e.g., 5000 ms):<br>
+  The Historian stores a value every N milliseconds <em>regardless of whether the value changed</em>. This guarantees a minimum sampling rate but increases storage requirements. Best for fast-changing values where you need guaranteed time resolution.
+</div>
+
+<div class="tip">
+  <strong>Tip — Value Deadband:</strong> The deadband works alongside the storage period. If deadband = 0.0, every change is recorded. If deadband = 0.5, the value must change by at least 0.5 units to trigger storage. Deadband of 0.0 is common for digital/alarm states (as in the example) but may need tuning for noisy analog signals to avoid excessive storage.
+</div>
+
+<div class="tip">
+  <strong>Tip — Trend High/Low:</strong> These values define the Y-axis range for Historian Client trends. They do <em>not</em> filter or truncate data — they only control how the data is visually displayed. Set Trend High to slightly above your maximum expected value and Trend Low to slightly below the minimum. The system uses these to scale the display in trend views.
+</div>
+
+<!-- ============================================================ -->
+<h2>21.4 Verifying History with Historian Client Web</h2>
+<p class="page-ref">Reference: Module 6, Section 1 (pages 6-9 to 6-10)</p>
+
+<p>Once history is enabled and data is flowing, you can verify collection using Historian Client Web — a browser-based tool for viewing historical trends.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0257_0.jpeg" alt="Historian Client Web interface">
+  <div class="caption">Historian Client Web — the main dashboard interface (typically at localhost:32573). This is your tool for browsing, trending, and analyzing historical data. (Module 6, page 6-9)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0258_0.png" alt="Dashboard trend showing Level_001.PV">
+  <div class="caption">Trend result: Level_001.PV = 64.47, showing an upward trend over a 24-hour period (May 12–13, 2020). Data is being collected successfully and is available for analysis. (Module 6, page 6-10)</div>
+</div>
+
+<p>When you open a trend in Historian Client Web, you can verify:</p>
+<ul>
+  <li><strong>Data is present</strong> — a value displayed confirms the Historian is collecting data</li>
+  <li><strong>Trend shape</strong> — the curve shows how the value changes over time</li>
+  <li><strong>Time range</strong> — adjust from 1 hour to 30+ days to see different perspectives</li>
+  <li><strong>Current value</strong> — the latest reading is displayed with a time stamp</li>
+</ul>
+
+<div class="tip">
+  <strong>Tip — Reading Trends:</strong> If a trend shows a flat line at 0 followed by a sharp spike, it usually means the Historian started collecting data at a specific point in time (when history was enabled on the attribute). The spike represents the first real values arriving. Over time, the trend will show a continuous line representing the full history.
+</div>
+
+<!-- ============================================================ -->
+<h2>Quiz</h2>
+
+<div class="quiz">
+  <h3>Question 1</h3>
+  <p>What are the four key components in the history data flow architecture?</p>
+  <details>
+    <summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary>
+    <p class="answer">PLC/Device, DAServer/Proxy/DBObject, AppEngine (in the Area), WinPlatform (with Store and Forward cache), and the Historian. The four key runtime components are: AppEngine, WinPlatform, Historian, and the field device/data access layer.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 2</h3>
+  <p>What is the purpose of the Store and Forward (S&amp;F) cache on the WinPlatform?</p>
+  <details>
+    <summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary>
+    <p class="answer">The S&amp;F cache buffers historical data on local disk when the Historian is temporarily unreachable. When connectivity is restored, the buffered data is forwarded to the Historian, ensuring no data loss during outages.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 3</h3>
+  <p>What does setting the "Force storage period" to 0 ms mean?</p>
+  <details>
+    <summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary>
+    <p class="answer">Data is stored on-change only — a new value is written to the Historian only when the attribute's value actually changes. No periodic storage occurs. This minimizes database size while capturing every transition.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 4</h3>
+  <p>What does a Value Deadband of 0.0 mean?</p>
+  <details>
+    <summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary>
+    <p class="answer">Every single change in the attribute value is recorded, no matter how small. There is no minimum change threshold. A deadband of 0.0 is common for digital/alarm states but may cause excessive storage for noisy analog signals.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 5</h3>
+  <p>What do the Trend High and Trend Low parameters control?</p>
+  <details>
+    <summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary>
+    <p class="answer">They define the Y-axis display range for Historian Client trends. They do not filter or truncate data — they only control how the data is visually scaled in the trend display. Set them to bracket your expected minimum and maximum values.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+<ol>
+  <li><strong>History architecture</strong> flows from PLC → DAServer → AppEngine → WinPlatform (S&amp;F) → Historian.</li>
+  <li><strong>Store and Forward</strong> buffers data locally to prevent data loss during Historian outages.</li>
+  <li>Enabling history is a <strong>single checkbox</strong> on any attribute — the History checkbox.</li>
+  <li><strong>Force storage period = 0</strong> means on-change storage only; a non-zero value adds periodic sampling.</li>
+  <li><strong>Value deadband</strong> controls the minimum change needed to trigger storage; 0.0 records everything.</li>
+  <li><strong>Trend High/Low</strong> control display scaling only — they do not filter data.</li>
+  <li><strong>Historian Client Web</strong> is the tool for verifying and analyzing collected historical data.</li>
+</ol>
+
+<p class="source">Next: Lesson 22 — History Configuration (deeper settings, template propagation, platform-level history settings)</p>
+
+<nav style="margin-top:2em;">
+  <a href="L20-History-Attributes.html">← Lesson 20: History Attributes</a> &nbsp;|&nbsp;
+  <a href="L22-History-Configuration.html">Lesson 22: History Configuration →</a>
+</nav>
+
+</body>
+</html>

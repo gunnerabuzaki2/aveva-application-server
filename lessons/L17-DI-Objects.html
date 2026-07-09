@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 17: Device Integration Objects</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../MISSION.md">← Mission</a> &nbsp;|&nbsp;
+  <a href="L16-Lab9-OI-Server.html">← Lesson 16: Lab 9</a> &nbsp;|&nbsp;
+  <a href="L18-History.html">Lesson 18: History →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Connectivity &amp; Field Data</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: Lab 9 — OI Server Setup</a><br>
+<a href="L17-DI-Objects.html">L17: Device Integration Objects</a><br>
+<a href="L18-History.html">L18: History</a><br>
+</div>
+</details>
+</nav>
+
+<h1>Lesson 17: Device Integration Objects</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 5, Section 2 (pages 5-13 to 5-18)</p>
+<p class="page-ref">The Galaxy objects that bridge your application to the real world — how Application Server communicates with field devices through Device Integration objects.</p>
+
+<!-- ============================================================ -->
+<h2>17.1 Data Flow — How Application Server Talks to Devices</h2>
+<p class="page-ref">Reference: Module 5, Section 2 (page 5-13)</p>
+
+<p>To understand Device Integration (DI) objects, you first need to see the complete data path from an application object in the Galaxy all the way to a physical PLC on the plant floor.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0230_0.jpeg" alt="Data flow from Application Object to PLC">
+  <div class="caption">Data flow path: Application Object → DDE/SuiteLink Client → OI Server → PLC (Module 5, page 5-13)</div>
+</div>
+
+<div class="key-concept">
+  <strong>The four-step data path:</strong>
+  <ol>
+    <li><strong>Application Object</strong> — your Galaxy object (e.g., a Mixer or Pump) needs to read/write data from a field device.</li>
+    <li><strong>DDE/SuiteLink Client</strong> — the Device Integration object inside the Galaxy that translates Galaxy attribute references into communication protocol requests.</li>
+    <li><strong>OI Server (Operating Interface Server)</strong> — a standalone Windows application that speaks the native protocol of the PLC (e.g., Modbus TCP, Allen-Bradley, Siemens). It bridges the gap between SuiteLink and the device.</li>
+    <li><strong>PLC / Field Device</strong> — the actual hardware controller with I/O points.</li>
+  </ol>
+</div>
+
+<div class="tip">
+  <strong>Why not talk directly?</strong> Application Server does not natively understand every PLC protocol. The OI Server acts as a protocol translator — Application Server speaks SuiteLink/DDE (both Microsoft-era protocols), and the OI Server converts those into whatever protocol the PLC speaks.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.2 The DDE/SuiteLink Client Object</h2>
+<p class="page-ref">Reference: Module 5, Section 2 (pages 5-13 to 5-14)</p>
+
+<p>The <code>$gDDESuiteLinkClient</code> is the built-in Galaxy object that acts as the communication bridge. Every Galaxy ships with one — it is a system global object that you configure for your specific devices.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0231_0.png" alt="DDESuiteLinkClient Topic tab">
+  <div class="caption">The $gDDESuiteLinkClient Topic tab — where topics and item references are defined (Module 5, page 5-13)</div>
+</div>
+
+<h3>Key Tabs and Configuration</h3>
+<table>
+  <tr><th>Tab / Property</th><th>Purpose</th></tr>
+  <tr>
+    <td><strong>Topic</strong> tab</td>
+    <td>Defines topic names that map to specific data sets on the OI Server. Each topic has a <em>Scan Mode</em> and associated <em>Attribute/Item Reference</em> pairs.</td>
+  </tr>
+  <tr>
+    <td><strong>Available Topics</strong> table</td>
+    <td>Shows topic names and their scan mode (e.g., Polled, Unsolicited, etc.). Initially empty until you configure connections.</td>
+  </tr>
+  <tr>
+    <td><strong>Associated Attributes</strong> table</td>
+    <td>Maps Galaxy attribute references (e.g., <code>ProdPLC.Topic1.$Sys$Status</code>) to item references on the OI Server side.</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Topic = a named connection</strong> to a specific set of data on the OI Server. You configure a topic per PLC (or per device group), and within that topic, you map individual attributes to item addresses on the PLC.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.3 Creating a Device Integration Object</h2>
+<p class="page-ref">Reference: Module 5, Section 2 (pages 5-14 to 5-15)</p>
+
+<p>To connect to a PLC, you create a new instance of the <code>$gDDESuiteLinkClient</code> template in the Templates pane. This becomes your dedicated communication object for that device.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0234_0.png" alt="Creating a new DDESuiteLinkClient instance from template">
+  <div class="caption">Right-click $gDDESuiteLinkClient in Templates → New → Instance/Derived Template to create a new DI object (Module 5, page 5-14)</div>
+</div>
+
+<h3>Step-by-Step: Creating the ProdPLC DI Object</h3>
+
+<p><strong>Step 1:</strong> In the Templates pane, expand the system templates and locate <code>$gDDESuiteLinkClient</code>.</p>
+
+<p><strong>Step 2:</strong> Right-click it and select <strong>New → Instance</strong> (for a direct instance) or <strong>New → Derived Template</strong> (for a template you can customize further).</p>
+
+<div class="tip">
+  <strong>Instance vs. Derived Template:</strong> An <strong>Instance</strong> is a direct copy of the template — quick and simple for one-off use. A <strong>Derived Template</strong> lets you customize the template first and then create multiple instances from your customized version. For most projects, a Derived Template gives you more flexibility.
+</div>
+
+<p><strong>Step 3:</strong> Name the new object <code>ProdPLC</code> — this object will represent your production PLC connection.</p>
+
+<p><strong>Step 4:</strong> Open the ProdPLC object editor and configure its General tab:</p>
+
+<h3>Configuring the General Tab</h3>
+<p>The General tab of the DI object editor contains two critical settings that determine which OI Server the object will communicate with:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0232_0.png" alt="Simulator Object Editor General tab">
+  <div class="caption">For comparison: the Simulator DI object configured with Server node=SOOPROD, Server name=OI.SIM.1 (Module 5, page 5-14)</div>
+</div>
+
+<table>
+  <tr><th>Property</th><th>Value for Simulator</th><th>Value for ProdPLC</th></tr>
+  <tr>
+    <td><strong>Server node</strong></td>
+    <td><code>SOOPROD</code></td>
+    <td><code>S00PROD</code></td>
+  </tr>
+  <tr>
+    <td><strong>Server name</strong></td>
+    <td><code>OI.SIM.1</code></td>
+    <td><code>MBTCP</code></td>
+  </tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0235_0.png" alt="ProdPLC Object Editor General tab">
+  <div class="caption">ProdPLC object: Server node=S00PROD, Server name=MBTCP — connects to a Modbus TCP OI Server (Module 5, page 5-15)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Two critical settings:</strong>
+  <ul>
+    <li><strong>Server node</strong> — the computer name where the OI Server software is running. This must match the actual hostname of that machine.</li>
+    <li><strong>Server name</strong> — the OI Server instance name, which you assign when you install/configure the OI Server. It must exactly match what the OI Server was configured with (e.g., <code>MBTCP</code> for Modbus TCP, <code>OI.SIM.1</code> for a simulator).</li>
+  </ul>
+</div>
+
+<div class="pitfall">
+  <strong>⚠ Pitfall — Mismatched Server Settings:</strong> If the server node or server name is wrong, the DI object will fail to connect. Common symptoms include a <code>ConnectionStatus</code> of "Disconnected" or "Faulted" after deployment. Always verify both values against the actual OI Server configuration on the target machine (check OCMC for the correct server name).
+</div>
+
+<!-- ============================================================ -->
+<h2>17.4 Where DI Objects Fit in Your Galaxy</h2>
+<p class="page-ref">Reference: Module 5, Section 2 (page 5-15)</p>
+
+<p>Your ProdPLC DI object, like all other objects, lives within the Galaxy hierarchy. Here is how the Galaxy structure looks with all the objects you have created so far:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0236_0.png" alt="Model-Tagname view showing Galaxy hierarchy">
+  <div class="caption">Model-Tagname view: Plant → ControlSystem (ProdPLC selected) alongside Production (Line1, Line2 with contained equipment L1, T1) (Module 5, page 5-15)</div>
+</div>
+
+<p>The Galaxy hierarchy at this point:</p>
+
+<table>
+  <tr><th>Area</th><th>Objects</th></tr>
+  <tr>
+    <td><strong>Plant → ControlSystem</strong></td>
+    <td><code>AppEngine1</code> (Application Engine), <code>GRPlatform</code> (GR node), <code>ProdPlatform</code> (production node), <code>ProdPLC</code> (DI object for production PLC), <code>Simulator</code> (DI object for simulator)</td>
+  </tr>
+  <tr>
+    <td><strong>Plant → Production</strong></td>
+    <td><code>Line1</code>, <code>Line2</code> (production lines with contained equipment)</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Placement matters:</strong> DI objects typically live in the ControlSystem area alongside the platform objects, because they represent <em>infrastructure</em> (communication paths) rather than equipment. Your equipment objects (Meters, Pumps, etc.) live under Production areas.
+</div>
+
+<div class="key-concept">
+  <strong>Two DI objects in our Galaxy:</strong>
+  <ul>
+    <li><strong>ProdPLC</strong> — connects to a real Modbus TCP PLC via the MBTCP OI Server on node S00PROD</li>
+    <li><strong>Simulator</strong> — connects to a software simulator via the OI.SIM.1 OI Server on node SOOPROD. The simulator is invaluable during development — it provides fake process data so you can build and test your application without any physical hardware.</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>17.5 Topics and Attribute Mapping</h2>
+<p class="page-ref">Reference: Module 5, Section 2 (pages 5-15 to 5-16)</p>
+
+<p>Once you have created a DI object (like ProdPLC), you need to configure which PLC data points your Galaxy attributes will read from and write to. This is done through <strong>topics</strong> and <strong>attribute mapping</strong>.</p>
+
+<h3>How Topics Work</h3>
+<p>A <strong>topic</strong> is a named communication channel within the DI object. Each topic corresponds to a specific group of data points on the PLC. Within a topic, you define individual <strong>item references</strong> that map to specific PLC addresses.</p>
+
+<table>
+  <tr><th>Concept</th><th>Example</th><th>What It Means</th></tr>
+  <tr>
+    <td><strong>Topic Name</strong></td>
+    <td><code>Topic1</code></td>
+    <td>A named channel pointing to a specific data set on the OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>Item Reference</strong></td>
+    <td><code>Agitator_001</code></td>
+    <td>A specific PLC register or tag address within the topic</td>
+  </tr>
+  <tr>
+    <td><strong>Full Attribute Path</strong></td>
+    <td><code>ProdPLC.Topic1.Agitator_001</code></td>
+    <td>The complete path an Application Server attribute uses to reach a PLC value</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>The binding string format:</strong> When you configure an attribute's I/O source, you use the syntax <code>TopicName.ItemName</code>. For example, if your OI Server has a topic called <strong>Topic1</strong> and the PLC tag is <strong>Agitator_001</strong>, the I/O source would be <code>Topic1.Agitator_001</code>. You type this into the I/O source field for whichever attribute needs the live data.
+</div>
+
+<h3>Attribute Types and I/O Binding</h3>
+<p>Different object types use I/O binding in different ways:</p>
+
+<table>
+  <tr><th>Object Type</th><th>Commonly Bound Attributes</th><th>Typical Use</th></tr>
+  <tr>
+    <td><strong>Discrete</strong></td>
+    <td><code>PV</code> (Process Value), <code>SP</code> (Setpoint)</td>
+    <td>On/off states: pump running, valve open/closed</td>
+  </tr>
+  <tr>
+    <td><strong>Analog</strong></td>
+    <td><code>PV</code>, <code>SP</code>, <code>SPH</code> (High), <code>SPL</code> (Low)</td>
+    <td>Continuous values: temperature, pressure, flow, level</td>
+  </tr>
+  <tr>
+    <td><strong>Motor</strong></td>
+    <td><code>PV</code> (Status), <code>SP</code> (Command)</td>
+    <td>Motors with start/stop and status feedback</td>
+  </tr>
+  <tr>
+    <td><strong>Pump</strong></td>
+    <td><code>PV</code>, <code>SP</code>, <code>RunCmd</code></td>
+    <td>Pumps with run command and status</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Simulation vs. I/O:</strong> Before you bind an attribute to a real I/O source, it runs in <strong>simulation mode</strong> (using an internal expression or hardcoded value). This is extremely useful during development — you can build and test your entire application without any hardware. When you are ready to go live, you simply change the I/O source from the simulation expression to the real PLC tag address.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.6 Connection Status and Monitoring</h2>
+<p class="page-ref">Reference: Module 5, Section 2 (pages 5-16 to 5-18)</p>
+
+<p>After deploying a DI object, you need to verify that it has successfully connected to the OI Server and is receiving live data. Application Server provides several diagnostic attributes for this purpose.</p>
+
+<h3>Key Diagnostic Attributes</h3>
+
+<table>
+  <tr><th>Attribute</th><th>Expected Value (Connected)</th><th>What It Means</th></tr>
+  <tr>
+    <td><code>ConnectionStatus</code></td>
+    <td><span class="answer">Connected</span></td>
+    <td>The DI object has established a live connection to the OI Server</td>
+  </tr>
+  <tr>
+    <td><code>Reconnect</code></td>
+    <td><span class="answer">false</span></td>
+    <td>The connection is stable — no reconnection attempts in progress</td>
+  </tr>
+  <tr>
+    <td><code>ScanState</code></td>
+    <td><span class="answer">true</span></td>
+    <td>The DI object is actively scanning/polling the OI Server for data</td>
+  </tr>
+  <tr>
+    <td><code>Topic1.$Sys$Status</code></td>
+    <td><span class="answer">true</span></td>
+    <td>The configured topic is active and communicating properly</td>
+  </tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0238_0.png" alt="ProdPLC attributes showing connection status">
+  <div class="caption">ProdPLC attributes: ConnectionStatus=Connected, Reconnect=false, ScanState=true, Topic1.$Sys$Status=true — confirms successful communication (Module 5, page 5-17)</div>
+</div>
+
+<h3>Monitoring Live Values</h3>
+<p>Once connected, the DI object starts pulling live values from the PLC. You can see these values in real time by opening the object and viewing its attributes.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0239_0.png" alt="ProdPLC monitoring with live values and timestamps">
+  <div class="caption">ProdPLC live monitoring: attributes with timestamps and Quality=C0:Good — values are updating in real time from the PLC (Module 5, page 5-18)</div>
+</div>
+
+<p>When you see attributes with:</p>
+<ul>
+  <li><strong>Live values</strong> — the PLC data is flowing through successfully</li>
+  <li><strong>Timestamps</strong> — each value shows when it was last updated</li>
+  <li><strong>Quality = C0:Good</strong> — the data quality indicator confirms the value is valid and current</li>
+</ul>
+
+<div class="pitfall">
+  <strong>⚠ Pitfall — If ConnectionStatus shows "Disconnected" or "Faulted":</strong>
+  <ul>
+    <li>Is the OI Server running on the target node?</li>
+    <li>Is the server node name correct?</li>
+    <li>Is the server name (OI Server instance) spelled exactly right?</li>
+    <li>Is there network connectivity between the Application Server node and the OI Server node?</li>
+    <li>Check the OI Server's own logs for error messages.</li>
+  </ul>
+</div>
+
+<div class="tip">
+  <strong>Quality codes matter:</strong> The Quality field uses standard OPC/DDE quality codes. <code>C0:Good</code> means the value is fresh and reliable. If you see <code>0:Bad</code> or <code>80:Uncertain</code>, it means the communication path has an issue, even if the value looks reasonable. Always check quality alongside the value.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.7 Summary — DI Objects in Context</h2>
+
+<table>
+  <tr><th>Component</th><th>Role</th><th>Lives On</th></tr>
+  <tr>
+    <td><strong>$gDDESuiteLinkClient</strong></td>
+    <td>Galaxy DI object — maps attributes to PLC items via topics</td>
+    <td>Galaxy database (deployed to Platform Engine)</td>
+  </tr>
+  <tr>
+    <td><strong>OI Server</strong></td>
+    <td>Protocol translator — bridges SuiteLink to PLC protocol</td>
+    <td>Dedicated Windows machine (the OI Server node)</td>
+  </tr>
+  <tr>
+    <td><strong>PLC</strong></td>
+    <td>Field device providing process data</td>
+    <td>Plant floor</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>The complete picture:</strong> Your application objects (Mixers, Pumps, Meters) contain attributes that reference items on the PLC. The DDE/SuiteLink Client DI object handles the actual communication, and the OI Server translates that communication into whatever protocol the PLC speaks. Deploy the DI object, and the data flows.
+</div>
+
+<!-- ============================================================ -->
+<h2>17.8 Key Terms</h2>
+
+<table>
+  <tr><th>Term</th><th>Definition</th></tr>
+  <tr>
+    <td><strong>Device Integration (DI) Object</strong></td>
+    <td>A Galaxy object (instance of <code>$gDDESuiteLinkClient</code>) that manages communication between Application Server and field devices through an OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>$gDDESuiteLinkClient</strong></td>
+    <td>The built-in system template for creating Device Integration objects in the Galaxy</td>
+  </tr>
+  <tr>
+    <td><strong>Server Node</strong></td>
+    <td>The computer name where the OI Server software is running</td>
+  </tr>
+  <tr>
+    <td><strong>Server Name</strong></td>
+    <td>The OI Server instance name (e.g., <code>MBTCP</code>, <code>OI.SIM.1</code>)</td>
+  </tr>
+  <tr>
+    <td><strong>Topic</strong></td>
+    <td>A named communication channel within the DI object, mapping to a specific set of PLC data points</td>
+  </tr>
+  <tr>
+    <td><strong>Item Reference</strong></td>
+    <td>A specific PLC address or tag within a topic (e.g., <code>Agitator_001</code>)</td>
+  </tr>
+  <tr>
+    <td><strong>I/O Binding</strong></td>
+    <td>The process of linking an object's attribute to a real-world data point through a DI object and OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>ConnectionStatus</strong></td>
+    <td>A diagnostic attribute showing whether the DI object is connected to the OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>Quality Code</strong></td>
+    <td>A standard indicator (e.g., C0:Good, 0:Bad, 80:Uncertain) reflecting the reliability of a data value</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>17.9 Quiz</h2>
+
+<div class="quiz">
+  <h3>Question 1</h3>
+  <p>What are the four components in the data path from an Application Object to a PLC?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">Application Object → DDE/SuiteLink Client → OI Server → PLC</span></p>
+    <p>The Application Object communicates through the DDE/SuiteLink Client DI object, which sends requests to the OI Server. The OI Server translates those requests into the PLC's native protocol and communicates with the field device.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 2</h3>
+  <p>What is the purpose of the OI Server in the communication path?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">The OI Server is a protocol translator.</span> It bridges SuiteLink/DDE communication from Application Server to the native protocol spoken by the PLC (e.g., Modbus TCP, Allen-Bradley). Application Server does not natively understand every PLC protocol — the OI Server handles the translation.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 3</h3>
+  <p>What two properties must be correctly configured on a DI object for it to connect to an OI Server?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">The Server node</span> (computer name where the OI Server runs) and <span class="answer">the Server name</span> (the OI Server instance name, e.g., <code>MBTCP</code>). Both must exactly match the actual OI Server configuration — a mismatch will cause the DI object to fail to connect.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 4</h3>
+  <p>What is the difference between creating a <strong>Derived Template</strong> from <code>$gDDESuiteLinkClient</code> versus creating a direct <strong>Instance</strong>?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p>A <span class="answer">Derived Template</span> lets you customize the template first (modify settings, add attributes) and then create multiple instances from your customized version. A direct <span class="answer">Instance</span> is a straightforward copy of the system template — quick and simple for one-off use. Derived Templates give you more flexibility for reuse.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 5</h3>
+  <p>What does a <code>ConnectionStatus</code> of "Connected" and a Quality code of "C0:Good" tell you?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">ConnectionStatus = Connected</span> means the DI object has established a live connection to the OI Server. <span class="answer">Quality = C0:Good</span> means the data values being received are fresh, reliable, and current. Together, they confirm that the communication path is healthy and the data can be trusted.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<h2>17.10 What You Learned</h2>
+
+<div class="key-concept">
+  <strong>In this lesson, you learned:</strong>
+  <ul>
+    <li>The data flow path: Application Object → DDE/SuiteLink Client → OI Server → PLC</li>
+    <li>The <code>$gDDESuiteLinkClient</code> is the built-in Galaxy DI object that manages communication with field devices</li>
+    <li>How to create a DI object instance from the Templates pane (Instance vs. Derived Template)</li>
+    <li>The two critical DI object settings: <strong>Server node</strong> and <strong>Server name</strong></li>
+    <li>How DI objects are placed in the Galaxy hierarchy (typically in the ControlSystem area)</li>
+    <li>How topics and item references map Galaxy attributes to PLC data points</li>
+    <li>How to verify connection status using diagnostic attributes (ConnectionStatus, ScanState, Quality codes)</li>
+    <li>Why quality codes matter — C0:Good means trustworthy data, while 0:Bad or 80:Uncertain signals a problem</li>
+  </ul>
+</div>
+<!-- ============================================================ -->
+
+<nav style="margin-top: 2em; padding-top: 1em; border-top: 1px solid #ddd;">
+  <a href="L16-Lab9-OI-Server.html">← Lesson 16: Lab 9 — OI Server Setup</a> &nbsp;|&nbsp;
+  <a href="L18-History.html">Lesson 18: History →</a>
+</nav>
+
+</body>
+</html>

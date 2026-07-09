@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 18: Lab 10 — Configuring the DI Object</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L17-Lab10-DI-Object.html">← Lesson 17: Connecting to Field Data</a> &nbsp;|&nbsp;
+  <a href="L19-Lab11-Verifying.html">Lesson 19: Verifying I/O →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: Lab 9 — OI Server Setup</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field Data</a><br>
+<a href="L18-Lab10-DI-Object.html" style="font-weight:bold;">L18: Lab 10 — DI Object Config</a><br>
+<a href="L19-Lab11-Verifying.html">L19: Verifying I/O</a><br>
+</div>
+</details>
+</nav>
+
+<h1>Lesson 18: Lab 10 — Configuring the DI Object</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 5, Lab 10 (pages 5-19 to 5-26)</p>
+<p class="page-ref">Understanding and configuring the Device Integration Object — the bridge between your Galaxy and field devices.</p>
+
+<!-- ============================================================ -->
+<h2>18.1 What is a DI Object?</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-19 to 5-20)</p>
+
+<p>When you connected to an OI Server in Lab 9, Application Server automatically created a special object in your Galaxy to represent that connection. This is the <strong>Device Integration (DI) Object</strong>.</p>
+
+<div class="key-concept">
+  <strong>DI Object (Device Integration Object)</strong> is a special system object within the Galaxy that represents a connection to an OI Server. It serves as the bridge between your automation application and the real-world field devices (PLCs, RTUs, sensors). The DI Object is not something you create from scratch — it is automatically generated when you connect the Galaxy to an OI Server.
+</div>
+
+<p>In your TrainingGalaxy, the DI Object is called <strong>ProdPLC</strong>. It represents the connection to your Production PLC through the OI Server. Every attribute in your Galaxy that is bound to a PLC tag flows through this DI Object.</p>
+
+<h3>Key Characteristics of DI Objects</h3>
+<table>
+  <tr><th>Characteristic</th><th>Description</th></tr>
+  <tr>
+    <td><strong>Auto-created</strong></td>
+    <td>Generated automatically when the Galaxy connects to an OI Server — you do not create it manually</td>
+  </tr>
+  <tr>
+    <td><strong>System-managed</strong></td>
+    <td>Contains system-level attributes that monitor and control the OI Server connection</td>
+  </tr>
+  <tr>
+    <td><strong>Hierarchical</strong></td>
+    <td>Organized under the Galaxy in the IO Devices view, with topics and tags nested below it</td>
+  </tr>
+  <tr>
+    <td><strong>Deployable</strong></td>
+    <td>Must be deployed to the runtime engine before any I/O binding will work</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Where to find it:</strong> The DI Object appears in the <strong>IO Devices</strong> view under your Galaxy name. In the Model view, it may also appear as a deployment node. You can also find it in the deployment tree by right-clicking objects and looking at their deployment targets.
+</div>
+
+<!-- ============================================================ -->
+<h2>18.2 The Deployment View and Context Menu</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-19 to 5-20)</p>
+
+<p>Understanding the deployment context menu is essential for managing your DI Object and the objects that depend on it. When you right-click an object in the deployment tree, you get a context menu with key operations:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0237_0.png" alt="Deployment view: right-click Mixer100 showing context menu">
+  <div class="caption">Right-clicking Mixer100 in the deployment view reveals the context menu: Deploy, Undeploy, Assign To, Export, and Properties (Module 5, page 5-19)</div>
+</div>
+
+<h3>Context Menu Options Explained</h3>
+<table>
+  <tr><th>Option</th><th>What It Does</th></tr>
+  <tr>
+    <td><strong>Deploy</strong></td>
+    <td>Pushes the object to the runtime engine. The object begins executing, communicating with the OI Server, and processing data.</td>
+  </tr>
+  <tr>
+    <td><strong>Undeploy</strong></td>
+    <td>Removes the object from the runtime engine. It returns to development-only status and stops all data communication.</td>
+  </tr>
+  <tr>
+    <td><strong>Assign To</strong></td>
+    <td>Changes which deployment node (e.g., which $WinPlatform or AppEngine) the object runs on. Useful for restructuring your deployment topology.</td>
+  </tr>
+  <tr>
+    <td><strong>Export</strong></td>
+    <td>Exports the object and its configuration for use in another Galaxy or for backup purposes.</td>
+  </tr>
+  <tr>
+    <td><strong>Properties</strong></td>
+    <td>Opens the object's properties dialog where you can configure deployment-specific settings such as which nodes to deploy to and deployment priorities.</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Deployment Chain:</strong> When you deploy Mixer100, it must be deployed to a deployment node (such as an AppEngine running on a $WinPlatform). That deployment node must itself be deployed. And if Mixer100 has I/O bindings, the DI Object (ProdPLC) must also be deployed. Application Server tracks these dependencies and will warn you if required objects are not deployed.
+</div>
+
+<div class="pitfall">
+  <strong>⚠ Pitfall — Missing Dependencies:</strong> If you deploy an automation object that has I/O bindings but the DI Object is not deployed, the attribute will show <code>Quality = Bad</code> or <code>Quality = Uncertain</code>. Always ensure the DI Object and its OI Server are deployed and connected before binding attributes to I/O.
+</div>
+
+<!-- ============================================================ -->
+<h2>18.3 DI Object Attributes — ConnectionStatus</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-20 to 5-22)</p>
+
+<p>The DI Object contains several critical system attributes that let you monitor and control the connection to the OI Server. Let's examine the ProdPLC DI Object's key attributes:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0238_0.png" alt="ProdPLC DI Object attributes showing ConnectionStatus, Reconnect, ScanState, and Topic status">
+  <div class="caption">The ProdPLC DI Object with its key attributes visible: ConnectionStatus = Connected, Reconnect = false, ScanState = true, Topic1.$Sys$Status = true (Module 5, page 5-20)</div>
+</div>
+
+<h3>Key Attributes of the DI Object</h3>
+<table>
+  <tr><th>Attribute</th><th>Value in Screenshot</th><th>What It Means</th></tr>
+  <tr>
+    <td><strong>ConnectionStatus</strong></td>
+    <td><code>Connected</code></td>
+    <td>Indicates the current state of the connection to the OI Server. Common values: <code>Connected</code>, <code>Disconnected</code>, <code>Connecting</code>, <code>Faulted</code>. When Connected, the OI Server is actively communicating with the field devices.</td>
+  </tr>
+  <tr>
+    <td><strong>Reconnect</strong></td>
+    <td><code>false</code></td>
+    <td>Controls automatic reconnection behavior. When <code>false</code>, Application Server will NOT automatically attempt to reconnect if the OI Server connection drops. When <code>true</code>, it will automatically retry the connection. In production, you typically want this set to <code>true</code>.</td>
+  </tr>
+  <tr>
+    <td><strong>ScanState</strong></td>
+    <td><code>true</code></td>
+    <td>Controls whether the OI Server actively polls the field devices. When <code>true</code>, data is being collected at the configured scan rate. When <code>false</code>, polling stops — useful for maintenance or troubleshooting without disconnecting entirely.</td>
+  </tr>
+  <tr>
+    <td><strong>Topic1.$Sys$Status</strong></td>
+    <td><code>true</code></td>
+    <td>A system-level attribute specific to Topic1. It indicates whether the topic is healthy and communicating. <code>true</code> means the topic is operational and data is flowing.</td>
+  </tr>
+</table>
+
+<div class="key-concept">
+  <strong>Understanding $Sys$ Attributes:</strong> Attributes prefixed with <code>$Sys$</code> are system-level attributes that Application Server uses internally for monitoring. They are read-only and provide real-time diagnostic information about the communication health. You cannot write to them — they are populated automatically by the runtime engine.
+</div>
+
+<h3>ConnectionStatus Values in Detail</h3>
+<table>
+  <tr><th>Status</th><th>Meaning</th><th>Action Required</th></tr>
+  <tr>
+    <td><code>Connected</code></td>
+    <td>Normal operation — OI Server is communicating with field devices</td>
+    <td>None — system is healthy</td>
+  </tr>
+  <tr>
+    <td><code>Disconnected</code></td>
+    <td>Connection lost — OI Server is not reachable</td>
+    <td>Check network, OI Server service, and deployment status</td>
+  </tr>
+  <tr>
+    <td><code>Connecting</code></td>
+    <td>Attempting to establish connection</td>
+    <td>Wait — connection attempt in progress</td>
+  </tr>
+  <tr>
+    <td><code>Faulted</code></td>
+    <td>Connection failed due to configuration error</td>
+    <td>Review OI Server configuration and topic settings</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>18.4 Monitoring the DI Object in Real Time</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-21 to 5-23)</p>
+
+<p>Once your DI Object is deployed and connected, you can monitor its attributes in real time. This is essential for verifying that communication is healthy and for diagnosing issues.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0239_0.png" alt="ProdPLC monitoring showing attributes with timestamps and Quality values">
+  <div class="caption">Monitoring the ProdPLC DI Object: the same attributes now show timestamps and Quality values. Quality = C0:Good indicates that all data is fresh and reliable (Module 5, page 5-21)</div>
+</div>
+
+<h3>Understanding Timestamps and Quality</h3>
+<p>When you monitor DI Object attributes in the Object Viewer or the Galaxy IDE, each attribute displays three pieces of information:</p>
+
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr>
+    <td><strong>Value</strong></td>
+    <td>The current attribute value (e.g., <code>Connected</code>, <code>true</code>)</td>
+  </tr>
+  <tr>
+    <td><strong>Timestamp</strong></td>
+    <td>When the value was last updated — critical for determining if data is fresh or stale</td>
+  </tr>
+  <tr>
+    <td><strong>Quality</strong></td>
+    <td>A code indicating data reliability. <code>C0:Good</code> means the value is fresh and trustworthy.</td>
+  </tr>
+</table>
+
+<h3>Quality Codes Explained</h3>
+<table>
+  <tr><th>Quality Code</th><th>Meaning</th><th>Typical Cause</th></tr>
+  <tr>
+    <td><code>C0:Good</code></td>
+    <td>Data is fresh and reliable</td>
+    <td>Normal operation — OI Server is polling and returning valid data</td>
+  </tr>
+  <tr>
+    <td><code>00:Bad</code></td>
+    <td>Data is unreliable or unavailable</td>
+    <td>OI Server disconnected, PLC offline, or communication timeout</td>
+  </tr>
+  <tr>
+    <td><code>40:Uncertain</code></td>
+    <td>Data may or may not be valid</td>
+    <td>Intermittent communication issues or the last known value may be stale</td>
+  </tr>
+  <tr>
+    <td><code>80:Good, Local Override</code></td>
+    <td>Value has been manually overridden locally</td>
+    <td>Someone used the Modify Value dialog to force a value</td>
+  </tr>
+</table>
+
+<div class="tip">
+  <strong>Tip — Continuous Monitoring:</strong> Leave the Object Viewer open while you work. If you see the Quality change from <code>C0:Good</code> to <code>00:Bad</code>, you'll know immediately that a communication issue has occurred. This is far better than discovering the problem hours later when an operator reports that the HMI is showing stale data.
+</div>
+
+<!-- ============================================================ -->
+<h2>18.5 Configuring DI Object Properties</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-22 to 5-24)</p>
+
+<p>While most DI Object attributes are system-managed, there are several properties you can and should configure for your specific application needs:</p>
+
+<h3>Scan State Configuration</h3>
+<p>The <strong>ScanState</strong> attribute controls whether the OI Server polls the field devices. This is one of the most useful operational tools:</p>
+
+<ul>
+  <li><strong>ScanState = true</strong> — Normal operation. The OI Server polls all configured tags at their defined rates.</li>
+  <li><strong>ScanState = false</strong> — Pauses all polling. Useful during maintenance windows, equipment testing, or when you need to freeze data for troubleshooting.</li>
+</ul>
+
+<div class="key-concept">
+  <strong>ScanState vs. Disconnect:</strong> Setting ScanState to <code>false</code> pauses polling but keeps the OI Server connection alive. Disconnecting the OI Server tears down the entire communication link. Use ScanState for temporary pauses; use disconnect for major maintenance.
+</div>
+
+<h3>Reconnect Configuration</h3>
+<p>The <strong>Reconnect</strong> attribute determines automatic recovery behavior:</p>
+
+<table>
+  <tr><th>Reconnect Value</th><th>Behavior</th><th>When to Use</th></tr>
+  <tr>
+    <td><code>true</code></td>
+    <td>Application Server automatically retries the connection if it drops</td>
+    <td>Production environments — you want automatic recovery without operator intervention</td>
+  </tr>
+  <tr>
+    <td><code>false</code></td>
+    <td>No automatic retry — you must manually re-enable the connection</td>
+    <td>Development/testing environments, or when you want controlled reconnection</td>
+  </tr>
+</table>
+
+<h3>Topic-Level Configuration</h3>
+<p>Each topic under the DI Object also has system attributes:</p>
+
+<table>
+  <tr><th>Attribute</th><th>Purpose</th></tr>
+  <tr>
+    <td><code>Topic1.$Sys$Status</code></td>
+    <td>Indicates if the topic is healthy (<code>true</code>) or faulted (<code>false</code>)</td>
+  </tr>
+  <tr>
+    <td><code>Topic1.$Sys$LastError</code></td>
+    <td>Contains the last error message if the topic encountered a problem</td>
+  </tr>
+  <tr>
+    <td><code>Topic1.$Sys$ScanRate</code></td>
+    <td>The configured polling rate for this topic (in milliseconds)</td>
+  </tr>
+</table>
+
+<div class="pitfall">
+  <strong>⚠ Common Issue — Topic Not Ready:</strong> After deploying, if <code>Topic1.$Sys$Status</code> shows <code>false</code>, check: (1) Is the OI Server running? (2) Is the topic configured in the OI Server? (3) Is the network path to the PLC valid? (4) Is the DI Object deployed? The $Sys$ attributes are your first line of diagnostic defense.
+</div>
+
+<!-- ============================================================ -->
+<h2>18.6 Lab 10: Configuring the DI Object — Step by Step</h2>
+<p class="page-ref">Reference: Module 5, Lab 10 (pages 5-19 to 5-26)</p>
+
+<div class="lab">
+  <h3>Lab 10 — Configuring the DI Object</h3>
+  <p><strong>Objective:</strong> Configure and verify the DI Object (ProdPLC) to ensure reliable communication between your Galaxy and the field devices through the OI Server.</p>
+  <p><strong>Prerequisites:</strong> Lab 9 completed — OI Server is running, Galaxy is connected, and the ProdPLC DI Object exists in your Galaxy.</p>
+</div>
+
+<h3>Step 1: Locate the DI Object</h3>
+<ol>
+  <li>Open the Galaxy IDE with TrainingGalaxy loaded.</li>
+  <li>In the <strong>IO Devices</strong> view, expand your Galaxy to see the DI Object hierarchy.</li>
+  <li>Locate <strong>ProdPLC</strong> — this is your DI Object representing the OI Server connection.</li>
+  <li>Verify that Topic1 is listed under ProdPLC and that tags (Agitator_001, Inlet1_001, Level1, etc.) are visible.</li>
+</ol>
+
+<h3>Step 2: Deploy the DI Object</h3>
+<ol>
+  <li>In the <strong>Deployment</strong> or <strong>Model</strong> view, locate ProdPLC.</li>
+  <li>Right-click ProdPLC and select <strong>Deploy</strong>.</li>
+  <li>Review the deployment wizard — confirm the target deployment node(s).</li>
+  <li>Complete the deployment. Wait for the deployment to finish successfully.</li>
+</ol>
+
+<div class="tip">
+  <strong>Tip:</strong> If you deployed the entire Galaxy in a previous lab, the DI Object may already be deployed. Check its status — deployed objects typically show a specific icon or status indicator in the deployment tree.
+</div>
+
+<h3>Step 3: Verify Connection Status</h3>
+<ol>
+  <li>After deployment, locate the <strong>ConnectionStatus</strong> attribute on the ProdPLC DI Object.</li>
+  <li>Verify it shows <code>Connected</code>. If it shows <code>Disconnected</code> or <code>Faulted</code>, troubleshoot the OI Server connection.</li>
+  <li>Check <strong>ScanState</strong> — it should be <code>true</code>, indicating active polling.</li>
+  <li>Check <strong>Reconnect</strong> — note its current value. For production, you would typically set this to <code>true</code>.</li>
+</ol>
+
+<h3>Step 4: Check Topic Health</h3>
+<ol>
+  <li>Expand the ProdPLC DI Object to see Topic1.</li>
+  <li>Check <strong>Topic1.$Sys$Status</strong> — it should be <code>true</code>, indicating the topic is healthy.</li>
+  <li>If the status is <code>false</code>, check the OI Server configuration and verify the PLC is accessible.</li>
+</ol>
+
+<h3>Step 5: Monitor with Timestamps and Quality</h3>
+<ol>
+  <li>Open the <strong>Object Viewer</strong> (press <strong>F12</strong> or use the toolbar).</li>
+  <li>Navigate to the ProdPLC DI Object.</li>
+  <li>Observe the attribute values along with their <strong>timestamps</strong> and <strong>Quality</strong> indicators.</li>
+  <li>Verify that Quality shows <code>C0:Good</code> for all attributes — this confirms data is fresh and reliable.</li>
+  <li>Note the timestamps — they should be recent (within the last few seconds), confirming active communication.</li>
+</ol>
+
+<h3>Step 6: Test ScanState Control</h3>
+<ol>
+  <li>In the Object Viewer, locate the <strong>ScanState</strong> attribute.</li>
+  <li>Double-click the value and change it from <code>true</code> to <code>false</code>.</li>
+  <li>Wait a few seconds and observe: the tag values should stop updating (timestamps freeze).</li>
+  <li>Set ScanState back to <code>true</code>. Verify that tag values resume updating.</li>
+</ol>
+
+<div class="pitfall">
+  <strong>⚠ Caution:</strong> Only modify ScanState in a training/development environment. In a production system, setting ScanState to false will stop all data collection from that OI Server, potentially causing operators to see stale data on their screens.
+</div>
+
+<h3>Step 7: Test Reconnect Behavior</h3>
+<ol>
+  <li>Note the current value of the <strong>Reconnect</strong> attribute.</li>
+  <li>Set <strong>Reconnect = false</strong>.</li>
+  <li>If possible, temporarily disconnect the OI Server (stop the OI Server service or disconnect the network).</li>
+  <li>Observe that <strong>ConnectionStatus</strong> changes to <code>Disconnected</code>.</li>
+  <li>Restart the OI Server / restore the network connection.</li>
+  <li>With Reconnect = false, observe that the connection does NOT automatically recover — <strong>ConnectionStatus</strong> remains <code>Disconnected</code>.</li>
+  <li>Now set <strong>Reconnect = true</strong>. The connection should automatically re-establish, and <strong>ConnectionStatus</strong> should return to <code>Connected</code>.</li>
+  <li>For the remainder of the labs, leave Reconnect = true (the recommended production setting).</li>
+</ol>
+
+<h3>Step 8: Document Your Findings</h3>
+<p>Record the following observations from this lab:</p>
+<table>
+  <tr><th>Attribute</th><th>Expected Value</th><th>Actual Value</th><th>Notes</th></tr>
+  <tr><td>ConnectionStatus</td><td>Connected</td><td></td><td></td></tr>
+  <tr><td>ScanState</td><td>true</td><td></td><td></td></tr>
+  <tr><td>Reconnect</td><td>true</td><td></td><td></td></tr>
+  <tr><td>Topic1.$Sys$Status</td><td>true</td><td></td><td></td></tr>
+  <tr><td>Quality</td><td>C0:Good</td><td></td><td></td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>18.7 Key Terms</h2>
+
+<table>
+  <tr><th>Term</th><th>Definition</th></tr>
+  <tr>
+    <td><strong>DI Object</strong></td>
+    <td>Device Integration Object — a system object in the Galaxy that represents a connection to an OI Server</td>
+  </tr>
+  <tr>
+    <td><strong>ConnectionStatus</strong></td>
+    <td>A system attribute indicating the current state of the OI Server connection (Connected, Disconnected, Connecting, Faulted)</td>
+  </tr>
+  <tr>
+    <td><strong>ScanState</strong></td>
+    <td>A controllable attribute that starts (true) or pauses (false) OI Server polling of field devices</td>
+  </tr>
+  <tr>
+    <td><strong>Reconnect</strong></td>
+    <td>A controllable attribute that enables (true) or disables (false) automatic reconnection after a connection loss</td>
+  </tr>
+  <tr>
+    <td><strong>$Sys$ Attributes</strong></td>
+    <td>System-level read-only attributes prefixed with $Sys$ that provide real-time diagnostic information</td>
+  </tr>
+  <tr>
+    <td><strong>Quality Code</strong></td>
+    <td>A code indicating data reliability: C0:Good (reliable), 00:Bad (unreliable), 40:Uncertain (may be stale)</td>
+  </tr>
+  <tr>
+    <td><strong>Topic</strong></td>
+    <td>A communication channel within an OI Server configured to talk to a specific PLC or device</td>
+  </tr>
+  <tr>
+    <td><strong>Deployment Chain</strong></td>
+    <td>The dependency chain: automation objects depend on deployment nodes, which depend on $WinPlatforms, which depend on Bootstrap services</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>18.8 Quiz</h2>
+
+<div class="quiz">
+  <h3>Question 1</h3>
+  <p>What is a DI Object and how is it created?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p>A <span class="answer">DI Object (Device Integration Object)</span> is a special system object in the Galaxy that represents a connection to an OI Server. It is <span class="answer">automatically created</span> when the Galaxy connects to an OI Server — you do not create it manually. In your TrainingGalaxy, the DI Object is called <span class="answer">ProdPLC</span>.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 2</h3>
+  <p>What does the <code>ConnectionStatus</code> attribute indicate, and what value do you want to see during normal operation?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p>The <span class="answer">ConnectionStatus</span> attribute indicates the current state of the connection between Application Server and the OI Server. During normal operation, you want to see <span class="answer">Connected</span>. Other values include Disconnected, Connecting, and Faulted — all of which indicate a problem that needs attention.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 3</h3>
+  <p>What is the difference between setting <strong>ScanState = false</strong> and <strong>disconnecting</strong> the OI Server?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">ScanState = false</span> pauses all polling of field devices but <span class="answer">keeps the OI Server connection alive</span>. Tag values freeze at their last known values. <span class="answer">Disconnecting</span> the OI Server tears down the entire communication link. Use ScanState for temporary pauses (maintenance, testing); use disconnect for major maintenance or shutdown.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 4</h3>
+  <p>What does a Quality value of <code>C0:Good</code> mean, and what should you do if you see <code>00:Bad</code> instead?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p><span class="answer">C0:Good</span> means the data is fresh and reliable — the OI Server is actively polling and returning valid data. If you see <span class="answer">00:Bad</span>, it means the data is unreliable or unavailable, typically because the OI Server is disconnected, the PLC is offline, or there is a communication timeout. Troubleshoot by checking: OI Server status, network connectivity, PLC availability, and deployment status.</p>
+  </details>
+</div>
+
+<div class="quiz">
+  <h3>Question 5</h3>
+  <p>In a production environment, what should the <strong>Reconnect</strong> attribute be set to, and why?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p>In production, Reconnect should be set to <span class="answer">true</span>. This ensures that if the OI Server connection drops (due to a network glitch, OI Server restart, etc.), Application Server will <span class="answer">automatically attempt to re-establish the connection</span> without requiring manual operator intervention. Without automatic reconnection, a temporary disruption could leave the system in a disconnected state indefinitely until someone notices and manually intervenes.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<h2>18.9 What You Learned</h2>
+
+<div class="key-concept">
+  <strong>In this lesson, you learned:</strong>
+  <ul>
+    <li>What a <strong>DI Object</strong> is — a system object that represents the connection between your Galaxy and an OI Server</li>
+    <li>How to locate and identify the DI Object in the IO Devices view</li>
+    <li>The key attributes of the DI Object: <strong>ConnectionStatus</strong>, <strong>ScanState</strong>, <strong>Reconnect</strong>, and topic-level <strong>$Sys$</strong> attributes</li>
+    <li>How to use the <strong>deployment context menu</strong> (Deploy, Undeploy, Assign To, Export, Properties)</li>
+    <li>How to <strong>monitor</strong> the DI Object with timestamps and Quality values</li>
+    <li>What Quality codes mean: <strong>C0:Good</strong>, <strong>00:Bad</strong>, <strong>40:Uncertain</strong></li>
+    <li>How to configure <strong>ScanState</strong> to pause/resume polling and <strong>Reconnect</strong> to control automatic recovery</li>
+    <li>Best practices: always ensure the DI Object is deployed before binding attributes, set Reconnect = true in production, and monitor Quality values continuously</li>
+  </ul>
+</div>
+<!-- ============================================================ -->
+
+<nav style="margin-top: 2em; padding-top: 1em; border-top: 1px solid #ddd;">
+  <a href="L17-Lab10-DI-Object.html">← Lesson 17: Connecting to Field Data</a> &nbsp;|&nbsp;
+  <a href="L19-Lab11-Verifying.html">Lesson 19: Verifying I/O →</a>
+</nav>
+
+</body>
+</html>

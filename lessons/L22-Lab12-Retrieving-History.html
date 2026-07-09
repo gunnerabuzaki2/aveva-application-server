@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 22: Lab 12 — Configuring and Retrieving History</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L21-Platform-Deployment.html">← Lesson 21: Platform Deployment</a> &nbsp;|&nbsp;
+  <a href="L01-System-Platform-Galaxy.html">Back to Module 1 →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+</div>
+</details>
+</nav>
+
+<h1>Lesson 22: Lab 12 — Configuring and Retrieving History</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Lab 12: Configuring and Retrieving History (pages 6-11 to 6-22)</p>
+<p class="page-ref">Hands-on lab covering platform-level history settings, enabling history on template attributes, deploying to production, and verifying data collection using Historian Client Web.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>22.1 Overview — What This Lab Covers</h2>
+<p class="page-ref">Reference: Lab 12 (pages 6-11 to 6-12)</p>
+
+<p>This lab walks through the complete history workflow — from configuring the platform's Store and Forward settings, to enabling history on individual attributes in your templates, to deploying the changes to the production platform, and finally verifying that data is flowing into the Historian using Historian Client Web.</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Review and configure the WinPlatform's Store and Forward (S&amp;F) settings for historical data</li>
+    <li>Enable History on attributes in the SMeter and SValve templates</li>
+    <li>Configure history parameters: Trend High/Low, deadband, interpolation, and storage period</li>
+    <li>Check in template changes and verify propagation to descendant objects</li>
+    <li>Deploy the updated galaxy to the production platform</li>
+    <li>Use Historian Client Web to retrieve and view historical trends</li>
+  </ul>
+</div>
+
+<p><strong>Prerequisites:</strong> You should have completed Labs 9–11 with the production platform deployed, objects running under <code>AppEngine1 → ControlSystem → Line1/Mixer100</code>, and Historian Client Web accessible (typically at <code>http://localhost:32573</code>).</p>
+
+<!-- ============================================================ -->
+<h2>22.2 Configuring Platform History and Store-and-Forward</h2>
+<p class="page-ref">Reference: Lab 12 (pages 6-11 to 6-13)</p>
+
+<p>Before enabling history on individual attributes, verify that the WinPlatform is properly configured for historical data collection. The platform's <strong>Store and Forward</strong> settings control how historical data is buffered locally before being sent to the Historian.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0260_0.png" alt="ProdPlatform General tab with S&F settings">
+  <div class="caption">ProdPlatform General tab: Network address = S00PROD, History store and forward path = C:\S&amp;F, Min RAM = 1024 MB, Stats average period = 10000 ms. Additional tabs visible: Engine, Alarms, Platform History, Scheduler History (page 6-11)</div>
+</div>
+
+<p>The key settings on this tab:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th><th>Purpose</th></tr>
+  <tr><td><strong>Network</strong></td><td>S00PROD</td><td>The network address where this platform is accessible</td></tr>
+  <tr><td><strong>History store and forward path</strong></td><td>C:\S&amp;F</td><td>Local disk path where historical data is buffered before forwarding to the Historian</td></tr>
+  <tr><td><strong>Min RAM</strong></td><td>1024 MB</td><td>Minimum RAM reserved for platform operations</td></tr>
+  <tr><td><strong>Stats average period</strong></td><td>10000 ms</td><td>How often platform statistics are averaged (10 seconds)</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Store and Forward (S&amp;F) is critical:</strong> The platform does <em>not</em> write directly to the Historian. Instead, historical data is first written to the local S&amp;F cache at <code>C:\S&amp;F</code>. If the Historian is temporarily unreachable (network outage, maintenance, etc.), data is buffered on disk. When connectivity is restored, the cached data is forwarded automatically. This guarantees <strong>zero data loss</strong> during transient failures.
+</div>
+
+<div class="pitfall">
+  <strong>Disk Space Warning:</strong> The S&amp;F cache consumes disk space. If the Historian is down for an extended period, the cache can grow large. Always ensure the S&amp;F path has sufficient free space. In production, use a dedicated, high-capacity drive — never use the system drive.
+</div>
+
+<p>The Platform History tab (also visible on this page) provides additional settings for controlling exactly which attributes are historized at the platform level. In most configurations, you enable history at the individual attribute level (covered in the next section) rather than at the platform level.</p>
+
+<!-- ============================================================ -->
+<h2>22.3 Enabling History on Template Attributes</h2>
+<p class="page-ref">Reference: Lab 12 (pages 6-13 to 6-16)</p>
+
+<p>History is enabled on a per-attribute basis. The most efficient approach is to enable it on the <strong>template</strong>, then check in the changes so they propagate to all descendant (instance) objects. This lab enables history on two key attributes: the SMeter PV and the SValve command/state attributes.</p>
+
+<h3>Step 1: Enable History on the SMeter PV Attribute</h3>
+<p class="page-ref">Reference: Lab 12 (page 6-13)</p>
+
+<p>Navigate to the <code>SMeter</code> template and open the <strong>PV</strong> attribute in the Attribute Viewer. Ensure the following properties are set:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0261_0.png" alt="SMeter PV attribute with History checked">
+  <div class="caption">SMeter PV attribute configuration: Data type = Float, Object writeable = checked, I/O enabled = checked, <strong>History = checked</strong>. Enabling the History checkbox tells the system to collect this attribute's values for historical storage (page 6-13)</div>
+</div>
+
+<p>The critical step is checking the <strong>History</strong> box. Without this, the Historian will never collect data for this attribute, regardless of any other configuration.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0261_1.png" alt="SMeter PV attribute additional details">
+  <div class="caption">Additional SMeter PV attribute details — verifying the attribute configuration before proceeding to History-specific settings (page 6-13)</div>
+</div>
+
+<h3>Step 2: Configure History Parameters</h3>
+<p class="page-ref">Reference: Lab 12 (pages 6-14 to 6-15)</p>
+
+<p>After checking the History box, expand the History section to configure the detailed parameters that control how data is collected and displayed:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0262_0.png" alt="History configuration details for PV attribute">
+  <div class="caption">History configuration: Trend High = 10.0, Trend Low = 0.0, Rollover = 0.0, Interpolation = SystemDefault, Swinging Door compression unchecked (page 6-14)</div>
+</div>
+
+<table>
+  <tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr>
+  <tr><td><strong>Trend High</strong></td><td>10.0</td><td>Upper bound of the Y-axis for Historian Client trends — scale the display to this maximum</td></tr>
+  <tr><td><strong>Trend Low</strong></td><td>0.0</td><td>Lower bound of the Y-axis for Historian Client trends — scale the display to this minimum</td></tr>
+  <tr><td><strong>Rollover</strong></td><td>0.0</td><td>Value at which the counter resets (0.0 = no rollover — used for counter-type tags)</td></tr>
+  <tr><td><strong>Interpolation</strong></td><td>SystemDefault</td><td>How the Historian fills in values between data points (SystemDefault uses the server's configured method)</td></tr>
+  <tr><td><strong>Swinging Door</strong></td><td>Unchecked</td><td>Compression algorithm — when unchecked, all data points are stored without compression</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Trend High/Low Best Practice:</strong> Set Trend High to slightly above your maximum expected value, and Trend Low to slightly below your minimum. For a level sensor that reads 0–10, Trend Low = 0.0 and Trend High = 10.0 is appropriate. These values only affect the <em>display</em> in Historian Client — they do not filter or truncate data.
+</div>
+
+<div class="key-concept">
+  <strong>On-Change vs. Periodic Storage:</strong><br>
+  • <strong>Force storage period = 0 ms</strong> (default) means the Historian stores a new value <em>only when the attribute changes</em> — this is "on-change" storage, the most common and efficient mode.<br>
+  • Setting a non-zero period (e.g., 5000 ms) forces the Historian to store a value every N milliseconds regardless of whether it changed — useful for critical process variables where you want guaranteed periodic snapshots.<br>
+  • <strong>Value deadband</strong> (typically 0.0) controls the minimum change required to trigger on-change storage. A deadband of 0.0 means every single change, no matter how small, is recorded.
+</div>
+
+<h3>Step 3: Review Inherited Attributes in the Mixer Agitator</h3>
+<p class="page-ref">Reference: Lab 12 (pages 6-16 to 6-17)</p>
+
+<p>Before checking in the template changes, it is useful to understand how attributes are inherited across the template hierarchy. The <code>$Mixer_Agitator</code> object demonstrates this clearly:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0265_0.jpeg" alt="$Mixer_Agitator Attributes showing template inheritance">
+  <div class="caption">$Mixer_Agitator Attributes: CMD and PV are inherited from the <code>[$Motor]</code> template (shown in brackets), while Speed.PV and Speed.SP are local attributes. The bracketed template name indicates the source of each inherited attribute (page 6-16)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0265_1.jpeg" alt="$Mixer_Agitator additional attributes">
+  <div class="caption">Additional view of $Mixer_Agitator attributes — confirming the full attribute list before template check-in (page 6-16)</div>
+</div>
+
+<p>Similarly, the SValve attributes show the same inheritance pattern:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0264_0.png" alt="SValve Attributes tab showing CMD and LSOpen">
+  <div class="caption">SValve Attributes: CMD (Valve Command) and LSOpen (Limit Switch Open) — both inherited from the template structure. History will be enabled on these attributes via the parent template (page 6-17)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0264_1.png" alt="SValve additional attribute details">
+  <div class="caption">SValve attribute details — verifying the command and state attributes before enabling history (page 6-17)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0264_2.png" alt="SValve attribute configuration">
+  <div class="caption">SValve attribute configuration view — confirming attribute types and I/O settings (page 6-17)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Template vs. Instance:</strong> Always enable history on the <strong>template</strong>, not on individual instances. If you enable it on an instance, you would need to repeat the process for every other instance. Template-level changes propagate to all instances during check-in.
+</div>
+
+<!-- ============================================================ -->
+<h2>22.4 Check-In — Propagating Changes to All Instances</h2>
+<p class="page-ref">Reference: Lab 12 (pages 6-18 to 6-19)</p>
+
+<p>After enabling history on the template attributes, check in the changes. This triggers the Galaxy to propagate the modifications to all descendant objects that inherit from the modified templates.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0263_0.png" alt="Check-in propagation to descendant objects">
+  <div class="caption">Check-in result: "Propagating template changes to 2 descendant objects. SMixer.Level: Successful. Optimizing galaxy database..." — the history configuration has been applied to all instances inheriting from the modified templates (page 6-18)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0263_1.png" alt="Check-in progress details">
+  <div class="caption">Check-in progress — the Galaxy database optimization runs after propagation to maintain performance (page 6-18)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0263_2.png" alt="Check-in completion">
+  <div class="caption">Check-in completed successfully — all descendant objects have received the template changes including history configuration (page 6-19)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Propagation in action:</strong> When you enable history on a template and check in, the Galaxy identifies every descendant object that inherits from that template and applies the changes. The message "Propagating template changes to 2 descendant objects" confirms the automatic propagation. The "Optimizing galaxy database" step ensures the Galaxy remains performant after the bulk update.
+</div>
+
+<!-- ============================================================ -->
+<h2>22.5 Deploying to Production</h2>
+<p class="page-ref">Reference: Lab 12 (pages 6-19 to 6-20)</p>
+
+<p>With the template changes propagated, deploy the updated galaxy to the production platform. This pushes the new history configuration to the running system.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0266_0.png" alt="Deployment tree showing production platform and objects">
+  <div class="caption">Deployment tree: TrainingGalaxy → ProdPlatform → AppEngine1 → ControlSystem → Line1/Mixer100 containing Agitator_001, Inlet1_001, Level_001, Outlet_001, Pump1_001, Temperature_001. All objects are now running with history enabled (page 6-20)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0266_1.png" alt="Deployment verification">
+  <div class="caption">Deployment verification — confirming all objects under Mixer100 are deployed and running with the updated history configuration (page 6-20)</div>
+</div>
+
+<p>At this point, the production platform is actively collecting historical data for all attributes that have History enabled. The Store and Forward mechanism on the WinPlatform buffers this data locally before forwarding it to the Historian.</p>
+
+<div class="tip">
+  <strong>Deployment tip:</strong> After deploying, allow a few minutes for data to accumulate before checking Historian Client Web. The first data points will appear once the Historian receives values from the S&amp;F cache.
+</div>
+
+<!-- ============================================================ -->
+<h2>22.6 Viewing Historical Data with Historian Client Web</h2>
+<p class="page-ref">Reference: Lab 12 (pages 6-21 to 6-22)</p>
+
+<p>Historian Client Web is the primary tool for viewing and analyzing historical data. Access it through a web browser — typically at <code>http://localhost:32573</code> or the Historian server's IP address.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0267_0.jpeg" alt="Historian Client Web main interface">
+  <div class="caption">Historian Client Web — the main dashboard interface for browsing, trending, and analyzing historical data. Use the Tag Selector to find attributes and create trends (page 6-21)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0267_1.jpeg" alt="Historian Client Web trend view">
+  <div class="caption">Historian Client Web — trend view showing historical data for selected tags (page 6-21)</div>
+</div>
+
+<h3>Step 4: Create a Trend for Level_001.PV</h3>
+<p class="page-ref">Reference: Lab 12 (pages 6-21 to 6-22)</p>
+
+<p>Select the <code>Level_001.PV</code> tag in Historian Client Web and create a trend to verify data collection is working:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0268_0.png" alt="Level_001.PV trend showing 63.09">
+  <div class="caption">Level_001.PV(I) = 63.09 with an upward trend, time range Jan 18, 2023. The <strong>(I)</strong> notation indicates interpolated values — the Historian calculates these between actual stored data points (page 6-22)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0268_1.png" alt="Level_001.PV trend details">
+  <div class="caption">Level_001.PV trend details — the current value and trend direction confirm that historical data is being collected and displayed correctly (page 6-22)</div>
+</div>
+
+<p>The <code>(I)</code> suffix after the value indicates <strong>interpolation</strong> — the Historian calculated this value by interpolating between the nearest stored data points. This is normal behavior and confirms the interpolation setting (SystemDefault) is working correctly.</p>
+
+<h3>Step 5: Examine Long-Term Trends</h3>
+<p class="page-ref">Reference: Lab 12 (page 6-22)</p>
+
+<p>Use the time selector in Historian Client Web to zoom out and view long-term trends. This reveals the full history of the tag since collection began:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0269_0.jpeg" alt="Long-term trend showing flat line and spike">
+  <div class="caption">Long-term trend: Level_001.PV stays flat near 0, then spikes to approximately 100 at 3 PM. The time selector ranges from 30 days (30D) down to 1 hour (1H) — use this to zoom in/out on historical data (page 6-22)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Reading Long-Term Trends:</strong> A flat line at 0 followed by a sharp spike typically means:
+  <ul>
+    <li>The Historian started collecting data at a specific point in time (when history was enabled)</li>
+    <li>Before that point, no data existed (flat line at 0 or default value)</li>
+    <li>The spike represents the first real values arriving from the process</li>
+    <li>Over time, the trend will show a continuous, meaningful line as more data accumulates</li>
+  </ul>
+</div>
+
+<div class="tip">
+  <strong>Time Selector Tips:</strong>
+  <ul>
+    <li><strong>30D</strong> — 30-day view: good for seeing overall patterns and identifying when events occurred</li>
+    <li><strong>1D</strong> — 1-day view: see daily cycles and shifts</li>
+    <li><strong>1H</strong> — 1-hour view: detailed analysis of recent behavior</li>
+    <li>Use the zoom controls or enter a custom time range to focus on specific periods of interest</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>22.7 Summary — Complete History Workflow</h2>
+<p class="page-ref">Reference: Lab 12 (page 6-22)</p>
+
+<p>This lab demonstrated the complete end-to-end history workflow in Application Server:</p>
+
+<table>
+  <tr><th>Step</th><th>Action</th><th>Key Detail</th></tr>
+  <tr><td>1</td><td>Configure Platform S&amp;F</td><td>Set the Store and Forward path on the WinPlatform (e.g., C:\S&amp;F) to buffer historical data locally</td></tr>
+  <tr><td>2</td><td>Enable History on attributes</td><td>Check the History box on template attributes (SMeter.PV, SValve.CMD/LSOpen)</td></tr>
+  <tr><td>3</td><td>Configure history parameters</td><td>Set Trend High/Low, deadband, interpolation, and storage period per attribute</td></tr>
+  <tr><td>4</td><td>Check in changes</td><td>Template changes propagate automatically to all descendant objects</td></tr>
+  <tr><td>5</td><td>Deploy to production</td><td>Deploy the updated galaxy to push the history configuration to the running system</td></tr>
+  <tr><td>6</td><td>Verify with Historian Client Web</td><td>Create trends, check current values, and examine long-term data patterns</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Module 6 Complete — Modules 5 &amp; 6 Summary:</strong> You now understand the complete data flow from PLC through Application Server into the Historian, how to enable and configure history on attributes, how template propagation simplifies bulk changes, and how to use Historian Client Web to retrieve and analyze historical data. This completes the AVEVA Application Server training curriculum.
+</div>
+
+<!-- ============================================================ -->
+<div class="quiz">
+  <h3>Quiz — Test Your Understanding</h3>
+
+  <p><strong>Q1:</strong> What is the purpose of the Store and Forward (S&amp;F) cache on the WinPlatform?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The S&amp;F cache buffers historical data on local disk when the Historian is temporarily unreachable. When connectivity is restored, the buffered data is forwarded automatically, guaranteeing no data loss during transient outages.</p></details>
+
+  <p><strong>Q2:</strong> What happens if you forget to check the History box on an attribute?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The Historian will not collect any data for that attribute, regardless of other settings. The History checkbox is the master switch — without it enabled, no historical data is stored for that attribute.</p></details>
+
+  <p><strong>Q3:</strong> What does the <code>(I)</code> suffix after a value in Historian Client Web mean?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">It indicates the value is <strong>interpolated</strong> — the Historian calculated it by interpolating between the nearest actual stored data points. This is normal behavior, especially when viewing data at time points between stored samples.</p></details>
+
+  <p><strong>Q4:</strong> Why should you enable history on the template rather than on individual instances?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Enabling history on the template allows you to configure it once and have the changes propagate automatically to all descendant objects during check-in. Enabling it on instances would require repeating the configuration for each one individually.</p></details>
+
+  <p><strong>Q5:</strong> In the ProdPlatform General tab, what is the default Store and Forward path shown in the lab?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">C:\S&amp;F — this is the local disk path where the platform buffers historical data. In production, use a dedicated, high-capacity drive with sufficient space for extended Historian outages.</p></details>
+
+  <p><strong>Q6:</strong> What does a flat line at 0 followed by a sharp spike in a long-term trend indicate?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">It indicates when history collection started — the flat line represents the period before data was being collected (no data stored), and the spike represents the first real values arriving once history was enabled. Over time, the trend becomes a continuous line.</p></details>
+
+  <p><strong>Q7:</strong> What does setting Force storage period to 0 ms mean, and when would you use a non-zero value?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Force storage period = 0 ms means on-change storage — data is stored only when the attribute value actually changes. A non-zero value (e.g., 5000 ms) forces periodic storage at that interval regardless of change, which is useful for critical process variables where guaranteed periodic snapshots are needed.</p></details>
+
+  <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>Key Takeaways</h2>
+<ol>
+  <li>The <strong>Store and Forward</strong> mechanism on the WinPlatform ensures zero data loss by buffering historical data locally before forwarding to the Historian.</li>
+  <li><strong>History is enabled per-attribute</strong> — always check the History box on template attributes for efficient, consistent configuration.</li>
+  <li><strong>Trend High/Low</strong> control the Y-axis display range in Historian Client — they do not filter or truncate data.</li>
+  <li><strong>Force storage period = 0</strong> means on-change storage; use non-zero values for guaranteed periodic snapshots.</li>
+  <li><strong>Template propagation</strong> during check-in automatically applies history configuration to all descendant objects.</li>
+  <li><strong>Historian Client Web</strong> is the primary tool for viewing trends, with configurable time ranges from 30 days down to 1 hour.</li>
+  <li>The <strong>(I)</strong> suffix in trends indicates interpolated values calculated between actual data points.</li>
+</ol>
+
+<p class="source">🎉 This lesson completes the AVEVA Application Server training curriculum — Modules 1 through 6.</p>
+
+<!-- ============================================================ -->
+<nav style="margin-top:2em;">
+  <a href="L21-Platform-Deployment.html">← Lesson 21: Platform Deployment</a> &nbsp;|&nbsp;
+  <a href="L01-System-Platform-Galaxy.html">Back to Module 1 →</a>
+</nav>
+
+</body>
+</html>
