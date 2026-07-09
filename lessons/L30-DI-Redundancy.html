@@ -29,6 +29,11 @@
   nav a { color: #2c5f2d; }
   .source { font-size: 0.85em; color: #777; font-style: italic; }
   .page-ref { font-size: 0.8em; color: #999; }
+
+  .checkbox-label { cursor: pointer; }
+  .checkbox-label input { margin-right: 0.3em; }
+  #progress-text { color: #2c5f2d; font-weight: bold; }
+
 </style>
 </head>
 <body>
@@ -39,51 +44,53 @@
 </nav>
 
 <nav style="margin-bottom:1.5em;">
-<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
 <summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
 <div style="margin-top:0.8em;line-height:2;">
 <strong>Module 1 — Introduction</strong><br>
-<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
-<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
-<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
-<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L01" onchange="saveProgress()"> <a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L02" onchange="saveProgress()"> <a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L03" onchange="saveProgress()"> <a href="L03-Automation-Objects.html">L03: Automation Objects</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L04" onchange="saveProgress()"> <a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a></label><br>
 <strong>Module 2 — Application Planning</strong><br>
-<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L05" onchange="saveProgress()"> <a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a></label><br>
 <strong>Module 3 — Application Infrastructure</strong><br>
-<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
-<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
-<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
-<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
-<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L06" onchange="saveProgress()"> <a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L07" onchange="saveProgress()"> <a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L08" onchange="saveProgress()"> <a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L09" onchange="saveProgress()"> <a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L10" onchange="saveProgress()"> <a href="L10-Data-Simulation.html">L10: Data Simulation</a></label><br>
 <strong>Module 4 — Application Objects</strong><br>
-<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
-<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
-<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
-<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L11" onchange="saveProgress()"> <a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L12" onchange="saveProgress()"> <a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L13" onchange="saveProgress()"> <a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L14" onchange="saveProgress()"> <a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a></label><br>
 <strong>Module 5 — Device Integration</strong><br>
-<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
-<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
-<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L15" onchange="saveProgress()"> <a href="L15-Device-Integration-Servers.html">L15: DI Servers</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L16" onchange="saveProgress()"> <a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L17" onchange="saveProgress()"> <a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a></label><br>
 <strong>Module 6 — History</strong><br>
-<a href="L18-History.html">L18: History + Lab 12</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L18" onchange="saveProgress()"> <a href="L18-History.html">L18: History + Lab 12</a></label><br>
 <strong>Module 7 — Alarms and Events</strong><br>
-<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
-<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L23" onchange="saveProgress()"> <a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L24" onchange="saveProgress()"> <a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a></label><br>
 <strong>Module 8 — Object Management</strong><br>
-<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
-<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L25" onchange="saveProgress()"> <a href="L25-Object-Export-Import.html">L25: Object Export and Import</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L26" onchange="saveProgress()"> <a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a></label><br>
 <strong>Module 9 — Security</strong><br>
-<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
-<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L27" onchange="saveProgress()"> <a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L28" onchange="saveProgress()"> <a href="L28-Object-Security.html">L28: Object Security + Lab 17</a></label><br>
 <strong>Module 10 — Application Redundancy</strong><br>
-<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
-<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L29" onchange="saveProgress()"> <a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L30" onchange="saveProgress()"> <a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a></label><br>
 <strong>Module 11 — QuickScript.NET</strong><br>
-<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
-<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
-<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L31" onchange="saveProgress()"> <a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L32" onchange="saveProgress()"> <a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L33" onchange="saveProgress()"> <a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a></label><br>
 <strong>Module 12 — Galaxy Backup and Restore</strong><br>
-<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L34" onchange="saveProgress()"> <a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a></label><br>
+<div style="margin-top:0.8em;padding-top:0.5em;border-top:1px solid #ddd;font-size:0.85em;color:#666;">
+<span id="progress-text">0 / 34 completed</span>
+</div>
 </div>
 </nav>
 
@@ -206,7 +213,7 @@
 <p><strong>Step 3.</strong> Rename <code>ProdPLC</code> to <code>R_ProdPLC1</code>.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0464_0.png" alt="Model view showing TrainingGalaxy hierarchy with Plant/ControlSystem area and components">
+  <img src="../images/page_0464_0.png" alt="Model view showing Production area with Simulator, Packaging, Production, Line1/Line2, Mixer100/Mixer200 hierarchy">
   <div class="caption">Model view after renaming: <strong>TrainingGalaxy → Plant → ControlSystem</strong> shows the component hierarchy including AppEngine1, GRPlatform, ProdPlatform, the renamed <strong>R_ProdPLC1</strong>, and Simulator. The Packaging area is also visible. (page 10-38)</div>
 </div>
 
@@ -228,7 +235,7 @@
 </table>
 
 <div class="screenshot">
-  <img src="../images/page_0465_0.png" alt="R_ProdPLC2 General tab showing Server node S00PROD and Server name MBTCP">
+  <img src="../images/page_0465_0.png" alt="Model view tree showing TrainingGalaxy with Unassigned Area and ControlSystem containing AppEngine1, GRPlatform, ProdPlatform, R_ProdPLC1, R_ProdPLC2">
   <div class="caption"><strong>R_ProdPLC2</strong> configuration editor — General tab. The Server node is set to <strong>S00PROD</strong> (Modbus simulator node for this course) and Server name is <strong>MBTCP</strong> (Modbus TCP). Communication protocol is SuiteLink. (page 10-39)</div>
 </div>
 
@@ -239,7 +246,7 @@
 <p><strong>Step 10.</strong> Save and close and check in the object with an appropriate comment.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0465_1.png" alt="R_ProdPLC2 Topic tab showing Topic1 with ActiveOnDemand scan mode">
+  <img src="../images/page_0465_1.png" alt="R_ProdPLC2 configuration editor General tab showing Server node S00PROD and Server name MBTCP">
   <div class="caption"><strong>R_ProdPLC2</strong> Topic tab showing <strong>Topic1</strong> added with Scan Mode set to <strong>ActiveOnDemand</strong>. This matches the scan group configuration of the primary DIObject (R_ProdPLC1). (page 10-39)</div>
 </div>
 
@@ -250,19 +257,19 @@
 <p><strong>Step 11.</strong> In the Model view, assign the <code>R_ProdPLC2</code> instance to the <code>ControlSystem</code> area.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0464_1.png" alt="Model view showing R_ProdPLC2 in Unassigned Area before moving to ControlSystem">
+  <img src="../images/page_0464_1.png" alt="Model view showing R_ProdPLC1 highlighted in ControlSystem with Unassigned Area collapsed">
   <div class="caption">Model view with <strong>R_ProdPLC2</strong> highlighted in the <strong>Unassigned Area</strong>, ready to be moved to the ControlSystem area. The ControlSystem area already contains AppEngine1, GRPlatform, ProdPlatform, R_ProdPLC1, and Simulator. (page 10-38)</div>
 </div>
 
 <p><strong>Step 12.</strong> In the Deployment view, assign the <code>R_ProdPLC2</code> instance to <code>AppEngine1</code>.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0465_3.png" alt="Model view showing R_ProdPLC2 assigned to ControlSystem area with R_ProdPLC1">
+  <img src="../images/page_0465_3.png" alt="R_ProdPLC2 Topic tab showing Topic1 added with Scan Mode set to ActiveOnDemand">
   <div class="caption">Model view showing <strong>R_ProdPLC2</strong> selected/highlighted in the Unassigned Area, ready to be moved to the ControlSystem area alongside R_ProdPLC1, AppEngine1, GRPlatform, ProdPlatform, and Simulator. (page 10-40)</div>
 </div>
 
 <div class="screenshot">
-  <img src="../images/page_0466_0.png" alt="Deployment view showing Mixer200 components and R_ProdPLC2 in deployment tree">
+  <img src="../images/page_0466_0.png" alt="Model view with R_ProdPLC2 highlighted in ControlSystem alongside R_ProdPLC1">
   <div class="caption">Deployment view after assigning R_ProdPLC2. Shows the expanded <strong>Mixer200</strong> component tree (Agitator, Inlets, Level, Temperature, Outlet, Pumps) along with the plant-level nodes including <strong>R_ProdPLC2</strong>. (page 10-40)</div>
 </div>
 
@@ -274,21 +281,21 @@
 <p><strong>Step 16.</strong> In the <strong>Backup DI source</strong> drop-down list, select <code>R_ProdPLC2</code>.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0466_1.png" alt="ProdPLC RedundantDIObject General tab showing Primary DI source R_ProdPLC1 and Backup DI source R_ProdPLC2">
+  <img src="../images/page_0466_1.png" alt="Deployment view showing Mixer200 components (Agitator, Inlets, Level, Outlet, Pump, Temperature) with R_ProdPLC2 highlighted">
   <div class="caption"><strong>ProdPLC</strong> (RedundantDIObject) configuration editor — General tab. The <strong>Primary DI source</strong> is set to <strong>R_ProdPLC1</strong> and the <strong>Backup DI source</strong> is set to <strong>R_ProdPLC2</strong>. Tabs available include Scan Group, Block Read, Block Write, Attributes, and Scripts. (page 10-41)</div>
 </div>
 
 <p><strong>Step 17.</strong> On the Scan Group tab, click the <strong>Copy Common Scan Groups</strong> button.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0467_0.png" alt="Copy Common Scan Groups dialog showing Topic1 in Configured in primary, backup, and identically named sections">
+  <img src="../images/page_0467_0.png" alt="Deployment view showing TrainingGalaxy with Unassigned Host containing ProdPLC, GRPlatform with AppEngine1 Backup, ProdPlatform">
   <div class="caption"><strong>Copy Common Scan Groups</strong> dialog box. Topic1 appears in all three sections — <strong>Configured in primary</strong>, <strong>Configured in backup</strong>, and <strong>Identically named</strong> — confirming the scan groups match between R_ProdPLC1 and R_ProdPLC2. Click OK to proceed. (page 10-41)</div>
 </div>
 
 <p><strong>Step 18.</strong> Click OK.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0467_1.png" alt="ProdPLC Scan Group tab showing Topic1 in Available scan groups after copying common scan groups">
+  <img src="../images/page_0467_1.png" alt="ProdPLC RedundantDIObject General tab showing Primary DI source R_ProdPLC1 and Backup DI source R_ProdPLC2">
   <div class="caption">ProdPLC Scan Group tab after copying. <strong>Topic1</strong> now appears in the <strong>Available scan groups</strong> list under the Scan Group column. The <strong>Copy Common Scan Groups</strong> button is visible above the list. (page 10-41)</div>
 </div>
 
@@ -296,7 +303,7 @@
 <p><strong>Step 20.</strong> In the Model view, assign the <code>ProdPLC</code> instance to the <code>ControlSystem</code> area.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0467_2.png" alt="Model view showing ProdPLC RedundantDIObject selected in ControlSystem area alongside R_ProdPLC1 and R_ProdPLC2">
+  <img src="../images/page_0467_2.png" alt="Copy Common Scan Groups dialog showing Topic1 in all three sections (Configured in primary/backup, identically named)">
   <div class="caption">Model view with <strong>ProdPLC</strong> (the RedundantDIObject) selected/highlighted in the <strong>ControlSystem</strong> area. Both <strong>R_ProdPLC1</strong> and <strong>R_ProdPLC2</strong> are visible as sibling objects — the three components of the DI redundancy scheme are now organized together. (page 10-42)</div>
 </div>
 
@@ -309,7 +316,7 @@
 <p><strong>Step 21.</strong> In the Deployment view, assign the <code>ProdPLC</code> instance to <code>AppEngine1</code>.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0468_0.png" alt="Deployment view showing TrainingGalaxy with Unassigned Host, GRPlatform, and ProdPlatform hierarchy">
+  <img src="../images/page_0468_0.png" alt="ProdPLC Scan Group tab showing Topic1 in Available scan groups with Copy Common Scan Groups button">
   <div class="caption">Deployment view showing the current deployment hierarchy: <strong>TrainingGalaxy</strong> with Unassigned Host (containing <strong>DIO_Engine1</strong> with a warning icon — not yet assigned), <strong>GRPlatform</strong> with AppEngine1 (Backup), and <strong>ProdPlatform</strong> with AppEngine1. (page 10-42)</div>
 </div>
 
@@ -324,7 +331,7 @@
 <p><strong>Step 29.</strong> Deploy both <code>DIO_Engine1</code> and <code>DIO_Engine2</code>.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0468_1.png" alt="Deployment view showing DIO_Engine1 under Unassigned Host and AppEngine1 Backup under GRPlatform">
+  <img src="../images/page_0468_1.png" alt="Model view showing TrainingGalaxy with ControlSystem containing ProdPLC selected">
   <div class="caption">Deployment view after creating the dedicated engines. <strong>DIO_Engine1</strong> sits in Unassigned Host (ready to be moved to ProdPlatform), while <strong>AppEngine1 (Backup)</strong> runs on GRPlatform with a green checkmark. <strong>DIO_Engine2</strong> will be assigned to GRPlatform to host R_ProdPLC2. (page 10-43)</div>
 </div>
 
@@ -343,7 +350,7 @@
 <p><strong>Step 32.</strong> Expand <code>R_ProdPLC1\Topic1</code>. Notice that the objects are all undeployed.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0469_0.png" alt="Model view showing ProdPLC selected with R_ProdPLC1 and R_ProdPLC2 visible in hierarchy">
+  <img src="../images/page_0469_0.png" alt="Deployment view showing ProdPLC selected with Mixer200 components deployed underneath">
   <div class="caption">Model view showing the complete hierarchy with <strong>ProdPLC</strong> (RedundantDIObject) selected in the ControlSystem area. <strong>R_ProdPLC1</strong> and <strong>R_ProdPLC2</strong> are visible as the two source DIObjects that feed into the redundancy manager. (page 10-46)</div>
 </div>
 
@@ -352,7 +359,7 @@
 <p><strong>Step 35.</strong> Deploy the objects.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0469_1.png" alt="Deployment view showing ProdPLC selected with all components deployed under it">
+  <img src="../images/page_0469_1.png" alt="Deployment view showing DIO_Engine1 selected under Unassigned Host">
   <div class="caption">Deployment view after object deployment. <strong>ProdPLC</strong> is selected/highlighted. The deployment tree shows Mixer200 components (Agitator, Inlets, Level, Temperature, Outlet, Pumps) along with the other plant sections — objects have been successfully moved and deployed under the RedundantDIObject. (page 10-49)</div>
 </div>
 
@@ -407,7 +414,7 @@
 <p><strong>Step 42.</strong> Click OK.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0457_0.png" alt="Windows Network Connections showing Plant and RMC adapters with RMC right-clicked and Disable highlighted, plus Object Viewer showing Active-Standby not Available">
+  <img src="../images/page_0457_0.png" alt="Windows Network Connections showing Plant and RMC adapters with RMC right-clicked and Disable menu visible">
   <div class="caption"><strong>Left:</strong> Windows Network Connections showing two adapters — <strong>Plant</strong> (vmnet3 Ethernet Adapter, "cloud.training") and <strong>RMC</strong> (Intel 82574L Gigabit Network Adapter, "Unidentified network") with the right-click context menu showing <strong>Disable</strong> selected. <strong>Right:</strong> Object Viewer after disabling RMC — <code>AppEngine1.Redundancy.Status</code> reads <strong>"Active - Standby not Available"</strong> and <code>PartnerStatus = Unknown</code>, confirming the partner is unreachable. (page 10-31)</div>
 </div>
 

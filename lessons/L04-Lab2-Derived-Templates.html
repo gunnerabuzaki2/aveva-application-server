@@ -27,6 +27,11 @@
   nav a { color: #2c5f2d; }
   .source { font-size: 0.85em; color: #777; font-style: italic; }
   .page-ref { font-size: 0.8em; color: #999; }
+
+  .checkbox-label { cursor: pointer; }
+  .checkbox-label input { margin-right: 0.3em; }
+  #progress-text { color: #2c5f2d; font-weight: bold; }
+
 </style>
 </head>
 <body>
@@ -37,51 +42,53 @@
 </nav>
 
 <nav style="margin-bottom:1.5em;">
-<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
 <summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
 <div style="margin-top:0.8em;line-height:2;">
 <strong>Module 1 — Introduction</strong><br>
-<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
-<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
-<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
-<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L01" onchange="saveProgress()"> <a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L02" onchange="saveProgress()"> <a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L03" onchange="saveProgress()"> <a href="L03-Automation-Objects.html">L03: Automation Objects</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L04" onchange="saveProgress()"> <a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a></label><br>
 <strong>Module 2 — Application Planning</strong><br>
-<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L05" onchange="saveProgress()"> <a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a></label><br>
 <strong>Module 3 — Application Infrastructure</strong><br>
-<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
-<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
-<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
-<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
-<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L06" onchange="saveProgress()"> <a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L07" onchange="saveProgress()"> <a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L08" onchange="saveProgress()"> <a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L09" onchange="saveProgress()"> <a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L10" onchange="saveProgress()"> <a href="L10-Data-Simulation.html">L10: Data Simulation</a></label><br>
 <strong>Module 4 — Application Objects</strong><br>
-<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
-<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
-<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
-<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L11" onchange="saveProgress()"> <a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L12" onchange="saveProgress()"> <a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L13" onchange="saveProgress()"> <a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L14" onchange="saveProgress()"> <a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a></label><br>
 <strong>Module 5 — Device Integration</strong><br>
-<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
-<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
-<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L15" onchange="saveProgress()"> <a href="L15-Device-Integration-Servers.html">L15: DI Servers</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L16" onchange="saveProgress()"> <a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L17" onchange="saveProgress()"> <a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a></label><br>
 <strong>Module 6 — History</strong><br>
-<a href="L18-History.html">L18: History + Lab 12</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L18" onchange="saveProgress()"> <a href="L18-History.html">L18: History + Lab 12</a></label><br>
 <strong>Module 7 — Alarms and Events</strong><br>
-<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
-<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L23" onchange="saveProgress()"> <a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L24" onchange="saveProgress()"> <a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a></label><br>
 <strong>Module 8 — Object Management</strong><br>
-<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
-<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L25" onchange="saveProgress()"> <a href="L25-Object-Export-Import.html">L25: Object Export and Import</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L26" onchange="saveProgress()"> <a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a></label><br>
 <strong>Module 9 — Security</strong><br>
-<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
-<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L27" onchange="saveProgress()"> <a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L28" onchange="saveProgress()"> <a href="L28-Object-Security.html">L28: Object Security + Lab 17</a></label><br>
 <strong>Module 10 — Application Redundancy</strong><br>
-<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
-<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L29" onchange="saveProgress()"> <a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L30" onchange="saveProgress()"> <a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a></label><br>
 <strong>Module 11 — QuickScript.NET</strong><br>
-<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
-<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
-<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L31" onchange="saveProgress()"> <a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L32" onchange="saveProgress()"> <a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a></label><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L33" onchange="saveProgress()"> <a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a></label><br>
 <strong>Module 12 — Galaxy Backup and Restore</strong><br>
-<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+<label style="cursor:pointer;"><input type="checkbox" data-lesson="L34" onchange="saveProgress()"> <a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a></label><br>
+<div style="margin-top:0.8em;padding-top:0.5em;border-top:1px solid #ddd;font-size:0.85em;color:#666;">
+<span id="progress-text">0 / 34 completed</span>
+</div>
 </div>
 </nav>
 <h1>Lesson 4: Lab 2 &mdash; Creating Global Derived Templates + Licensing</h1>
