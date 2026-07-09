@@ -33,7 +33,7 @@
 
 <nav>
   <a href="L13-Change-Control-Lab7.html">← Lesson 13: Change Control</a> &nbsp;|&nbsp;
-  <a href="L01-System-Platform-Galaxy.html">Back to Module 1 →</a>
+  <a href="L15-Device-Integration-Servers.html">Lesson 15: DI Servers →</a>
 </nav>
 
 <nav style="margin-bottom:1.5em;">
@@ -126,7 +126,7 @@
 
 <div class="screenshot">
   <img src="../images/page_0189_0.png" alt="Deployment view showing Mixer100 with all contained components">
-  <div class="caption">Deployment view: TrainingGalaxy hierarchy showing Mixer100 under Line1 with all contained components — Agitator_001, Inlet1_001, Inlet2_001, Level_001, Outlet_001, Pump1_001, Pump2_001, and Temperature_001 (Module 4, page 4-45)</div>
+  <div class="caption">Deployment view: TrainingGalaxy → Unassigned Host, GRPlatform, ProdPlatform → AppEngine1 → ControlSystem → Line1/Mixer100 with Agitator_001, Inlet1_001, Inlet2_001, Level_001, Outlet_001, Pump1_001, Pump2_001, and Temperature_001</div>
 </div>
 
 <p>Consider the complete Mixer100 deployment hierarchy:</p>
@@ -192,21 +192,21 @@
 
 <div class="screenshot">
   <img src="../images/page_0195_0.png" alt="Templates pane showing available equipment templates">
-  <div class="caption">Templates pane showing the available templates in the Project folder — SMixer (selected), SMeter, SMotor, SValve, SLevel, and STemperature, along with system templates below (Module 4, page 4-55)</div>
+  <div class="caption">Templates pane: Project folder with SMixer (selected), SMeter, SMotor, SValve, SLevel, and STemperature. System templates above.</div>
 </div>
 
 <p><strong>Step 1a:</strong> Expand the <code>SMixer</code> template to see its child objects. The SMixer template already has <code>Level</code> and <code>Temperature</code> as contained child templates — these are the sensor components built into the mixer design.</p>
 
 <div class="screenshot">
   <img src="../images/page_0196_0.png" alt="SMixer template expanded showing Level and Temperature children">
-  <div class="caption">SMixer template expanded in the Templates pane, revealing Level and Temperature as contained child objects — the SValve template is also shown selected (Module 4, page 4-55)</div>
+  <div class="caption">Templates pane: SMixer expanded with Level and Temperature children. SValve selected.</div>
 </div>
 
 <p><strong>Step 1b:</strong> Examine the <code>$Mixer</code> object hierarchy. The template defines the complete structure: <code>$Inlet1</code>, <code>$Inlet2</code>, <code>$Mixer</code> (with Level and Temperature children), <code>$Outlet</code>, and <code>$Valve</code> — all nested within the Project folder.</p>
 
 <div class="screenshot">
   <img src="../images/page_0197_0.png" alt="$Mixer hierarchy tree showing contained objects">
-  <div class="caption">The $Mixer hierarchy tree: Project folder containing $Inlet1, $Inlet2, $Mixer (expanded to show Level and Temperature), $Outlet, and $Valve (Module 4, page 4-56)</div>
+  <div class="caption">Project hierarchy: $Inlet1, $Inlet2, $Mixer (expanded: Level, Temperature), $Outlet, $Valve</div>
 </div>
 
 <div class="tip">
@@ -219,61 +219,40 @@
 
 <p>With the Mixer hierarchy in place, the next step is configuring each contained object's unique attributes — I/O connections, Boolean labels, and command/state definitions. Start with the valve and motor attributes.</p>
 
-<p><strong>Step 2a — Configure the Valve's LSOpen attribute:</strong> The Limit Switch Open attribute on <code>$Valve</code> is a Boolean that indicates whether the valve is physically open or closed. Set the data type to Boolean, the False label to "Closed", and the True label to "Open". The I/O link reads from <code>&lt;IODevice&gt;.$Valve.LSOpen</code>.</p>
+<p><strong>Step 2a — Configure the Valve's CMD attribute:</strong> The Command attribute on <code>$Valve</code> controls whether the valve is open or closed. Set the data type to Boolean, the False label to "Close", the True label to "Open", and the Initial value to "Close". The I/O link writes to <code>&lt;IODevice&gt;.$Valve.CMD</code>.</p>
 
 <div class="screenshot">
-  <img src="../images/page_0197_1.png" alt="LSOpen attribute configuration for $Valve">
-  <div class="caption">Configuring the LSOpen attribute on $Valve — Name: LSOpen, Description: "Limit Switch Open", Data type: Boolean, False label: "Closed", True label: "Open", with I/O Read from &lt;IODevice&gt;.$Valve.LSOpen (Module 4, page 4-57)</div>
+  <img src="../images/page_0198_0.png" alt="CMD attribute configuration for $Valve">
+  <div class="caption">CMD attribute config: Name=CMD, Description=Valve Command, Boolean, False=Close, True=Open, Initial=Close, I/O Write to &lt;IODevice&gt;.$Valve.CMD</div>
 </div>
 
-<p><strong>Step 2b — Configure the Motor's CMD attribute:</strong> The motor command attribute controls starting and stopping the agitator motor. Set the data type to Boolean, False label to "Stop", True label to "Start", and Initial value to "Stop". The I/O link reads from and writes to <code>&lt;IODevice&gt;.$Motor.CMD</code>.</p>
-
-<div class="screenshot">
-  <img src="../images/page_0198_0.png" alt="CMD attribute configuration for $Motor">
-  <div class="caption">Configuring the CMD (Command) attribute on $Motor — Name: CMD, Description: "Command", Data type: Boolean, False label: "Stop", True label: "Start", Initial: "Stop", with I/O Read/Write to &lt;IODevice&gt;.$Motor.CMD (Module 4, page 4-58)</div>
-</div>
-
-<p><strong>Step 2c — Configure the Motor's PV attribute:</strong> The motor process variable (PV) reports the actual running state. Set the data type to Boolean, False label to "Stopped", and True label to "Running". The I/O link reads from <code>&lt;IODevice&gt;.$Motor.PV</code>.</p>
+<p><strong>Step 2b — Configure the Motor's PV attribute:</strong> The motor process variable (PV) reports the actual running state. Set the data type to Boolean, False label to "Stopped", and True label to "Running". The I/O link reads from <code>&lt;IODevice&gt;.$Motor.PV</code>.</p>
 
 <div class="screenshot">
   <img src="../images/page_0198_1.png" alt="PV attribute configuration for $Motor">
-  <div class="caption">Configuring the PV (State) attribute on $Motor — Name: PV, Description: "State", Data type: Boolean, False label: "Stopped", True label: "Running", with I/O Read from &lt;IODevice&gt;.$Motor.PV (Module 4, page 4-59)</div>
+  <div class="caption">PV attribute config: Name=PV, Description=State, Boolean, False=Stopped, True=Running, I/O Read from &lt;IODevice&gt;.$Motor.PV</div>
 </div>
 
 <div class="pitfall">
   <strong>Watch out:</strong> The CMD attribute is both Read and Write (operator can send commands), while the PV attribute is Read only (it reports actual state). This distinction is critical — you don't want the system accidentally overwriting the motor's real status.
 </div>
 
+<p><strong>Step 2c — Configure the Motor's CMD attribute:</strong> The motor command attribute controls starting and stopping the agitator motor. Set the data type to Boolean, False label to "Stop", True label to "Start". The I/O link reads from and writes to <code>&lt;IODevice&gt;.$Motor.CMD</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0200_0.png" alt="CMD attribute configuration for $Motor">
+  <div class="caption">CMD config for $Motor: Name=CMD, Description=Command, Boolean, False=Stop, True=Start, I/O Read/Write to &lt;IODevice&gt;.$Motor.CMD</div>
+</div>
+
 <!-- ============================================================ -->
 <h3>Step 3: Build the Containment Structure</h3>
 <p class="page-ref">Reference: Module 4, Lab 8 (pages 4-60 to 4-62)</p>
 
-<p>Now create the actual containment relationships. The <code>$Mixer</code> object in the Project folder contains all the sub-components — <code>$Inlet1</code>, <code>$Inlet2</code>, <code>$Mixer</code> (with Level and Temperature), <code>$Outlet</code>, and <code>$Valve</code>.</p>
+<p>Now create the actual containment relationships. Expand <code>$Mixer</code> in the Project folder to verify all sub-components are properly contained: <code>Inlet1</code>, <code>Inlet2</code>, <code>Level</code>, <code>Outlet</code>, and <code>Temperature</code>.</p>
 
 <div class="screenshot">
   <img src="../images/page_0199_0.png" alt="$Mixer containing all sub-objects in Project folder">
-  <div class="caption">The $Mixer object in the Project folder with all contained objects: $Inlet1, $Inlet2, $Mixer, $Outlet, and $Valve — this is the complete containment hierarchy (Module 4, page 4-60)</div>
-</div>
-
-<p><strong>Step 3a:</strong> With all contained objects in place and attributes configured, verify the final Mixer model. The <code>$Mixer</code> should show all its contained objects with their configured attributes.</p>
-
-<div class="screenshot">
-  <img src="../images/page_0200_0.png" alt="$Mixer with all contained objects fully configured">
-  <div class="caption">$Mixer with all contained objects fully configured — each child object has its attributes set with the correct I/O links and labels (Module 4, page 4-61)</div>
-</div>
-
-<p><strong>Step 3b:</strong> Verify the valve containment as well. The <code>$Valve</code> object contains <code>$Inlet1</code> and <code>$Inlet2</code> — both inlet valves are contained within the valve structure, with their LSOpen limit switch attributes properly configured.</p>
-
-<div class="screenshot">
-  <img src="../images/page_0201_0.png" alt="$Valve containing $Inlet1 and $Inlet2">
-  <div class="caption">The $Valve object showing $Inlet1 and $Inlet2 as contained objects — the valve structure organizes the inlet components within its hierarchy (Module 4, page 4-61)</div>
-</div>
-
-<p><strong>Step 3c:</strong> Confirm the Mixer-to-Inlet containment relationship. The <code>$Mixer</code> directly contains <code>$Inlet1</code>, establishing the physical containment path that the real mixer equipment represents.</p>
-
-<div class="screenshot">
-  <img src="../images/page_0201_1.png" alt="$Mixer showing $Inlet1 as contained object">
-  <div class="caption">The $Mixer with $Inlet1 as a contained object — this confirms the inlet is physically part of the mixer in the containment hierarchy (Module 4, page 4-62)</div>
+  <div class="caption">Project hierarchy with $Mixer expanded: Inlet1, Inlet2, Level, Outlet, Temperature</div>
 </div>
 
 <div class="key-concept">
@@ -281,28 +260,56 @@
 </div>
 
 <!-- ============================================================ -->
-<h3>Step 4: Deploy and Verify</h3>
-<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-63 to 4-66)</p>
+<h3>Step 4: Check In Changes</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-62 to 4-63)</p>
+
+<p>With all attributes configured and containment relationships established, check in the changes to the Galaxy. A successful check-in propagates the template changes to all descendant objects and optimizes the galaxy database.</p>
+
+<p><strong>Step 4a:</strong> Check in the <code>$Valve</code> template. The system propagates changes to descendant objects and confirms success:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0201_0.png" alt="Check-in completion for $Valve">
+  <div class="caption">Check-in completion: "Propagating to 0 descendent objects. $Valve:Successful. Optimizing galaxy database…"</div>
+</div>
+
+<p><strong>Step 4b:</strong> Check in the <code>SMotor</code> template. The same process confirms the motor template changes are saved:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0201_1.png" alt="Check-in completion for SMotor">
+  <div class="caption">Check-in completion: "Propagating to 0 descendent objects. SMotor:Successful. Optimizing galaxy database…"</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Step 5: Verify Instantiated Objects</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-63 to 4-64)</p>
+
+<p>After checking in the templates, the instantiated objects in the Project folder reflect the updated structure. Verify that each template now appears with its correct child objects.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0202_0.png" alt="Templates pane showing instantiated objects after check-in">
+  <div class="caption">Templates pane: Project folder with $Agitator, $Meter, $Mixer (expanded), $Motor, $Valve</div>
+</div>
+
+<p><strong>Step 5a:</strong> Now configure the Agitator's CMD attribute. The Agitator Command controls the mixing motor — set the data type to Boolean, False label to "Stop", and True label to "Start".</p>
+
+<div class="screenshot">
+  <img src="../images/page_0202_1.png" alt="CMD attribute configuration for Agitator">
+  <div class="caption">CMD config: Name=CMD, Description=Agitator Command, Boolean, False=Stop</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Step 6: Deploy and Verify</h3>
+<p class="page-ref">Reference: Module 4, Lab 8 (pages 4-64 to 4-66)</p>
 
 <p>With all attributes configured and containment relationships established, deploy the Mixer and verify that all contained objects come up correctly.</p>
 
-<p><strong>Step 4a:</strong> Right-click on <code>Mixer100</code> in the Galaxy Model and select <strong>Deploy</strong>. Because Mixer100 contains all the child objects, deploying the parent automatically deploys every contained child — Agitator, Inlets, Outlet, Pumps, Level, and Temperature sensors.</p>
+<p><strong>Step 6a:</strong> Right-click on <code>Mixer100</code> in the Galaxy Model and select <strong>Deploy</strong>. Because Mixer100 contains all the child objects, deploying the parent automatically deploys every contained child — Agitator, Inlets, Outlet, Pumps, Level, and Temperature sensors.</p>
 
-<div class="screenshot">
-  <img src="../images/page_0202_0.png" alt="Deployment view or verification after deploying Mixer100">
-  <div class="caption">Deployment verification — the Mixer100 and all its contained components have been deployed successfully to the runtime (Module 4, page 4-64)</div>
-</div>
-
-<p><strong>Step 4b:</strong> Verify the deployment status shows successful for all objects. If any contained object fails to deploy, check its I/O link configuration and Container attribute.</p>
+<p><strong>Step 6b:</strong> Verify the deployment status shows successful for all objects. If any contained object fails to deploy, check its I/O link configuration and Container attribute.</p>
 
 <!-- ============================================================ -->
-<h3>Step 5: Lab Completion — Module 4 Summary</h3>
+<h3>Step 7: Lab Completion — Module 4 Summary</h3>
 <p class="page-ref">Reference: Module 4, Lab 8 (page 4-66)</p>
-
-<div class="screenshot">
-  <img src="../images/page_0202_1.png" alt="Lab 8 completion and Module 4 summary">
-  <div class="caption">Lab 8 completion and Module 4 summary — the Mixer is fully modeled with all contained components deployed and verified (Module 4, page 4-66)</div>
-</div>
 
 <p>Congratulations — you have completed Lab 8 and Module 4. The Mixer model demonstrates how all the concepts from this module come together:</p>
 
@@ -323,22 +330,22 @@
   <h3>Quiz — Test Your Understanding</h3>
 
   <p><strong>Q1:</strong> What is containment in Application Server, and how does it differ from a reference relationship?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Containment means one object physically contains another — the child is part of the parent's design and is deployed/deleted with it. A reference is a data link between two independent objects that remain separate in the Galaxy hierarchy.</p></details>
+  <details><summary>Click to reveal answer</summary><p class="answer">Containment means one object physically contains another — the child is part of the parent's design and is deployed/deleted with it. A reference is a data link between two independent objects that remain separate in the Galaxy hierarchy.</p></details>
 
   <p><strong>Q2:</strong> If Mixer100 contains Pump1_001, what is Pump1_001's fully qualified name?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Plant.Production.Line1.Mixer100.Pump1_001</p></details>
+  <details><summary>Click to reveal answer</summary><p class="answer">Plant.Production.Line1.Mixer100.Pump1_001</p></details>
 
   <p><strong>Q3:</strong> What happens when you deploy a parent object that contains children?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">All contained child objects are deployed automatically as part of the deployment — you do not need to deploy each child individually.</p></details>
+  <details><summary>Click to reveal answer</summary><p class="answer">All contained child objects are deployed automatically as part of the deployment — you do not need to deploy each child individually.</p></details>
 
   <p><strong>Q4:</strong> What attribute on an object defines its containment relationship?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">The Container attribute — it specifies the fully qualified name of the parent object that contains this object.</p></details>
+  <details><summary>Click to reveal answer</summary><p class="answer">The Container attribute — it specifies the fully qualified name of the parent object that contains this object.</p></details>
 
   <p><strong>Q5:</strong> How many components does the Mixer100 model contain in Lab 8?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">Eight components: Agitator_001, Inlet1_001, Inlet2_001, Outlet_001, Pump1_001, Pump2_001, Level_001, and Temperature_001.</p></details>
+  <details><summary>Click to reveal answer</summary><p class="answer">Eight components: Agitator_001, Inlet1_001, Inlet2_001, Outlet_001, Pump1_001, Pump2_001, Level_001, and Temperature_001.</p></details>
 
   <p><strong>Q6:</strong> What is a practical rule of thumb for deciding whether to use containment vs. a reference?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer" style="display:block;color:#2c5f2d;font-weight:bold;margin-top:0.3em;">If you would need a wrench to remove component X from equipment Y in the real world, use containment. If X and Y just need to share data but are physically separate, use a reference.</p></details>
+  <details><summary>Click to reveal answer</summary><p class="answer">If you would need a wrench to remove component X from equipment Y in the real world, use containment. If X and Y just need to share data but are physically separate, use a reference.</p></details>
 
   <p style="font-size: 0.85em; color: #999;">Click each answer to reveal it.</p>
 </div>
