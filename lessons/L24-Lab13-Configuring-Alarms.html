@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 24: Lab 13 — Configuring and Interacting with Alarms</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L23-Alarms-Events-Overview.html">← Lesson 23: Alarms &amp; Events Overview</a> &nbsp;|&nbsp;
+  <a href="L25-Object-Export-Import.html">Next: Lesson 25 — Object Export &amp; Import →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 24: Lab 13 — Configuring and Interacting with Alarms</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 7 Lab 13</p>
+<p class="page-ref">Hands-on lab covering limit alarm configuration, state alarm setup, runtime alarm interaction via Object Viewer, alarm history in Historian Client Web, and SQL-based alarm data queries. (pages 7-23 to 7-35)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>24.1 Overview — What This Lab Covers</h2>
+<p class="page-ref">Reference: Lab 13 (pages 7-23)</p>
+
+<p>In this lab, you will configure alarms on your existing mixer objects, interact with alarm attributes in the Object Viewer, view alarm history in AVEVA Historian Client Web, and query alarm data directly from the SQL Server database.</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Configure limit alarms on the mixer level attribute (high and low thresholds)</li>
+    <li>Create a state alarm on a new Boolean attribute for PLC-triggered conditions</li>
+    <li>Deploy alarm configuration changes to the production galaxy</li>
+    <li>Interact with alarm attributes in Object Viewer (view, acknowledge)</li>
+    <li>View alarm and process history in AVEVA Historian Client Web</li>
+    <li>Retrieve alarm history using SQL Server Management Studio queries</li>
+  </ul>
+</div>
+
+<p><strong>Prerequisites:</strong> You should have completed Labs 9–12 with the production platform deployed, objects running under <code>AppEngine1 → ControlSystem → Line1/Mixer100</code>, and Historian Client Web accessible.</p>
+
+<!-- ============================================================ -->
+<h2>24.2 Configuring Limit Alarms on $Mixer.Level</h2>
+<p class="page-ref">Reference: Lab 13 (pages 7-24)</p>
+
+<p>First, you will configure high and low limit alarms on the Level attribute of the $Mixer template. These alarms will trigger whenever the mixer level crosses defined thresholds.</p>
+
+<p><strong>Step 1.</strong> In the IDE, Template tab, navigate to <code>Training\Project</code> toolset, and open the <code>$Mixer.Level</code> configuration editor.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0294_0.png" alt="$Mixer.Level configuration editor showing PV properties and Limit alarms button">
+  <div class="caption">$Mixer.Level configuration editor showing the PV attribute properties (Name: PV, Description: Level Indicator, Data type: Float, Eng units: l) and the Available Features section. The <strong>Limit alarms</strong> button is enabled and highlighted — click it to configure alarm thresholds (page 7-24)</div>
+</div>
+
+<p><strong>Step 2.</strong> Click the <strong>Limit alarms</strong> button to open the alarm configuration panel.</p>
+
+<p><strong>Step 3.</strong> Scroll down and configure the Limit alarms group as follows:</p>
+
+<table>
+  <tr><th>Setting</th><th>Value</th><th>Notes</th></tr>
+  <tr><td><strong>HiHi</strong></td><td>Unchecked</td><td>Not used in this lab</td></tr>
+  <tr><td><strong>Hi</strong></td><td>Checked (locked)</td><td>Enable high-level alarm</td></tr>
+  <tr><td><strong>Hi: Limit</strong></td><td>80.0 (unlocked)</td><td>Alarm triggers when level exceeds 80.0</td></tr>
+  <tr><td><strong>Hi: Priority</strong></td><td>100 (locked)</td><td>Severity 1 — highest priority</td></tr>
+  <tr><td><strong>Hi: Alarm message</strong></td><td>"Mixer Hi Level Alarm" (locked)</td><td>Message displayed to operator</td></tr>
+  <tr><td><strong>Lo</strong></td><td>Checked (locked)</td><td>Enable low-level alarm</td></tr>
+  <tr><td><strong>Lo: Limit</strong></td><td>25.0 (unlocked)</td><td>Alarm triggers when level drops below 25.0</td></tr>
+  <tr><td><strong>Lo: Priority</strong></td><td>500 (locked)</td><td>Severity 2 — medium priority</td></tr>
+  <tr><td><strong>Lo: Alarm message</strong></td><td>"Mixer Lo Level Alarm" (locked)</td><td>Message displayed to operator</td></tr>
+  <tr><td><strong>Alarm deadband</strong></td><td>0.0 (locked)</td><td>No deadband — alarm clears exactly at limit</td></tr>
+  <tr><td><strong>Time deadband</strong></td><td>00:00:00.000000 (locked)</td><td>No time-based filtering</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0294_1.png" alt="Limit Alarms configuration showing Hi=80.0 Priority 100 and Lo=25.0 Priority 500">
+  <div class="caption">Limit Alarms configuration panel for $Mixer.Level. The <strong>Hi</strong> alarm is checked with Limit=80.0, Priority=100, and message "Mixer Hi Level Alarm". The <strong>Lo</strong> alarm is checked with Limit=25.0, Priority=500, and message "Mixer Lo Level Alarm". Lock icons indicate template inheritance — locked values are fixed from the template, unlocked values can be customized per instance (page 7-24)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Understanding Lock Icons:</strong> In AVEVA Application Server, the lock icon controls template inheritance. A <strong>locked</strong> attribute value is inherited from the template and cannot be changed in descendant objects. An <strong>unlocked</strong> value can be overridden in derived objects. This lets you enforce standards (like alarm messages) while allowing flexibility (like alarm limits) per instance.
+</div>
+
+<p><strong>Step 4.</strong> Save and close, then check in the object with an appropriate comment.</p>
+
+<!-- ============================================================ -->
+<h2>24.3 Creating a State Alarm on $Mixer.Alarm.Condition</h2>
+<p class="page-ref">Reference: Lab 13 (page 7-25)</p>
+
+<p>Next, you will add a new Boolean attribute to $Mixer that monitors an alarm condition triggered from the PLC. This uses a <strong>State alarm</strong> — an alarm that activates based on a Boolean state rather than a numeric threshold.</p>
+
+<p><strong>Step 5.</strong> In the <code>Training\Project</code> toolset, open the <code>$Mixer</code> configuration editor.</p>
+
+<p><strong>Step 6.</strong> Add an attribute named <code>Alarm.Condition</code>, and configure it as follows:</p>
+
+<table>
+  <tr><th>Property</th><th>Value</th><th>Notes</th></tr>
+  <tr><td><strong>Description</strong></td><td>"Mixer Malfunction" (locked)</td><td>Human-readable label for the alarm</td></tr>
+  <tr><td><strong>Data type</strong></td><td>Boolean</td><td>True/False binary state</td></tr>
+  <tr><td><strong>Writeability</strong></td><td>Object writeable</td><td>Can be written to by external systems</td></tr>
+  <tr><td><strong>I/O</strong></td><td>Checked</td><td>Connected to a physical I/O source</td></tr>
+  <tr><td><strong>I/O: Read</strong></td><td>Selected</td><td>Read-only input from PLC</td></tr>
+  <tr><td><strong>I/O: Read from</strong></td><td><code>&lt;IODevice&gt;.$Mixer.Alarm.Condition</code></td><td>PLC source address</td></tr>
+  <tr><td><strong>State alarm</strong></td><td>Checked (locked)</td><td>Enable state-based alarm</td></tr>
+  <tr><td><strong>Category</strong></td><td>Process (locked)</td><td>Process alarm category</td></tr>
+  <tr><td><strong>Priority</strong></td><td>700 (locked)</td><td>Severity 3 — lower priority than Hi/Lo</td></tr>
+  <tr><td><strong>Alarm message</strong></td><td><code>me.Alarm.Condition.Description</code> (locked)</td><td>Uses the Description property ("Mixer Malfunction")</td></tr>
+  <tr><td><strong>Active alarm state</strong></td><td>True (locked)</td><td>Alarm activates when attribute = True</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0295_0.png" alt="$Mixer.Alarm.Condition attribute editor with I/O Read and State alarm configuration">
+  <div class="caption">$Mixer.Alarm.Condition attribute configuration. The attribute is a Boolean with I/O Read enabled (reading from <code>&lt;$Device&gt;._$Mixer.Alarm.Condition</code>) and a State alarm configured with Category=Process, Priority=700, and the Active alarm state set to True. The alarm message references <code>me.Alarm.Condition.Description</code> which resolves to "Mixer Malfunction" (page 7-25)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Limit Alarms vs. State Alarms:</strong> A <strong>Limit alarm</strong> triggers when a numeric value crosses a threshold (e.g., level &gt; 80.0). A <strong>State alarm</strong> triggers when a Boolean attribute enters a specific state (True or False). State alarms are ideal for monitoring PLC-triggered conditions like equipment faults, interlock trips, or mode changes — any binary condition that doesn't depend on a numeric threshold.
+</div>
+
+<p><strong>Step 7.</strong> Save and close, then check in the object with an appropriate comment.</p>
+
+<div class="tip">
+  <strong>Tip:</strong> You may configure other data points for alarming at this stage. Any attribute with I/O, History, or alarm features enabled can generate alarm events when conditions are met.
+</div>
+
+<!-- ============================================================ -->
+<h2>24.4 Deploying Alarm Configuration Changes</h2>
+<p class="page-ref">Reference: Lab 13 (page 7-26)</p>
+
+<p>After configuring alarms on the templates, you need to deploy the changes to the production platform for them to take effect at runtime.</p>
+
+<p><strong>Step 8.</strong> Switch to the <strong>Deployment</strong> view in the IDE. Notice that objects with pending changes display a <strong>yellow exclamation mark</strong> icon.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0296_0.png" alt="Deployment view showing yellow exclamation marks on Mixer100, Level_001, and L1">
+  <div class="caption">Deployment view showing the object hierarchy under ControlSystem. <strong>Mixer100</strong>, <strong>Level_001</strong>, and <strong>L1</strong> display yellow exclamation mark icons indicating undeployed changes — the alarm configurations you just added. Other child objects (Agitator_001, Inlet1_001, Inlet2_001, Outlet_001, Pump1_001, Pump2_001, Temperature_001) show normal blue icons (page 7-26)</div>
+</div>
+
+<p><strong>Step 9.</strong> Deploy <strong>Mixer100</strong>, <strong>Level_001</strong>, and <strong>L1</strong> to push the alarm configuration to the runtime platform.</p>
+
+<div class="pitfall">
+  <strong>Deployment is required:</strong> Changes made in the IDE are only definitions — they do not affect runtime until deployed. If you configure alarms but forget to deploy, the alarms will not trigger. Always check the Deployment view for yellow exclamation marks after making changes.
+</div>
+
+<!-- ============================================================ -->
+<h2>24.5 Viewing Alarm States in Runtime (Object Viewer)</h2>
+<p class="page-ref">Reference: Lab 13 (pages 7-27)</p>
+
+<p>Now you will use the Object Viewer to observe alarm conditions in real time, viewing the state of both the State alarm (Alarm.Condition) and the Limit alarms (Hi/Lo on Level_001.PV).</p>
+
+<p><strong>Step 10.</strong> View <code>Mixer100</code> in Object Viewer.</p>
+
+<p><strong>Step 11.</strong> Add a new watch window and rename it <strong>"Alarms"</strong>.</p>
+
+<p><strong>Step 12.</strong> Add the following attributes to the watch window:</p>
+
+<table>
+  <tr><th>Attribute</th><th>Purpose</th></tr>
+  <tr><td><code>Mixer100.Alarm.Condition</code></td><td>PLC-triggered malfunction state</td></tr>
+  <tr><td><code>Mixer100.Alarm.Condition.InAlarm</code></td><td>Whether the State alarm is active</td></tr>
+  <tr><td><code>Mixer100.Alarm.Condition.AckMsg</code></td><td>Acknowledgment message</td></tr>
+  <tr><td><code>Mixer100.Alarm.Condition.TimeAlarmOff</code></td><td>Time the alarm last cleared</td></tr>
+  <tr><td><code>Mixer100.Alarm.Condition.TimeAlarmOn</code></td><td>Time the alarm last triggered</td></tr>
+  <tr><td><code>Level_001.PV</code></td><td>Current level value</td></tr>
+  <tr><td><code>Level_001.PV.Hi.InAlarm</code></td><td>High-level alarm state</td></tr>
+  <tr><td><code>Level_001.PV.Lo.InAlarm</code></td><td>Low-level alarm state</td></tr>
+  <tr><td><code>Level_001.PV.Hi.Limit</code></td><td>High-level threshold (80.0)</td></tr>
+  <tr><td><code>Level_001.PV.Lo.Limit</code></td><td>Low-level threshold (25.0)</td></tr>
+  <tr><td><code>Level_001.PV.Hi.AckMsg</code></td><td>High alarm acknowledgment message</td></tr>
+  <tr><td><code>Level_001.PV.Lo.AckMsg</code></td><td>Low alarm acknowledgment message</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0297_0.png" alt="Object Viewer Alarms tab showing Mixer100 and Level_001 alarm attributes">
+  <div class="caption">Object Viewer <strong>Alarms</strong> watch window showing real-time alarm states. Key observations: <code>Level_001.PV</code> = 98.14408 (above the Hi limit of 80.0), so <code>Level_001.PV.Hi.InAlarm</code> = <strong>true</strong>. Meanwhile, <code>Level_001.PV.Lo.InAlarm</code> = <strong>false</strong> because the value is well above 25.0. The <code>Mixer100.Alarm.Condition</code> is also active (true). All attributes show Quality = CO:Good and Status = Ok (page 7-27)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Reading Alarm States:</strong> The <code>InAlarm</code> attribute is the key indicator — when it equals <strong>true</strong>, the alarm condition is currently active. For limit alarms, <code>Hi.InAlarm</code> = true when the PV exceeds the Hi limit, and <code>Lo.InAlarm</code> = true when the PV drops below the Lo limit. The <code>AckMsg</code> attribute stores the operator's acknowledgment message — it is empty/null until an operator acknowledges the alarm.
+</div>
+
+<!-- ============================================================ -->
+<h2>24.6 Alarm Counts by Severity</h2>
+<p class="page-ref">Reference: Lab 13 (pages 7-28)</p>
+
+<p>The AVEVA Application Server maintains an array attribute called <code>AlarmCntsBySeverity</code> on each area and object. This provides a summary of alarm counts categorized by severity level.</p>
+
+<p><strong>Step 13.</strong> For the <code>Production</code> area, add <code>AlarmCntsBySeverity</code> to the watch window.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0298_0.png" alt="Array dialog for Production.AlarmCntsBySeverity with index -1">
+  <div class="caption">The "Array for Production.AlarmCntsBySeverity" dialog box. Enter <strong>-1</strong> in the array index field to retrieve the entire array dimension — this displays all 13 alarm count elements rather than a single index (page 7-28)</div>
+</div>
+
+<p><strong>Step 14.</strong> In the "Enter an array index" field, enter <code>-1</code> (this retrieves the entire array). Click <strong>OK</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0298_1.png" alt="Alarms watch window showing Production.AlarmCntsBySeverity array values">
+  <div class="caption">Updated Alarms watch window showing <code>Production.AlarmCntsBySeverity[]</code> with its array values. The alarm counts array contains 13 elements tracking active alarms, unacknowledged alarms, and return-to-normal states per severity level (page 7-28)</div>
+</div>
+
+<div class="key-concept">
+  <strong>AlarmCntsBySeverity Array (13 elements):</strong>
+  <table>
+    <tr><th>Elements</th><th>Meaning</th></tr>
+    <tr><td>1–4</td><td>Active Alarms Per Severity (Severity 1 through 4)</td></tr>
+    <tr><td>5–8</td><td>UNACK_ALM Per Severity — unacknowledged active alarms</td></tr>
+    <tr><td>9–12</td><td>UNACK_RTN Per Severity — unacknowledged return-to-normal</td></tr>
+    <tr><td>13</td><td>Bitmask — which alarm severity/status applies to the local object</td></tr>
+  </table>
+</div>
+
+<p><strong>Step 15.</strong> Repeat steps 13–14 for the <code>Line1</code> and <code>Line2</code> areas, and for the <code>Mixer100</code> object.</p>
+
+<div class="tip">
+  <strong>Note:</strong> Some alarm counts, such as <code>Line2.AlarmCntsBySeverity</code>, may be all zeros if no instances have been assigned to that area yet.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0299_0.png" alt="Alarms tab with alarm count arrays for Production, Line1, Line2, and Mixer100">
+  <div class="caption">Alarms watch window expanded with <code>AlarmCntsBySeverity[]</code> arrays for <strong>Production</strong>, <strong>Line1</strong>, <strong>Line2</strong> (all zeros — no instances assigned), and <strong>Mixer100</strong>. Mixer100 shows active alarm counts across severity levels (page 7-29)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>24.7 Acknowledging an Alarm in Runtime</h2>
+<p class="page-ref">Reference: Lab 13 (page 7-29)</p>
+
+<p>Operators must acknowledge alarms to confirm they have seen and are addressing the condition. In this step, you will acknowledge the high-level alarm on Level_001.</p>
+
+<p><strong>Step 16.</strong> In the Alarms watch window, double-click <code>Level_001.PV.Hi.AckMsg</code>.</p>
+
+<p><strong>Step 17.</strong> In the Modify String Value dialog box, type a comment to acknowledge the alarm (e.g., "Acknowledge alarm").</p>
+
+<div class="screenshot">
+  <img src="../images/page_0299_1.png" alt="Modify String Value dialog for Level_001.PV.Hi.AckMsg">
+  <div class="caption">The "Modify String Value" dialog for <code>Level_001.PV.Hi.AckMsg</code>. Type an acknowledgment message such as "Acknowledge alarm" in the text field, then click <strong>OK</strong> to confirm. This action acknowledges the high-level alarm and reduces the severity count for the object (page 7-29)</div>
+</div>
+
+<p><strong>Step 18.</strong> Click <strong>OK</strong> to confirm the acknowledgment.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0300_0.png" alt="Alarms watch window after acknowledgment showing updated severity counts">
+  <div class="caption">Alarms watch window after acknowledging the high-level alarm. The severity counts have been updated — the acknowledged alarm no longer contributes to the unacknowledged alarm count. The <code>Level_001.PV.Hi.AckMsg</code> now displays the acknowledgment text "Acknowledge alarm" (page 7-30)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Acknowledgment Rules:</strong>
+  <ul>
+    <li>When an alarm is acknowledged, the severity count for that object decreases.</li>
+    <li>The acknowledgment message <strong>must change</strong> if you wish to acknowledge the alarm again — writing the same string again will not re-acknowledge.</li>
+    <li>Acknowledgment is tracked via the <code>AckMsg</code> attribute — operators write a message to signal they have seen and are handling the alarm condition.</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>24.8 Viewing Alarm History in Historian Client Web</h2>
+<p class="page-ref">Reference: Lab 13 (pages 7-30 to 7-31)</p>
+
+<p>AVEVA Historian Client Web provides a graphical view of alarm and process history. Alarm history is <strong>only visible</strong> for attributes that are <strong>historized</strong> — if an attribute is alarmed but not historized, its alarm history will not appear in the Client Web.</p>
+
+<div class="pitfall">
+  <strong>Important:</strong> <code>Mixer.Alarm.Condition</code> has no historized process data, so it <strong>cannot</strong> be added to a trend to view alarm states. Only historized attributes like <code>Level_001.PV</code> will show alarm colors on trends.
+</div>
+
+<p><strong>Step 19.</strong> Save the watch list and minimize Object Viewer.</p>
+
+<p><strong>Step 20.</strong> Switch back to AVEVA Historian Client Web in your browser and verify that <code>Level_001.PV</code> is on the trend.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0300_1.jpeg" alt="Historian Client Web initial trend view of Level_001.PV">
+  <div class="caption">AVEVA Historian Client Web showing the initial "Mixed data" trend of <code>Level_001.PV</code>. The sawtooth pattern represents the level cycling between 0 and ~100 over a 1-hour window. At this zoom level, the trend line appears mostly green — you need to zoom in further to see alarm severity colors (page 7-30)</div>
+</div>
+
+<p><strong>Step 21.</strong> Click <strong>Refresh</strong> to update the trend to the most recent data.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0301_0.jpeg" alt="Historian Client Web trend showing Level_001.PV with green sawtooth pattern">
+  <div class="caption">AVEVA Historian Client Web showing a "Mixed data" trend of <code>Level_001.PV</code> over a 1-hour window (7:28 AM to 8:28 AM). The sawtooth pattern shows the level cycling between 0 and ~100. The <strong>Refresh button</strong> (top-right, circled) updates the trend to the latest data. Green checkmarks on the trend indicate alarm acknowledgment markers — click them to view acknowledgment details (page 7-31)</div>
+</div>
+
+<p><strong>Step 22.</strong> Hover over the trend and use your mouse wheel to <strong>zoom in</strong> until the trend shows red and yellow highlight colors at the peaks and troughs of the level signal.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0301_1.jpeg" alt="Zoomed trend showing red (Hi alarm) and yellow (Lo alarm) color segments">
+  <div class="caption">Zoomed-in view of the Level_001.PV trend (8:15:49 AM to 8:19:55 AM) showing <strong>alarm severity colors</strong>: <span style="color:red;font-weight:bold;">Red</span> segments indicate the Hi limit alarm (Priority 100 = Severity 1), <span style="color:#b8860b;font-weight:bold;">Yellow</span> segments indicate the Lo limit alarm (Priority 500 = Severity 2), and <span style="color:green;font-weight:bold;">Green</span> segments indicate normal operation between alarm thresholds (page 7-31)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Alarm Severity and Color Coding:</strong>
+  <table>
+    <tr><th>Priority</th><th>Severity</th><th>Color</th><th>Meaning</th></tr>
+    <tr><td>100</td><td>Severity 1</td><td><span style="color:red;">Red</span></td><td>High-priority alarm (Hi limit exceeded)</td></tr>
+    <tr><td>500</td><td>Severity 2</td><td><span style="color:#b8860b;">Yellow</span></td><td>Medium-priority alarm (Lo limit exceeded)</td></tr>
+    <tr><td>700</td><td>Severity 3</td><td>—</td><td>Lower-priority alarm (State alarm)</td></tr>
+  </table>
+  <p>Alarm colors on trends are only visible when you zoom in enough to resolve individual data segments. The zoom level must be detailed enough to show the alarm limit colors associated with each severity.</p>
+</div>
+
+<p><strong>Step 23.</strong> Minimize AVEVA Historian Client Web.</p>
+
+<!-- ============================================================ -->
+<h2>24.9 Querying Alarm History with SQL Server Management Studio</h2>
+<p class="page-ref">Reference: Lab 13 (pages 7-32 to 7-35)</p>
+
+<p>The final section of this lab uses Microsoft SQL Server Management Studio (SSMS) to query the AVEVA Runtime database directly. This provides access to high-speed alarm history data that may not be visible through the Historian Client Web.</p>
+
+<h3>24.9.1 Connecting to SQL Server</h3>
+
+<p><strong>Step 24.</strong> Open Microsoft SQL Server Management Studio (found in the Windows menu under Microsoft SQL Server tools).</p>
+
+<div class="screenshot">
+  <img src="../images/page_0302_0.png" alt="SQL Server Management Studio splash screen">
+  <div class="caption">SQL Server Management Studio (SSMS) v18.12.1 splash screen during startup. The Connect to Server dialog will appear after a few moments (page 7-32)</div>
+</div>
+
+<p><strong>Step 25.</strong> Leave the default settings and click <strong>Connect</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0302_1.png" alt="Connect to Server dialog with defaults for SOENG database engine">
+  <div class="caption">SSMS Connect to Server dialog with default settings: Server type = <strong>Database Engine</strong>, Server name = <strong>S00ENG</strong>, Authentication = <strong>Windows Authentication</strong> (user: CLOUD\student). Click <strong>Connect</strong> to proceed (page 7-32)</div>
+</div>
+
+<h3>24.9.2 Opening the SQL Query Script</h3>
+
+<p><strong>Step 26.</strong> On the File menu, click <strong>Open → File</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0303_0.png" alt="SSMS File menu with Open submenu showing File option highlighted">
+  <div class="caption">SSMS File menu expanded showing the <strong>Open → File...</strong> option (Ctrl+O). This is the standard way to open SQL query scripts in SSMS (page 7-33)</div>
+</div>
+
+<p><strong>Step 27.</strong> Navigate to <code>C:\Training</code>, and select <code>Lab 13 - Querying Alarm History.SQL</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0303_1.png" alt="Windows Open File dialog showing Lab 13 SQL file selected in C:\Training">
+  <div class="caption">Windows Open File dialog navigating to <code>C:\Training</code>. The file <strong>"Lab 13 - Querying Alarm History.SQL"</strong> is highlighted and selected. This pre-written script contains two SQL queries for retrieving alarm and event history data (page 7-33)</div>
+</div>
+
+<p><strong>Step 28.</strong> Click <strong>Open</strong>.</p>
+
+<h3>24.9.3 Running the SQL Queries</h3>
+
+<p>The SQL script contains two queries. The first retrieves all events from the last hour; the second filters specifically for alarm-type events.</p>
+
+<p><strong>Step 29.</strong> Highlight the first query in the query editor.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0304_0.png" alt="SSMS query editor with first SQL query highlighted">
+  <div class="caption">SSMS query editor showing <strong>Query 1</strong> highlighted. The query selects all columns from the <code>Events</code> table for events occurring in the last hour. The Object Explorer on the left shows the connected SOENG SQL Server instance (page 7-34)</div>
+</div>
+
+<pre><code>-- Query 1: All events in the last hour
+USE Runtime
+SELECT * FROM Events
+WHERE EventTime > DATEADD(hh, -1, GETDATE())</code></pre>
+
+<p><strong>Step 30.</strong> On the toolbar, click <strong>Execute</strong> (or press F5).</p>
+
+<p>The results appear in the bottom pane showing the complete alarm and event history for the last hour. Scroll right and down to view all columns and rows.</p>
+
+<p><strong>Step 31.</strong> Scroll to the right and down to view all the data.</p>
+
+<p><strong>Step 32.</strong> Now highlight the second query — this one provides a more focused, formatted view of alarm-specific data.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0304_1.png" alt="SSMS query editor with second alarm-specific query and results table">
+  <div class="caption">SSMS showing <strong>Query 2</strong> (alarm-specific) and its results. The query selects key alarm columns with readable aliases, filters to only alarm-type events, and sorts by newest first. The results table shows alarm records with columns for EventTime, Type (Alarm.Set/Alarm.Clear), Attribute, Condition, State, Priority, and Severity (page 7-34)</div>
+</div>
+
+<pre><code>-- Query 2: Alarm-specific events in the last hour
+USE Runtime
+SELECT EventTime, Type,
+       Source_ProcessVariable AS Attribute,
+       Alarm_Condition AS Condition,
+       Alarm_State AS State,
+       Priority, Severity, Comment
+FROM Events
+WHERE EventTime > DATEADD(hh, -1, GETDATE())
+  AND Type LIKE '%Alarm%'
+ORDER BY EventTime DESC</code></pre>
+
+<p><strong>Step 33.</strong> Click <strong>Execute</strong> to run the second query.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0305_0.png" alt="SSMS results showing formatted alarm history with Set/Clear events">
+  <div class="caption">SSMS results after executing Query 2. The results show formatted alarm event records with columns: EventTime, Type (<strong>Alarm.Set</strong> = triggered, <strong>Alarm.Clear</strong> = resolved), Attribute (<code>Level_001.PV</code>, <code>Mixer100.Alarm.Condition</code>), Condition (Limit.Hi, Limit.Lo, Process), State (UNACK_ALM, UNACK_RTN), Priority, Severity, and Comment ("Mixer Hi Level Alarm", "Mixer Lo Level Alarm", "Mixer Malfunction"). The status bar confirms "Query executed successfully" (page 7-35)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Understanding the Alarm Event Types:</strong>
+  <table>
+    <tr><th>Type</th><th>Meaning</th></tr>
+    <tr><td><strong>Alarm.Set</strong></td><td>Alarm condition was triggered — the process value crossed the alarm threshold</td></tr>
+    <tr><td><strong>Alarm.Clear</strong></td><td>Alarm condition was resolved — the process value returned to normal</td></tr>
+  </table>
+  <p>The <code>Alarm_State</code> column shows acknowledgment status:</p>
+  <ul>
+    <li><strong>UNACK_ALM</strong> — Unacknowledged active alarm (operator hasn't confirmed yet)</li>
+    <li><strong>UNACK_RTN</strong> — Unacknowledged return-to-normal (alarm cleared but operator hasn't acknowledged)</li>
+  </ul>
+</div>
+
+<div class="tip">
+  <strong>Why Query the Database Directly?</strong> While Historian Client Web provides a user-friendly graphical view, querying the SQL Server directly gives you access to the complete alarm event record — including all columns, timestamps, and metadata. This is especially useful for:
+  <ul>
+    <li>Auditing alarm history for compliance purposes</li>
+    <li>Building custom reports or dashboards</li>
+    <li>Troubleshooting alarm floods or nuisance alarms</li>
+    <li>Analyzing alarm acknowledgment patterns and response times</li>
+  </ul>
+</div>
+
+<p><strong>Step 34.</strong> Close Microsoft SQL Server Management Studio. <em>End of Lab.</em></p>
+
+<!-- ============================================================ -->
+<h2>24.10 Lab Summary</h2>
+
+<p>This lab covered the complete alarm workflow in AVEVA Application Server:</p>
+
+<table>
+  <tr><th>Phase</th><th>What You Did</th><th>Key Takeaway</th></tr>
+  <tr><td><strong>Configuration</strong></td><td>Set up Hi/Lo limit alarms on Level and a State alarm on Alarm.Condition</td><td>Limit alarms use numeric thresholds; State alarms use Boolean states</td></tr>
+  <tr><td><strong>Deployment</strong></td><td>Deployed Mixer100, Level_001, and L1 changes to runtime</td><td>IDE changes require deployment to take effect</td></tr>
+  <tr><td><strong>Runtime Monitoring</strong></td><td>Used Object Viewer to observe InAlarm states and AckMsg attributes</td><td><code>InAlarm</code> = true means the alarm is currently active</td></tr>
+  <tr><td><strong>Acknowledgment</strong></td><td>Acknowledged the Hi alarm via AckMsg string attribute</td><td>Message must change to re-acknowledge; acknowledgment reduces severity counts</td></tr>
+  <tr><td><strong>Historian Web</strong></td><td>Viewed alarm colors on trend (Red=Hi, Yellow=Lo)</td><td>Only historized attributes show alarm history in the Client Web</td></tr>
+  <tr><td><strong>SQL Queries</strong></td><td>Queried Runtime database for complete alarm event records</td><td>Direct SQL access provides full event details for auditing and analysis</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>Quiz</h2>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q1: What is the difference between a Limit alarm and a State alarm?</h3></summary>
+<p class="answer">A <strong>Limit alarm</strong> triggers when a numeric attribute crosses a defined threshold (e.g., level &gt; 80.0). A <strong>State alarm</strong> triggers when a Boolean attribute enters a specific state (True or False). Limit alarms are configured on numeric attributes (Float, Integer) via the Limit Alarms panel; State alarms are configured on Boolean attributes via the State Alarm panel.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q2: What does the <code>InAlarm</code> attribute indicate?</h3></summary>
+<p class="answer">The <code>InAlarm</code> attribute indicates whether an alarm condition is <strong>currently active</strong>. When <code>InAlarm = true</code>, the process value is in the alarm state (e.g., above the Hi limit or below the Lo limit). When <code>InAlarm = false</code>, the alarm condition is not active.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q3: Why does <code>Mixer.Alarm.Condition</code> not appear in the Historian Client Web trend?</h3></summary>
+<p class="answer">Alarm history is only visible in Historian Client Web for attributes that are <strong>historized</strong>. The <code>Mixer.Alarm.Condition</code> attribute was configured with I/O and State alarm features, but <strong>History was not enabled</strong>. Therefore, no historical data is stored for this attribute, and it cannot be added to a trend. Only <code>Level_001.PV</code> (which was historized in Lab 12) shows alarm colors on the trend.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q4: What do the red and yellow colors on the Historian Client Web trend represent?</h3></summary>
+<p class="answer"><strong>Red</strong> indicates a Severity 1 alarm (Hi limit exceeded, Priority 100). <strong>Yellow</strong> indicates a Severity 2 alarm (Lo limit exceeded, Priority 500). <strong>Green</strong> indicates normal operation between alarm thresholds. These colors are only visible when you zoom in enough to resolve individual data segments on the trend.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q5: What is the purpose of entering -1 in the AlarmCntsBySeverity array index dialog?</h3></summary>
+<p class="answer">Entering <strong>-1</strong> retrieves the <strong>entire array dimension</strong> — all 13 elements of the AlarmCntsBySeverity array — rather than a single index element. This gives you a complete view of alarm counts across all severity levels and acknowledgment states (active, UNACK_ALM, UNACK_RTN) for the selected area or object.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q6: What SQL query would you use to find only high-priority (Priority &lt; 200) alarm events from the last 2 hours?</h3></summary>
+<pre><code>USE Runtime
+SELECT EventTime, Type, Source_ProcessVariable AS Attribute,
+       Alarm_Condition AS Condition, Alarm_State AS State,
+       Priority, Severity, Comment
+FROM Events
+WHERE EventTime > DATEADD(hh, -2, GETDATE())
+  AND Type LIKE '%Alarm%'
+  AND Priority < 200
+ORDER BY EventTime DESC</code></pre>
+<p class="answer">This modifies the lab's Query 2 by extending the time window to 2 hours and adding a <code>Priority &lt; 200</code> filter to isolate only high-priority alarms (Severity 1 range).</p>
+</details>
+</div>
+
+<hr>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 7 Lab 13</p>
+
+</body>
+</html>

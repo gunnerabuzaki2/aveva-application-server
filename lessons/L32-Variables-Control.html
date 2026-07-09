@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 32: Variables and Control Statements — Labs 22–23</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L31-Scripting-Introduction.html">← Lesson 31: Scripting Introduction</a> &nbsp;|&nbsp;
+  <a href="L33-Averager-Object.html">Next: Lesson 33 — Averager Object →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 32: Variables and Control Statements — Labs 22–23</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11 — Introduction to QuickScript.NET, Section 2</p>
+<p class="page-ref">Covers QuickScript.NET variables (DIM declarations, data types, arrays, null, quality propagation), control structures (IF/THEN, FOR/NEXT, FOR EACH, TRY/CATCH, WHILE), Lab 22 (Scripting Valve Status), and Lab 23 (Scripting Custom Alarms). (pages 11-22 to 11-50)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>32.1 Completing Lab 20 — Runtime Verification Screenshots</h2>
+<p class="page-ref">Reference: Lab 20 — Auto Reconnect for DDESuiteLinkClient, runtime verification (pages 11-18 to 11-22)</p>
+
+<p>The following screenshots document the runtime verification steps for Lab 20, showing the script configuration, attribute setup, and Object Viewer monitoring used to confirm the reconnect and disconnect-monitoring scripts work correctly.</p>
+
+<h3>Step A — Script Configuration: Reconnect Script</h3>
+<p>First, verify the Reconnect script is configured on the <code>$gDDESuiteLinkClient</code> object. The Scripts tab shows the Reconnect script entry.</p>
+
+<!-- IMAGE 1: page_0492_1.png — Scripts tab showing Reconnect -->
+<div class="screenshot">
+  <img src="../images/page_0492_1.png" alt="Scripts tab for $gDDESuiteLinkClient showing the Reconnect script in the script list">
+  <div class="caption">Figure 32-1: The Scripts tab for the $gDDESuiteLinkClient object. The Reconnect script is listed in the left panel, with collapsed Aliases, Declarations, and Scripts sections visible on the right. (page 11-18)</div>
+</div>
+
+<!-- IMAGE 2: page_0492_2.png — Reconnect Basics configuration -->
+<div class="screenshot">
+  <img src="../images/page_0492_2.png" alt="Reconnect script Basics configuration showing Execute type, expression Me.ConnectionStatus <> 2, WhileTrue trigger, 5-second period, and script body Me.Reconnect = true">
+  <div class="caption">Figure 32-2: The Reconnect script Basics configuration. Execution type is Execute, expression is <code>Me.ConnectionStatus &lt;&gt; 2</code>, trigger type is WhileTrue with a 5-second trigger period, and the script body executes <code>Me.Reconnect = true;</code>. (page 11-18)</div>
+</div>
+
+<!-- IMAGE 3: page_0493_1.png — Reconnect locked configuration -->
+<div class="screenshot">
+  <img src="../images/page_0493_1.png" alt="Reconnect script locked configuration showing Execute type and expression Me.ConnectionStatus <> 2 with padlock icons">
+  <div class="caption">Figure 32-3: The Reconnect script with locked settings. The Execution type is set to Execute, and the expression <code>Me.ConnectionStatus &lt;&gt; 2</code> triggers when the connection status is not equal to 2 (Connected). Padlock icons indicate inherited/locked properties. (page 11-18)</div>
+</div>
+
+<h3>Step B — Attribute Configuration: Disconnect.Cnt</h3>
+
+<!-- IMAGE 4: page_0493_2.png — Disconnect.Cnt attribute configuration -->
+<div class="screenshot">
+  <img src="../images/page_0493_2.png" alt="Disconnect.Cnt attribute configuration showing Name, Integer data type, Calculated writeability, and Initial value of 0">
+  <div class="caption">Figure 32-4: The Disconnect.Cnt attribute configuration. Name is Disconnect.Cnt, data type is Integer, writeability is Calculated, and initial value is 0. This counter tracks how many times the connection has been lost. (page 11-18)</div>
+</div>
+
+<h3>Step C — Script Configuration: Disconnect.Monitor (Execute)</h3>
+
+<!-- IMAGE 5: page_0494_0.png — Disconnect.Monitor Execute script -->
+<div class="screenshot">
+  <img src="../images/page_0494_0.png" alt="Disconnect.Monitor script configuration with Execute type, expression Me.ConnectionStatus <> 2, OnTrue trigger, and script body incrementing Disconnect.Cnt">
+  <div class="caption">Figure 32-5: The Disconnect.Monitor script in Execute mode. Expression is <code>Me.ConnectionStatus &lt;&gt; 2</code>, trigger type is OnTrue (fires once when transitioning from false to true), and the script body is <code>Me.Disconnect.Cnt = Me.Disconnect.Cnt + 1;</code>. (page 11-19)</div>
+</div>
+
+<h3>Step D — Script Configuration: Disconnect.Monitor (OnScan)</h3>
+
+<!-- IMAGE 6: page_0495_0.png — Disconnect.Monitor OnScan script -->
+<div class="screenshot">
+  <img src="../images/page_0495_0.png" alt="Disconnect.Monitor OnScan script configuration with script body Me.Disconnect.Cnt = 0">
+  <div class="caption">Figure 32-6: The Disconnect.Monitor script in OnScan mode. The execution type is OnScan, and the script body is <code>Me.Disconnect.Cnt = 0;</code>. This resets the disconnect counter to zero every time the object goes on scan. (page 11-19)</div>
+</div>
+
+<h3>Step E — Scripts List and Check-In</h3>
+
+<!-- IMAGE 7: page_0495_1.png — Scripts list showing both scripts -->
+<div class="screenshot">
+  <img src="../images/page_0495_1.png" alt="Scripts tab showing both Reconnect and DisconnectMonitor scripts with execution type indicators">
+  <div class="caption">Figure 32-7: The Scripts tab showing both configured scripts — Reconnect and DisconnectMonitor. The columns indicate which execution types each script uses, with "x" marks showing the active types. (page 11-19)</div>
+</div>
+
+<!-- IMAGE 8: page_0495_2.png — Checking in objects dialog -->
+<div class="screenshot">
+  <img src="../images/page_0495_2.png" alt="Checking in objects dialog showing successful check-in with derived objects R_ProdPLC1 and R_ProdPLC2 updated">
+  <div class="caption">Figure 32-8: The "Checking in objects" dialog confirming successful check-in. The log shows the system found descendant objects, updated derived objects R_ProdPLC1 and R_ProdPLC2, and optimized the galaxy database. (page 11-20)</div>
+</div>
+
+<h3>Step F — Runtime Verification: Object Viewer Monitoring</h3>
+<p>After deploying the scripts, use Object Viewer to verify the reconnect and disconnect monitoring functionality.</p>
+
+<!-- IMAGE 9: page_0496_0.png — Object Viewer: Connected, Disconnect.Cnt=0 -->
+<div class="screenshot">
+  <img src="../images/page_0496_0.png" alt="Object Viewer showing R_ProdPLC1 with ConnectionStatus=Connected, Disconnect.Cnt=0, all execution counts at 0">
+  <div class="caption">Figure 32-9: Object Viewer watch window for R_ProdPLC1 showing initial state — ConnectionStatus is Connected, Disconnect.Cnt is 0, and both Disconnect.Monitor.ExecutionCnt and Reconnect.ExecutionCnt are 0. All values have Good quality. (page 11-20)</div>
+</div>
+
+<h3>Step G — Deactivate the OI Server to Test Reconnect</h3>
+
+<!-- IMAGE 10: page_0496_1.png — OCMC Deactivate OI.MBTCP.1 -->
+<div class="screenshot">
+  <img src="../images/page_0496_1.png" alt="OCMC showing OI.MBTCP.1 with right-click context menu highlighting Deactivate option">
+  <div class="caption">Figure 32-10: The Operations Control Management Console (OCMC) showing the OI.MBTCP.1 Modbus PLC server node. The right-click context menu highlights the Deactivate option, which will stop the server and trigger a disconnection event. (page 11-20)</div>
+</div>
+
+<!-- IMAGE 11: page_0497_0.png — Confirmation dialog -->
+<div class="screenshot">
+  <img src="../images/page_0497_0.png" alt="Confirmation dialog asking to deactivate OI.MBTCP.1 server on node SO3PROD">
+  <div class="caption">Figure 32-11: The confirmation dialog warning that deactivating the OI.MBTCP.1 server on node SO3PROD is immediate and requires re-activation to run again. Click Yes to confirm. (page 11-20)</div>
+</div>
+
+<!-- IMAGE 12: page_0497_1.png — OCMC tree structure -->
+<div class="screenshot">
+  <img src="../images/page_0497_1.png" alt="OCMC tree showing Operations Integration Server Manager with TrainingGalaxy, GRPlatform, ProdPlatform, and Modicon MBTCP nodes">
+  <div class="caption">Figure 32-12: The OCMC navigation tree showing the full hierarchy — Operations Integration Server Manager, TrainingGalaxy with Default Group, GRPlatform (SO3ENG), ProdPlatform (SO3PROD), and the Modicon MBTCP communication nodes. This provides context for the deactivation action. (page 11-20)</div>
+</div>
+
+<h3>Step H — Verify Disconnection Detection</h3>
+
+<!-- IMAGE 13: page_0497_2.png — Object Viewer: Disconnected, Disconnect.Cnt=1 -->
+<div class="screenshot">
+  <img src="../images/page_0497_2.png" alt="Object Viewer showing R_ProdPLC1 with ConnectionStatus=Disconnected, Disconnect.Cnt=1, execution counts at 1">
+  <div class="caption">Figure 32-13: Object Viewer after deactivating the OI server. ConnectionStatus shows Disconnected, Disconnect.Cnt has incremented to 1, and both Disconnect.Monitor.ExecutionCnt and Reconnect.ExecutionCnt show 1. The OnTrue trigger fired once, correctly incrementing the counter. (page 11-21)</div>
+</div>
+
+<h3>Step I — Re-Activate the OI Server</h3>
+
+<!-- IMAGE 14: page_0498_0.png — OCMC Activate OI.MBTCP.1 -->
+<div class="screenshot">
+  <img src="../images/page_0498_0.png" alt="OCMC showing OI.MBTCP.1 with right-click context menu highlighting Activate option">
+  <div class="caption">Figure 32-14: The OCMC with the right-click context menu on OI.MBTCP.1 showing the Activate (Auto start after reboot) option. This will restart the Modbus PLC server and restore the connection. (page 11-21)</div>
+</div>
+
+<h3>Step J — Verify Reconnection</h3>
+
+<!-- IMAGE 15: page_0498_1.png — Object Viewer: Connected, Disconnect.Cnt=1, Reconnect.ExecutionCnt=16 -->
+<div class="screenshot">
+  <img src="../images/page_0498_1.png" alt="Object Viewer showing R_ProdPLC1 with ConnectionStatus=Connected, Disconnect.Cnt=1, Reconnect.ExecutionCnt=16">
+  <div class="caption">Figure 32-15: Object Viewer after re-activating the OI server. ConnectionStatus is back to Connected, Disconnect.Cnt remains at 1 (correctly tracking the single disconnect event), and Reconnect.ExecutionCnt shows 16 — indicating the WhileTrue script executed 16 times attempting to reconnect before the connection was restored. (page 11-21)</div>
+</div>
+
+<h3>Step K — Test ScanState and ScanStateCmd</h3>
+
+<!-- IMAGE 16: page_0499_0.png — Object Viewer: ScanState=true -->
+<div class="screenshot">
+  <img src="../images/page_0499_0.png" alt="Object Viewer showing R_ProdPLC1 with ScanState=true and ScanStateCmd=true">
+  <div class="caption">Figure 32-16: Object Viewer with additional attributes added — ScanState and ScanStateCmd. Both show true, confirming the PLC is in an active scan state. The Disconnect.Cnt shows 1 and Reconnect.ExecutionCnt shows 16 from the previous test. (page 11-21)</div>
+</div>
+
+<!-- IMAGE 17: page_0499_1.png — Object Viewer: ScanState=true, ScanStateCmd=true with more attributes -->
+<div class="screenshot">
+  <img src="../images/page_0499_1.png" alt="Object Viewer showing R_ProdPLC1 with ScanState=true, ScanStateCmd=true, ConnectionStatus=Connected, Disconnect.Cnt=1">
+  <div class="caption">Figure 32-17: Object Viewer showing the full set of monitored attributes. ConnectionStatus is Connected, Disconnect.Cnt is 1, Disconnect.Monitor.ExecutionCnt is 1, Reconnect.ExecutionCnt is 16, ScanState is true, and ScanStateCmd is true. All values show Good quality. (page 11-21)</div>
+</div>
+
+<!-- IMAGE 18: page_0499_2.png — Modify Boolean Value: ScanStateCmd=False -->
+<div class="screenshot">
+  <img src="../images/page_0499_2.png" alt="Modify Boolean Value dialog for R_ProdPLC1.ScanStateCmd with False selected">
+  <div class="caption">Figure 32-18: The Modify Boolean Value dialog for R_ProdPLC1.ScanStateCmd. Setting this to False will take the PLC off-scan, which should trigger the Disconnect.Monitor script's OnScan execution type to reset the Disconnect.Cnt. (page 11-21)</div>
+</div>
+
+<!-- IMAGE 19: page_0500_0.png — Object Viewer: ScanState=false, ScanStateCmd=false -->
+<div class="screenshot">
+  <img src="../images/page_0500_0.png" alt="Object Viewer showing R_ProdPLC1 with ScanState=false, ScanStateCmd=false, Disconnect.Cnt=1, Reconnect.ExecutionCnt=16">
+  <div class="caption">Figure 32-19: Object Viewer after setting ScanStateCmd to False. ScanState is now false, confirming the PLC is off-scan. The Disconnect.Cnt shows 1 with Bad quality (because the PLC is off-scan), while other attributes retain their Good quality values. (page 11-22)</div>
+</div>
+
+<div class="tip">
+  <strong>Lab 20 Verification Complete:</strong> The runtime tests confirm that the Reconnect script (WhileTrue, 5-second interval) correctly attempts reconnection when the connection drops, and the Disconnect.Monitor script (OnTrue) correctly increments the counter exactly once per disconnect event. The OnScan script correctly resets the counter when the object goes on scan.
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>32.2 Completing Lab 21 — Redundancy Script &amp; Deployment</h2>
+<p class="page-ref">Reference: Lab 21 — Switching Back to Primary Redundant Engine (pages 11-22 to 11-24)</p>
+
+<p>This section completes the final steps of Lab 21, where you configure a script to force failover back to the primary redundant engine when it becomes available.</p>
+
+<h3>Create the RedundancyPrimaryActive Script</h3>
+<p><strong>Step 1:</strong> In the IDE, open the AppEngine1 configuration editor.</p>
+<p><strong>Step 2:</strong> On the Scripts tab, add a script and configure it as follows:</p>
+
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>RedundancyPrimaryActive</code></td></tr>
+  <tr><td>Execution type</td><td><code>Execute</code> (default)</td></tr>
+  <tr><td>Expression</td><td><code>(Me.Redundancy.Identity == 2) AND (Me.Redundancy.PartnerStatus == 4)</code></td></tr>
+  <tr><td>Trigger type</td><td><code>OnTrue</code></td></tr>
+  <tr><td>Script body</td><td><code>Me.Redundancy.ForceFailoverCmd = true;</code></td></tr>
+</table>
+
+<!-- IMAGE 20: page_0502_0.png — RedundancyPrimaryActive script configuration -->
+<div class="screenshot">
+  <img src="../images/page_0502_0.png" alt="RedundancyPrimaryActive script configuration showing expression (Me.Redundancy.Identity == 2) AND (Me.Redundancy.PartnerStatus == 4), trigger type OnTrue, and script body Me.Redundancy.ForceFailoverCmd = true;">
+  <div class="caption">Figure 32-20: The RedundancyPrimaryActive script configuration. The expression checks that this engine is the active primary (Identity == 2) and the partner is unavailable (PartnerStatus == 4), then forces a failover command. (page 11-22)</div>
+</div>
+
+<div class="key-concept">
+  <strong>How the Redundancy Script Works:</strong>
+  <ul>
+    <li><code>Me.Redundancy.Identity == 2</code> — Checks that this engine is the current active (primary) controller</li>
+    <li><code>Me.Redundancy.PartnerStatus == 4</code> — Checks that the partner/backup engine is unavailable or faulty</li>
+    <li><code>Me.Redundancy.ForceFailoverCmd = true</code> — Commands the system to failover to the designated primary</li>
+    <li>The <strong>OnTrue</strong> trigger fires once when the condition transitions from false to true</li>
+  </ul>
+</div>
+
+<p><strong>Step 3:</strong> Validate the script.</p>
+<p><strong>Step 4:</strong> Save, close, and check in the object with an appropriate comment. The change propagates to the backup engine.</p>
+
+<h3>Deploy and Test in Runtime</h3>
+<p><strong>Step 5:</strong> Deploy AppEngine1. Note that <em>Include redundant partner</em> is selected by default and cannot be unchecked.</p>
+
+<!-- IMAGE 21: page_0502_1.png — Deployment tree showing redundant engines -->
+<div class="screenshot">
+  <img src="../images/page_0502_1.png" alt="Deployment tree showing TrainingGalaxy with GRPlatform containing AppEngine1 (Backup) and DIQ_Engine2 with R_ProdPLC2, and ProdPlatform containing AppEngine1 with ControlSystem">
+  <div class="caption">Figure 32-21: Deployment view showing the redundant engine pair — AppEngine1 (Backup) on GRPlatform and the primary AppEngine1 on ProdPlatform. The ControlSystem is nested under the primary engine. (page 11-22)</div>
+</div>
+
+<!-- IMAGE 22: page_0503_0.png — Deploy 31 objects dialog -->
+<div class="screenshot">
+  <img src="../images/page_0503_0.png" alt="Deploy 31 objects dialog showing cascade deploy and include redundant partner checked, with deploy changes and force off scan options selected">
+  <div class="caption">Figure 32-22: The Deploy dialog confirming 31 objects will be deployed with cascade deploy and redundant partner included. The "Deploy changes" option is selected, and "Force off scan" and "Preserve runtime changes" are both checked. (page 11-23)</div>
+</div>
+
+<p><strong>Step 6–7:</strong> In Object Viewer, apply the ForceFailover command to AppEngine1 and observe the engine returning to the Active computer.</p>
+
+<!-- IMAGE 23: page_0504_0.png — Object Viewer redundancy status -->
+<div class="screenshot">
+  <img src="../images/page_0504_0.png" alt="Object Viewer showing AppEngine1 redundancy attributes including Identity: Primary, PartnerPlatform: GRPlatform, PartnerStatus: Standby - Ready, Status: Active, and ForceFailoverCmd: false">
+  <div class="caption">Figure 32-23: Object Viewer showing AppEngine1 redundancy status after failover — Identity is Primary, PartnerPlatform is GRPlatform, PartnerStatus is Standby - Ready, Status is Active, and ForceFailoverCmd is false (no longer forcing). The system has successfully returned to the primary engine. (page 11-24)</div>
+</div>
+
+<div class="tip">
+  <strong>Note:</strong> Redundancy was checked at the "Instance" level, not at the "Template" level in these lab exercises. You may want to configure two templates in a production environment: one for redundant engines and one for non-redundant engines.
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h1>Section 2 — Variables and Control Statements</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11, Section 2</p>
+<p class="page-ref">This section describes the usage of variables and control statements in a script. (pages 11-25 to 11-32)</p>
+
+<!-- ============================================================ -->
+<h2>32.3 QuickScript.NET Variables</h2>
+<p class="page-ref">Reference: QuickScript .NET Variables (pages 11-25 to 11-26)</p>
+
+<p>Variables in QuickScript.NET must be <strong>declared before use</strong>. They can appear on both the left and right sides of statements and expressions.</p>
+
+<div class="key-concept">
+  <strong>Variable Scope — Two Types:</strong>
+  <ul>
+    <li><strong>Script body variables:</strong> Declared within the script body. They <em>lose their value</em> after the script executes and <em>cannot be accessed</em> by other scripts.</li>
+    <li><strong>Declarations area variables:</strong> Declared in the Declarations area of the Script tab. They <strong>maintain their values</strong> throughout the lifetime of the associated object and persist between script executions.</li>
+  </ul>
+</div>
+
+<h3>DIM Statement Syntax</h3>
+<p>Each variable must be declared with a separate <code>DIM</code> statement followed by a semicolon:</p>
+
+<pre><code>DIM &lt;variable_name&gt; [ ( &lt;upper_bound&gt;
+  [, &lt;upper_bound&gt; [, &lt;upper_bound&gt;]] ) ]
+  [ AS &lt;data_type&gt; ];</code></pre>
+
+<table>
+  <tr><th>Element</th><th>Description</th></tr>
+  <tr><td><code>DIM</code></td><td>Required keyword</td></tr>
+  <tr><td><code>&lt;variable_name&gt;</code></td><td>Must begin with a letter (A–Z or a–z); remaining characters can be letters, digits (0–9), or underscores (_). Limited to 255 Unicode characters. Must not contain dots.</td></tr>
+  <tr><td><code>&lt;upper_bound&gt;</code></td><td>A number between 1 and 2,147,483,647 for array dimensions. Up to 3 dimensions supported. Lower bound is always 1.</td></tr>
+  <tr><td><code>AS</code></td><td>Optional keyword for declaring the data type.</td></tr>
+  <tr><td><code>&lt;data_type&gt;</code></td><td>One of: Boolean, Integer, ElapsedTime, Float, Double, String, Time, or InternationalizedString. Also supports .NET types and imported script library types.</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Default Data Type:</strong> If you omit the <code>AS</code> clause, the variable defaults to <strong>Integer</strong>. For example:
+  <pre><code>DIM LocVar1;
+' is equivalent to:
+DIM LocVar1 AS Integer;</code></pre>
+</div>
+
+<h3>DIM Statement Rules</h3>
+<div class="pitfall">
+  <strong>Important Rules:</strong>
+  <ul>
+    <li>DIM statements can appear anywhere in the script body, but they <strong>must precede</strong> the first referencing statement or expression.</li>
+    <li><strong>Do not cascade DIM statements</strong> — each variable needs its own DIM statement:
+      <pre><code>' INVALID:
+DIM LocVar1 AS Integer, LocVar2 AS Float;
+DIM LocVar3, LocVar4, LocVar5 AS String;
+
+' VALID:
+DIM LocVar1 AS Integer;
+DIM LocVar2 AS Float;
+DIM LocVar3 AS String;</code></pre>
+    </li>
+    <li>Variable names and data type identifiers are <strong>not case sensitive</strong>.</li>
+    <li>If a variable name conflicts with an attribute name, alias, or object name, the <strong>variable name takes precedence</strong>.</li>
+  </ul>
+</div>
+
+<h3>Array Variables</h3>
+<p>Arrays are declared with dimensions in the DIM statement. The syntax for referencing an entire array is <code>[ ]</code>:</p>
+
+<pre><code>DIM locarr[10] AS Float;
+' Assign attribute array to local array:
+locarr[] = tag.attr[];</code></pre>
+
+<p>The lower bound of each array dimension is always <strong>1</strong>. After declaration, the upper bound is fixed — <code>ReDim</code> is not supported.</p>
+
+<h3>Quality Propagation with Variables</h3>
+<p>When used on the right side of an equation, declared local variables always cause the left side to have <strong>Good quality</strong>:</p>
+
+<pre><code>DIM x AS Integer;
+DIM y AS Integer;
+x = 5;
+y = 5;
+me.attr = 5;      ' Quality: Good
+me.attr = x;      ' Quality: Good
+me.attr = x + y;  ' Quality: Good</code></pre>
+
+<h3>Null Values</h3>
+<p>Use <code>null</code> to indicate no object is currently assigned to a variable. This is equivalent to C#'s <code>null</code> or VB's <code>Nothing</code>. Assigning <code>null</code> makes the variable eligible for garbage collection.</p>
+
+<div class="pitfall">
+  <strong>Warning:</strong> You may <em>not</em> use a variable whose value is <code>null</code> — doing so terminates the script with an error. However, you <em>can</em> test a variable for null:
+  <pre><code>IF myvar == null THEN ...</code></pre>
+</div>
+
+<h3>Passing Attributes as Parameters</h3>
+<p>It is <strong>not possible</strong> to pass attributes directly as parameters for system objects. Use a local variable as an intermediary, or explicitly convert the attribute to a string using an appropriate function call.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>32.4 Control Structures</h2>
+<p class="page-ref">Reference: QuickScript .NET Control Structures (pages 11-27 to 11-32)</p>
+
+<p>QuickScript.NET provides <strong>five primary control structures</strong>:</p>
+<ol>
+  <li><code>IF … THEN … ELSEIF … ELSE … ENDIF</code></li>
+  <li><code>FOR … TO … STEP … NEXT</code> Loop</li>
+  <li><code>FOR EACH … IN … NEXT</code></li>
+  <li><code>TRY … CATCH</code></li>
+  <li><code>WHILE</code> Loop</li>
+</ol>
+
+<!-- ============================================================ -->
+<h3>32.4.1 IF … THEN … ELSEIF … ELSE … ENDIF</h3>
+<p class="page-ref">Reference: IF-THEN-ELSE-ENDIF (pages 11-27 to 11-28)</p>
+
+<p>Conditionally executes various instructions based on the state of an expression:</p>
+
+<pre><code>IF &lt;Boolean_expression&gt; THEN;
+  [statements];
+  [ { ELSEIF;
+    [statements] } ];
+  [ ELSE;
+    [statements] ];
+ENDIF;</code></pre>
+
+<h4>Boolean Expression Evaluation</h4>
+<p>Depending on the data type, expressions are evaluated as True or False:</p>
+
+<table>
+  <tr><th>Data Type</th><th>Mapping</th></tr>
+  <tr><td>Boolean</td><td>Directly used (no mapping needed)</td></tr>
+  <tr><td>Integer</td><td>Value == 0 → False; Value &lt;&gt; 0 → True</td></tr>
+  <tr><td>Float</td><td>Value == 0 → False; Value &lt;&gt; 0 → True</td></tr>
+  <tr><td>Double</td><td>Value == 0 → False; Value &lt;&gt; 0 → True</td></tr>
+  <tr><td>String</td><td><strong>Cannot be mapped</strong> — results in validation error</td></tr>
+  <tr><td>Time</td><td><strong>Cannot be mapped</strong> — results in validation error</td></tr>
+  <tr><td>ElapsedTime</td><td><strong>Cannot be mapped</strong> — results in validation error</td></tr>
+  <tr><td>InternationalizedString</td><td><strong>Cannot be mapped</strong> — results in validation error</td></tr>
+  <tr><td>BigString</td><td><strong>Cannot be mapped</strong> — results in validation error</td></tr>
+</table>
+
+<h4>IF/THEN Example</h4>
+<pre><code>IF value == 0 THEN
+  Message = "Value is zero";
+ELSEIF value > 0 THEN;
+  Message = "Value is positive";
+ELSEIF value < 0 THEN;
+  Message = "Value is negative";
+ELSE;
+  {Default. Should never occur in this example};
+ENDIF;</code></pre>
+
+<h4>Nested IF Statements</h4>
+<p>You can nest IF statements, but each nesting requires an additional <code>ENDIF</code>:</p>
+<pre><code>IF &lt;Boolean_expression&gt; THEN;
+  [statements];
+  IF &lt;Boolean_expression&gt; THEN;
+    [statements];
+  ENDIF;
+ENDIF;</code></pre>
+
+<h4>IF/THEN and Attribute Quality</h4>
+<div class="key-concept">
+  <strong>Quality Handling in IF Statements:</strong>
+  <ul>
+    <li>When copying an Attribute value to another Attribute of the same type, the <strong>quality is also copied</strong>.</li>
+    <li>If an Attribute has <strong>BAD quality</strong> and you need to copy only the value, use a temporary variable:
+      <pre><code>DIM temp AS Integer;
+temp = me.Attribute1;
+me.Attribute2 = temp;</code></pre>
+    </li>
+    <li>If a comparison involves an Attribute with BAD quality, the statements within the IF block are <strong>not executed</strong>.</li>
+    <li>Always check quality first using <code>IsBad()</code>:
+      <pre><code>IF (IsBad(me.Attribute1)) THEN
+  LogMessage("Attribute1 quality is bad");
+ELSE
+  IF me.Attribute1 &lt;&gt; me.Attribute2 THEN
+    me.Attribute2 = me.Attribute1;
+  ENDIF;
+ENDIF;</code></pre>
+    </li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h3>32.4.2 FOR … TO … STEP … NEXT Loop</h3>
+<p class="page-ref">Reference: FOR-NEXT Loop (page 11-29)</p>
+
+<p>Performs a function (or set of functions) multiple times during a single script execution:</p>
+
+<pre><code>FOR &lt;analog_var&gt; = &lt;start_expression&gt; TO &lt;end_expression&gt;
+  [STEP &lt;change_expression&gt;];
+  [statements];
+  [EXIT FOR;];
+  [statements];
+NEXT;</code></pre>
+
+<table>
+  <tr><th>Element</th><th>Description</th></tr>
+  <tr><td><code>analog_var</code></td><td>A variable of type Integer, Float, or Double</td></tr>
+  <tr><td><code>start_expression</code></td><td>Initial value for the loop variable</td></tr>
+  <tr><td><code>end_expression</code></td><td>Termination condition — loop exits when analog_var exceeds this value (positive step) or falls below it (negative step)</td></tr>
+  <tr><td><code>change_expression</code></td><td>Increment/decrement value (can be positive or negative). Defaults to +1 or −1 if STEP is omitted.</td></tr>
+</table>
+
+<h4>FOR Loop Execution Flow</h4>
+<ol>
+  <li><code>analog_var</code> is set to <code>start_expression</code></li>
+  <li>System tests if <code>analog_var</code> exceeds <code>end_expression</code> (positive step) or falls below it (negative step). If so, exit loop.</li>
+  <li>Statements in the loop body execute (can exit via <code>EXIT FOR</code>)</li>
+  <li><code>analog_var</code> is incremented by the step value</li>
+  <li>Steps 2–4 repeat</li>
+</ol>
+
+<div class="tip">
+  <strong>Note:</strong> FOR-NEXT loops can be nested. The number of nesting levels depends on memory and resource availability.
+</div>
+
+<!-- ============================================================ -->
+<h3>32.4.3 FOR EACH … IN … NEXT</h3>
+<p class="page-ref">Reference: FOR EACH Loop (page 11-30)</p>
+
+<p>Used with collections exposed by OLE Automation servers:</p>
+
+<pre><code>FOR EACH &lt;object_variable&gt; IN &lt;collection_object&gt;
+  [statements];
+  [EXIT FOR;];
+  [statements];
+NEXT;</code></pre>
+
+<p>Where <code>object_variable</code> is a dimmed variable and <code>collection_object</code> is a variable holding a collection object. You can exit the loop with <code>EXIT FOR</code>.</p>
+
+<!-- ============================================================ -->
+<h3>32.4.4 TRY … CATCH</h3>
+<p class="page-ref">Reference: TRY-CATCH (pages 11-30 to 11-31)</p>
+
+<p>Provides error handling — allows scripts to continue running rather than terminating when errors occur:</p>
+
+<pre><code>TRY
+  [try statements]  ' guarded section
+CATCH
+  [catch statements]
+ENDTRY;</code></pre>
+
+<h4>TRY-CATCH Execution Flow</h4>
+<ol>
+  <li>Runtime error handling starts with <code>TRY</code>. Put code that might fail in the try block.</li>
+  <li>If no error occurs, the script runs normally — catch block is ignored.</li>
+  <li>If a runtime error occurs, the rest of the try block is skipped, and execution jumps to the <code>CATCH</code> statement.</li>
+</ol>
+
+<div class="key-concept">
+  <strong>The ERROR variable:</strong> Statements inside the Catch block may reference the reserved <code>ERROR</code> variable, which is a .NET <code>System.Exception</code> object thrown from the Try block. You can call <code>GetType()</code> to determine the exception type.
+</div>
+
+<h4>TRY-CATCH Example — SQL Database Query</h4>
+<pre><code>DIM command = new System.Data.SqlClient.SqlCommand;
+DIM reader AS System.Data.SqlClient.SqlDataReader;
+command.Connection = new System.Data.SqlClient.SqlConnection;
+TRY
+  command.Connection.ConnectionString = "Integrated Security=SSPI";
+  command.CommandText = "select * from sys.databases";
+  command.Connection.Open();
+  reader = command.ExecuteReader();
+  WHILE reader.Read()
+    me.name = reader.GetString(0);
+    LogMessage(me.name);
+  ENDWHILE;
+CATCH
+  LogMessage(error);
+ENDTRY;
+IF reader &lt;&gt; null AND NOT reader.IsClosed THEN
+  reader.Close();
+ENDIF;
+IF command.Connection.State == System.Data.ConnectionState.Open THEN
+  command.Connection.Close();
+ENDIF;</code></pre>
+
+<!-- ============================================================ -->
+<h3>32.4.5 WHILE Loop</h3>
+<p class="page-ref">Reference: WHILE Loop (pages 11-31 to 11-32)</p>
+
+<p>Performs a function or set of functions repeatedly while a condition is true:</p>
+
+<pre><code>WHILE &lt;Boolean_expression&gt;
+  [statements]
+  [EXIT WHILE;]
+  [statements]
+ENDWHILE;</code></pre>
+
+<h4>WHILE Loop Execution Flow</h4>
+<ol>
+  <li>Evaluate the Boolean expression. If false, exit the loop and continue after <code>ENDWHILE</code>.</li>
+  <li>Execute the statements in the loop body (can exit via <code>EXIT WHILE</code>).</li>
+  <li>Repeat steps 1–2.</li>
+</ol>
+
+<div class="tip">
+  <strong>Note:</strong> WHILE loops can be nested. The number of nesting levels depends on memory and resource availability.
+</div>
+
+<!-- ============================================================ -->
+<h2>32.5 Quality of Input/Output Extensions</h2>
+<p class="page-ref">Reference: Quality of Input, InputOutput, and Output Extensions (page 11-32)</p>
+
+<div class="key-concept">
+  <strong>Extended Attribute Quality Behavior:</strong>
+  <ul>
+    <li><strong>OnScan:</strong> The value and quality of the Input extended attribute mirrors the quality of the externally referenced attribute for successful reads. Data quality is set to <strong>Bad</strong> when reads fail due to communication errors or datatype conversion failures.</li>
+    <li><strong>External set while OnScan:</strong> If a user changes the value or quality of an extended attribute, a write to the destination occurs during the next execute phase. Quality must be Good or Uncertain for a write to occur.</li>
+    <li><strong>OffScan:</strong> Quality is always <strong>Bad</strong> and user sets are accepted.</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h1>Lab 22 — Scripting Valve Status</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11 Lab 22</p>
+<p class="page-ref">Hands-on lab covering array attributes, script-based valve state calculation, and the use of DIM declarations. (pages 11-33 to 11-42)</p>
+
+<!-- ============================================================ -->
+<h2>32.6 Lab 22 — Introduction</h2>
+<p class="page-ref">Reference: Lab 22 Introduction (page 11-33)</p>
+
+<p>In this lab, you will add a script to the <code>$Valve</code> template to report all stages of the valve: <strong>Open</strong>, <strong>Closed</strong>, and <strong>Traveling</strong>. You will create an attribute with an Array value that holds the list of possible states, and an integer value for the current valve state.</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Use a script to calculate the state of a valve</li>
+    <li>Create an attribute with an Array value</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>32.7 Lab 22 — Add Support Attributes</h2>
+<p class="page-ref">Reference: Add Support Attributes (pages 11-34 to 11-35)</p>
+
+<p>First, modify the Limit Switch Open (LSOpen) to add a "Not Open" option. Then add attributes for the Limit Switch Closed (LSClosed), the calculated valve state (PV), an array of possible states (PVStates), and the valve state index (PVState).</p>
+
+<p><strong>Step 1:</strong> In the IDE, Templates tab, Training\Project toolset, open the <code>$Valve</code> configuration editor.</p>
+
+<p><strong>Step 2:</strong> In the Attributes list, select <code>LSOpen</code> and modify the configuration:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>'False' label</td><td><code>Not Open and locked</code> (default)</td></tr>
+</table>
+
+<p><strong>Step 3:</strong> With LSOpen selected, click the Duplicate button and configure the new attribute:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>LSClosed</code></td></tr>
+  <tr><td>Description</td><td>Limit Switch Closed and locked</td></tr>
+  <tr><td>'False' label</td><td>Not Closed and locked</td></tr>
+  <tr><td>'True' label</td><td>Closed and locked</td></tr>
+  <tr><td>I/O</td><td>Read (default)</td></tr>
+</table>
+
+<p><strong>Step 4:</strong> Add a new attribute for the calculated valve state:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>PV</code></td></tr>
+  <tr><td>Data type</td><td>String</td></tr>
+  <tr><td>Writeability</td><td>Calculated</td></tr>
+</table>
+
+<p><strong>Step 5:</strong> Add an array attribute to hold the valve states:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>PVStates</code></td></tr>
+  <tr><td>Data type</td><td>String</td></tr>
+  <tr><td>Array</td><td>Checked</td></tr>
+  <tr><td>Array size</td><td>3</td></tr>
+  <tr><td>Writeability</td><td>Read/Write</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Array Attribute Configuration:</strong> The PVStates array holds three string values: "Open", "Closed", and "Traveling". Using an array makes it easier to update the stage names in the future without modifying the script logic.
+</div>
+
+<p><strong>Step 6:</strong> Add an integer attribute for the valve state index:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>PVState</code></td></tr>
+  <tr><td>Data type</td><td>Integer</td></tr>
+  <tr><td>Writeability</td><td>Calculated</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>32.8 Lab 22 — Create the Valve State Script</h2>
+<p class="page-ref">Reference: Create and Configure a Script (pages 11-36 to 11-37)</p>
+
+<p><strong>Step 7:</strong> On the Scripts tab, add a new script named <code>Valve.State.Calculate</code>.</p>
+
+<p><strong>Step 8:</strong> Configure the script with these settings:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Execution type</td><td><code>Execute</code> (default) and locked</td></tr>
+  <tr><td>Expression</td><td><code>Me.LSOpen OR Me.LSClosed</code></td></tr>
+  <tr><td>Trigger type</td><td><code>Data Change</code></td></tr>
+</table>
+
+<p><strong>Step 9:</strong> In the script body, enter the following:</p>
+
+<pre><code>' Determine valve state based on limit switches
+IF (Me.LSOpen AND NOT Me.LSClosed) THEN
+  Me.PVState = 1;
+ELSEIF (NOT Me.LSOpen AND Me.LSClosed) THEN
+  Me.PVState = 2;
+ELSE
+  Me.PVState = 3;
+ENDIF;
+
+' Set the PV string from the PVStates array
+Me.PV = Me.PVStates[Me.PVState];</code></pre>
+
+<div class="key-concept">
+  <strong>How the Script Works:</strong>
+  <ul>
+    <li>When <strong>LSOpen is True</strong> and <strong>LSClosed is False</strong> → Valve is Open (state 1)</li>
+    <li>When <strong>LSOpen is False</strong> and <strong>LSClosed is True</strong> → Valve is Closed (state 2)</li>
+    <li>Otherwise → Valve is Traveling (state 3)</li>
+    <li>The PVStates array provides the human-readable state name using the PVState index</li>
+  </ul>
+</div>
+
+<p><strong>Step 10:</strong> Validate the script.</p>
+<p><strong>Step 11:</strong> Save, close, and check in the object with an appropriate comment.</p>
+
+<!-- ============================================================ -->
+<h2>32.9 Lab 22 — Configure the PVStates Array Values</h2>
+<p class="page-ref">Reference: Set Array Values (pages 11-38 to 11-39)</p>
+
+<p><strong>Step 12:</strong> Open the <code>$Valve</code> configuration editor and select the <code>PVStates</code> attribute.</p>
+
+<p><strong>Step 13:</strong> Set the array values:</p>
+<table>
+  <tr><th>Index</th><th>Value</th></tr>
+  <tr><td>PVStates[1]</td><td><code>Open</code></td></tr>
+  <tr><td>PVStates[2]</td><td><code>Closed</code></td></tr>
+  <tr><td>PVStates[3]</td><td><code>Traveling</code></td></tr>
+</table>
+
+<p><strong>Step 14:</strong> Save, close, and check in the object.</p>
+<p><strong>Step 15:</strong> Deploy the valve instances (InletValve_001, InletValve_002, OutletValve_001, OutletValve_002).</p>
+
+<!-- ============================================================ -->
+<h2>32.10 Lab 22 — Test in Runtime</h2>
+<p class="page-ref">Reference: Test in Runtime (pages 11-40 to 11-42)</p>
+
+<p><strong>Step 16:</strong> In the Deployment view, open <code>InletValve_001</code> in Object Viewer.</p>
+
+<p><strong>Step 17:</strong> Create a new watch window named <code>ValveState</code> and add the following attributes:</p>
+<ul>
+  <li><code>LSOpen</code></li>
+  <li><code>LSClosed</code></li>
+  <li><code>PV</code></li>
+  <li><code>PVState</code></li>
+  <li><code>PVStates[]</code></li>
+</ul>
+
+<p><strong>Step 18:</strong> Save the watch list.</p>
+
+<p><strong>Step 19:</strong> Test the valve states:</p>
+<ul>
+  <li>Set <code>LSOpen</code> to <strong>True</strong> and <code>LSClosed</code> to <strong>False</strong> → PV should show "Open", PVState should be 1</li>
+  <li>Set <code>LSOpen</code> to <strong>False</strong> and <code>LSClosed</code> to <strong>True</strong> → PV should show "Closed", PVState should be 2</li>
+  <li>Set both to <strong>False</strong> → PV should show "Traveling", PVState should be 3</li>
+</ul>
+
+<div class="tip">
+  <strong>Key Learning:</strong> This lab demonstrates how to use array variables (<code>PVStates</code>) together with control structures (<code>IF/THEN/ELSEIF/ELSE</code>) to create a flexible, maintainable state-tracking script. The array makes it easy to update state names without changing the script logic.
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h1>Lab 23 — Scripting Custom Alarms</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11 Lab 23</p>
+<p class="page-ref">Hands-on lab covering custom alarm attributes, script-based alarm condition monitoring, and IF/THEN control logic. (pages 11-43 to 11-50)</p>
+
+<!-- ============================================================ -->
+<h2>32.11 Lab 23 — Introduction</h2>
+<p class="page-ref">Reference: Lab 23 Introduction (page 11-43)</p>
+
+<p>In this lab, you will configure two new attributes with alarm features to monitor the flow to the transfer pumps within the <code>$Mixer</code> template. You will add a script to monitor the inlet valves and transfer pumps to ensure they are operating correctly, and trigger an alarm if they are not.</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Use attributes and scripting to determine custom alarm conditions</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>32.12 Lab 23 — Create Alarm Attributes</h2>
+<p class="page-ref">Reference: Create and Configure Attributes (pages 11-44 to 11-45)</p>
+
+<p><strong>Step 1:</strong> In the IDE, Templates tab, Training\Project toolset, open the <code>$Mixer</code> configuration editor.</p>
+
+<p><strong>Step 2:</strong> Create and configure a new attribute:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>Flow.Alarm.Pump1</code></td></tr>
+  <tr><td>Description</td><td>Transfer Pump 1 - Faulty Flow Condition and locked</td></tr>
+  <tr><td>Data type</td><td>Boolean (default)</td></tr>
+  <tr><td>Writeability</td><td>Calculated</td></tr>
+  <tr><td>State alarm</td><td>Checked and locked</td></tr>
+  <tr><td>Category</td><td>Process</td></tr>
+  <tr><td>Priority</td><td>500 (default)</td></tr>
+  <tr><td>Active alarm state</td><td>True (default)</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Custom Alarm Attributes:</strong> By enabling <em>State alarm</em> on a Boolean attribute, the attribute becomes an alarm source. When the attribute value is <strong>True</strong>, the alarm is active; when <strong>False</strong>, the alarm is cleared. The alarm inherits the Category, Priority, and other alarm settings configured on the attribute.
+</div>
+
+<p><strong>Step 3:</strong> Duplicate <code>Flow.Alarm.Pump1</code> and change the Description to "Transfer Pump 2 - Faulty Flow Condition" and lock it. The new attribute will be named <code>Flow.Alarm.Pump2</code>.</p>
+
+<!-- ============================================================ -->
+<h2>32.13 Lab 23 — Add the Alarm Condition Script</h2>
+<p class="page-ref">Reference: Add a Script to Calculate Alarm Conditions (pages 11-46 to 11-47)</p>
+
+<p><strong>Step 4:</strong> On the Scripts tab, add a new script named <code>Flow.Alarm.Condition</code>.</p>
+
+<p><strong>Step 5:</strong> Configure the script:</p>
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td>Execution type</td><td><code>Execute</code> (default) and locked</td></tr>
+  <tr><td>Expression</td><td><code>Me.Inlet1.StateIndex == 1 or Me.Inlet2.StateIndex == 1 or Me.Pump1.PV or Me.Pump2.PV</code></td></tr>
+  <tr><td>Trigger type</td><td><code>While True</code> (default)</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Expression Meaning:</strong> The expression evaluates to True when either inlet valve is closed (StateIndex == 1) OR either pump is running (PV is True). This ensures the script runs whenever there's a potential faulty flow condition.
+</div>
+
+<p><strong>Step 6:</strong> In the script body, enter the following:</p>
+
+<pre><code>' Triggers Alarm State if Inlet1 is Closed and Pump is on
+IF (Me.Inlet1.StateIndex == 1 AND Me.Pump1.PV) THEN
+  Me.Flow.Alarm.Pump1 = true;
+ELSE
+  Me.Flow.Alarm.Pump1 = false;
+ENDIF;
+
+' Triggers Alarm State if Inlet2 is Closed and Pump is on
+IF (Me.Inlet2.StateIndex == 1 AND Me.Pump2.PV) THEN
+  Me.Flow.Alarm.Pump2 = true;
+ELSE
+  Me.Flow.Alarm.Pump2 = false;
+ENDIF;</code></pre>
+
+<div class="key-concept">
+  <strong>How the Alarm Script Works:</strong>
+  <ul>
+    <li><strong>Inlet1 closed + Pump1 running</strong> → Faulty flow condition detected → <code>Flow.Alarm.Pump1</code> set to True (alarm activates)</li>
+    <li><strong>Inlet2 closed + Pump2 running</strong> → Faulty flow condition detected → <code>Flow.Alarm.Pump2</code> set to True (alarm activates)</li>
+    <li>Otherwise → Alarm cleared (attribute set to False)</li>
+  </ul>
+</div>
+
+<p><strong>Step 7:</strong> Validate the script.</p>
+
+<h3>Add OnScan Initialization</h3>
+<p><strong>Step 8:</strong> In the Execution type drop-down list, select <strong>OnScan</strong>.</p>
+<p><strong>Step 9:</strong> In the script body, enter:</p>
+
+<pre><code>' Initialize alarm states as false
+Me.Flow.Alarm.Pump1 = false;
+Me.Flow.Alarm.Pump2 = false;</code></pre>
+
+<p><strong>Step 10:</strong> Validate the script. Notice the Flow.Alarm.Condition script now has both OnScan and Execute scripts.</p>
+<p><strong>Step 11:</strong> Save, close, and check in the object with an appropriate comment. The change propagates to derived objects.</p>
+<p><strong>Step 12:</strong> Deploy Mixer100 and Mixer200.</p>
+
+<!-- ============================================================ -->
+<h2>32.14 Lab 23 — Test in Runtime</h2>
+<p class="page-ref">Reference: Test in Runtime (pages 11-49 to 11-50)</p>
+
+<p><strong>Step 13:</strong> In the Deployment view, open <code>Mixer100</code> in Object Viewer.</p>
+
+<p><strong>Step 14:</strong> Create a new watch window named <code>CustomAlarms</code> and add the following attributes:</p>
+<ul>
+  <li><code>Inlet1_001.Status</code></li>
+  <li><code>Pump1_001.CMD</code></li>
+  <li><code>Pump1_001.PV.Msg</code></li>
+  <li><code>Mixer100.Flow.Alarm.Pump1</code></li>
+  <li><code>Mixer100.Flow.Alarm.Pump1.InAlarm</code></li>
+  <li><code>Inlet2_001.Status</code></li>
+  <li><code>Pump2_001.CMD</code></li>
+  <li><code>Pump2_001.PV.Msg</code></li>
+  <li><code>Mixer100.Flow.Alarm.Pump2</code></li>
+  <li><code>Mixer100.Flow.Alarm.Pump2.InAlarm</code></li>
+</ul>
+
+<p><strong>Step 15:</strong> Save the watch list.</p>
+
+<p><strong>Step 16:</strong> Trigger an alarm condition:</p>
+<ul>
+  <li>When <code>Inlet1_001.Status</code> is <strong>Closed</strong>, set <code>Pump1_001.CMD</code> to <strong>True</strong> → Observe <code>Flow.Alarm.Pump1</code> becomes True and <code>InAlarm</code> becomes True</li>
+</ul>
+
+<p><strong>Step 17:</strong> Clear the alarm:</p>
+<ul>
+  <li>Set <code>Pump1_001.CMD</code> to <strong>False</strong> → Observe the alarm clears</li>
+</ul>
+
+<p><strong>Step 18:</strong> Repeat the test for Inlet2 and Pump2.</p>
+<p><strong>Step 19:</strong> Minimize Object Viewer.</p>
+
+<div class="tip">
+  <strong>Key Learning:</strong> This lab demonstrates how to create <strong>custom alarm conditions</strong> using Boolean attributes with State Alarm enabled. The script uses IF/THEN/ELSE control logic to monitor process conditions (inlet valve position + pump status) and automatically trigger or clear alarms based on faulty flow conditions.
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>32.15 Summary — Variables and Control Statements</h2>
+
+<div class="key-concept">
+  <strong>Key Takeaways from This Lesson:</strong>
+  <ul>
+    <li><strong>Variables</strong> must be declared with <code>DIM</code> before use; each variable needs its own DIM statement</li>
+    <li><strong>Declarations area</strong> variables persist across script executions; <strong>script body</strong> variables do not</li>
+    <li><strong>8 data types</strong>: Boolean, Integer, ElapsedTime, Float, Double, String, Time, InternationalizedString</li>
+    <li><strong>Arrays</strong> support up to 3 dimensions with lower bound always 1</li>
+    <li><strong>IF/THEN/ELSEIF/ELSE/ENDIF</strong> for conditional logic — Boolean, Integer, Float, and Double can be used in conditions; String, Time, ElapsedTime cannot</li>
+    <li><strong>FOR/NEXT</strong> for counted loops with optional STEP; <strong>FOR EACH</strong> for collection iteration</li>
+    <li><strong>TRY/CATCH</strong> for error handling with the ERROR exception object</li>
+    <li><strong>WHILE/ENDWHILE</strong> for condition-based loops</li>
+    <li><strong>Quality propagation:</strong> Variables on the right side of assignments produce Good quality on the left side; always check quality with <code>IsBad()</code> before comparisons</li>
+    <li><strong>Lab 22</strong> demonstrated array attributes and IF/THEN logic for valve state tracking</li>
+    <li><strong>Lab 23</strong> demonstrated custom alarm attributes with script-based alarm condition monitoring</li>
+  </ul>
+</div>
+
+<hr>
+
+<div class="quiz">
+  <h3>📝 Knowledge Check — Lesson 32</h3>
+  <ol>
+    <li>What is the difference between declaring a variable in the Declarations area vs. in the script body?</li>
+    <li>What happens if you omit the <code>AS</code> clause in a DIM statement?</li>
+    <li>Why can't you use a String expression as the Boolean_expression in an IF/THEN statement?</li>
+    <li>What is the purpose of the <code>EXIT FOR</code> statement in a FOR/NEXT loop?</li>
+    <li>In Lab 23, what two conditions must both be true to trigger the Flow.Alarm.Pump1 alarm?</li>
+    <li>How does the PVStates array in Lab 22 make the valve state script more maintainable?</li>
+  </ol>
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;color:#2c5f2d;">Show Answers</summary>
+    <ol>
+      <li>Variables in the <span class="answer">Declarations area persist</span> throughout the object's lifetime and between script executions. Variables in the <span class="answer">script body lose their value</span> after the script executes and cannot be accessed by other scripts.</li>
+      <li>The variable is declared as an <span class="answer">Integer</span> by default.</li>
+      <li>Strings <span class="answer">cannot be mapped to Boolean</span> — using a String expression as a Boolean_expression results in a <span class="answer">script validation error</span>.</li>
+      <li><code>EXIT FOR</code> allows you to <span class="answer">exit the loop early</span> from within the loop body, jumping to the statement immediately after NEXT.</li>
+      <li>The inlet valve must be <span class="answer">closed</span> (Inlet1.StateIndex == 1) AND the pump must be <span class="answer">running</span> (Pump1.PV is True).</li>
+      <li>The array holds state names ("Open", "Closed", "Traveling") so the script uses <span class="answer">index-based lookup</span> instead of hardcoding strings. State names can be <span class="answer">updated without modifying the script logic</span>.</li>
+    </ol>
+  </details>
+</div>
+
+<hr>
+
+<nav>
+  <a href="L31-Scripting-Introduction.html">← Lesson 31: Scripting Introduction</a> &nbsp;|&nbsp;
+  <a href="L33-Averager-Object.html">Next: Lesson 33 — Averager Object →</a>
+</nav>
+
+</body>
+</html>

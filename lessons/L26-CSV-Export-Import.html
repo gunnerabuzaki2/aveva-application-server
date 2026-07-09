@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 26: CSV Export/Import + Lab 15</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L25-Object-Export-Import.html">← Lesson 25: Object Export &amp; Import</a> &nbsp;|&nbsp;
+  <a href="L27-Security-Overview.html">Next: Lesson 27 — Security Overview →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 26: CSV Export/Import + Lab 15 — Configuring Instances Using a .CSV File</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 8 Section 2 + Lab 15</p>
+<p class="page-ref">Covers exporting object instances to CSV, editing in Excel, importing modified CSVs, and creating new instances via CSV. Includes full Lab 15 walkthrough. (pages 8-31 to 8-55)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>26.1 Overview — CSV Export and Import</h2>
+<p class="page-ref">Reference: Module 8 Section 2 (pages 8-31 to 8-37)</p>
+
+<p>AVEVA Application Server provides <strong>Export Selected as CSV</strong> and <strong>Import Objects from CSV</strong> features that allow you to bulk-export object instances and their configuration data to comma-delimited files, edit them in external tools like Microsoft Excel or Notepad, and re-import the modified files back into the Galaxy.</p>
+
+<div class="key-concept">
+  <strong>Key Capabilities:</strong>
+  <ul>
+    <li>Export one or more object instances (including all contained children) to a <code>.csv</code> file</li>
+    <li>Edit exported data in Microsoft Excel, Notepad, or any text editor</li>
+    <li>Import the modified CSV to update existing object instances in the Galaxy</li>
+    <li>Create entirely new object instances by modifying tag names in a CSV and importing</li>
+    <li>Templates <strong>cannot</strong> be exported or imported via CSV — only instances</li>
+  </ul>
+</div>
+
+<h3>What Gets Exported</h3>
+<p>The CSV file contains the configuration for the <strong>checked-in</strong> versions of selected objects plus any <strong>checked-out</strong> objects belonging to the user who initiates the export. Only attributes that are <strong>unlocked</strong> and <strong>configuration-time writable</strong> are included — one column per attribute. The following are <em>not</em> exported:</p>
+
+<table>
+  <tr><th>Not Exported</th><th>Reason</th></tr>
+  <tr><td>Script libraries</td><td>Libraries are global, not per-instance</td></tr>
+  <tr><td>Scripts within objects</td><td>Scripts <em>within</em> an object are exported, but library references are not</td></tr>
+  <tr><td>Non-text attributes</td><td>e.g. QualifiedStruct types</td></tr>
+  <tr><td>Locked attributes</td><td>Inherited from template; not instance-specific</td></tr>
+  <tr><td>Runtime-writable attributes only</td><td>These are not configuration-time values</td></tr>
+  <tr><td>Custom object online help files</td><td>Not part of CSV export scope</td></tr>
+</table>
+
+<h3>CSV File Structure</h3>
+<p>Exported objects are organized by template in the resulting CSV file. Each template section begins with a <code>:TEMPLATE=$[TemplateName]</code> header line, followed by a row of column headers (attribute names), then one data row per instance. Comments can be added by prefixing a line with a semicolon (<code>;</code>).</p>
+
+<div class="tip">
+  <strong>Script Editing Rule:</strong> Carriage returns in scripts are saved as <code>\n</code> in the CSV. Do not delete these <code>\n</code> characters. To insert a carriage return in a script within the CSV, use <code>\n</code>. To include a literal backslash followed by "n" in a script (not interpreted as carriage return), use <code>\\n</code>.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0340_0.png" alt="AVEVA Import menu showing Import > Objects > From CSV option highlighted">
+  <div class="caption">The Import menu in the Galaxy tab. Select <strong>Import &gt; Objects &gt; From CSV</strong> to begin the CSV import process. This is how you bring modified or new object instances back into the Galaxy (page 8-34)</div>
+</div>
+
+<h3>Importing from CSV</h3>
+<p>A CSV file can be edited in most text editors and spreadsheet programs. Using editing functions like copy and paste, you can create quantities of already-configured objects ready to be imported into your Galaxy.</p>
+
+<div class="pitfall">
+  <strong>Important:</strong> The export contains only object <em>instances</em>. For the import to succeed, the <strong>templates</strong> from which those objects were derived must <em>already exist</em> in the Galaxy. You cannot import instances of templates that don't exist.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0341_0.png" alt="Import Objects from CSV dialog showing Mixer1.csv selected">
+  <div class="caption">The <strong>Import Objects from CSV</strong> dialog box. Browse to the location of your <code>.csv</code> file, select it, and click <strong>Open</strong> to begin the import (page 8-35)</div>
+</div>
+
+<h3>Conflict Resolution</h3>
+<p>When importing objects that already exist in the Galaxy, the <strong>Galaxy load conflict resolution</strong> dialog appears, offering four options:</p>
+
+<table>
+  <tr><th>Option</th><th>Behavior</th></tr>
+  <tr><td><strong>Replace entire instance</strong></td><td>Completely overwrites the existing object with the imported version</td></tr>
+  <tr><td><strong>Only update changed attributes</strong></td><td>Only overwrites attributes where the imported value differs from the current value</td></tr>
+  <tr><td><strong>Skip</strong></td><td>Keeps the existing Galaxy object; ignores the imported version entirely</td></tr>
+  <tr><td><strong>Stop Galaxy load</strong></td><td>Cancels the entire import process when any conflict is found</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0342_0.png" alt="Galaxy load conflict resolution dialog with Only update changed attributes selected">
+  <div class="caption"><strong>Galaxy load conflict resolution</strong> dialog. Select how to handle pre-existing instances during the Galaxy load process. Here, <strong>Only update changed attributes</strong> is selected — this is the most common choice for updating configuration values without disrupting the full object (page 8-36)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Post-Import Behavior:</strong> When the import is complete, all objects that were changed or created during the Import from CSV process are automatically <strong>checked in</strong>. This ensures the Galaxy remains in a consistent state.
+</div>
+
+<div class="tip">
+  <strong>Excel CSV Tip:</strong> A comment line in a CSV file created in Microsoft Excel may create an unintended default-value object. To avoid this, open the CSV file in Notepad before importing to ensure the comment line does not contain quotation marks.
+</div>
+
+<!-- ============================================================ -->
+<h2>26.2 Lab 15 — Configuring Instances Using a .CSV File</h2>
+<p class="page-ref">Reference: Lab 15 (pages 8-37 to 8-55)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Use Export to CSV and Import Objects from CSV features to modify instances</li>
+    <li>Use a CSV file to make configuration changes to an object</li>
+    <li>Create a new mixer container instance (Mixer200) by modifying and importing a CSV file</li>
+  </ul>
+</div>
+
+<p><strong>Prerequisites:</strong> You should have completed earlier labs with Mixer100 and its contained objects (Agitator_001, Inlet1_001, Inlet2_001, Level_001, Outlet_001, Pump1_001, Pump2_001, Temperature_001) deployed under Line1.</p>
+
+<!-- ============================================================ -->
+<h3>Part A: Export Mixer100 to CSV</h3>
+<p class="page-ref">Reference: Lab 15 Steps 1–5 (pages 8-38 to 8-39)</p>
+
+<p><strong>Step 1.</strong> In the IDE, Model view, select <code>Mixer100</code> and all of its contained objects.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0344_0.png" alt="Model view showing Mixer100 selected with all contained objects under Line1">
+  <div class="caption">Model &gt; Tagname view with <strong>Mixer100</strong> selected under <code>Simulator &gt; Production &gt; L1 &gt; Line1</code>. All contained objects are visible: Agitator_001, Inlet1_001, Inlet2_001, Level_001, Outlet_001, Pump1_001, Pump2_001, and Temperature_001 (page 8-38)</div>
+</div>
+
+<p><strong>Step 2.</strong> Right-click any of the highlighted objects and select <strong>Export &gt; Selected as CSV</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0344_1.png" alt="Right-click context menu showing Export submenu with Selected as CSV option">
+  <div class="caption">Right-click context menu on the selected objects. Navigate to <strong>Export</strong> and select <strong>Selected as CSV</strong> to begin the CSV export process (page 8-38)</div>
+</div>
+
+<p><strong>Step 3.</strong> The Export Selected objects as CSV dialog appears. Navigate to <code>C:\Training</code>, and in the File name field, enter <code>Mixer</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0345_0.png" alt="Export Selected objects as CSV save dialog with file name Mixer">
+  <div class="caption"><strong>Export Selected objects as CSV</strong> dialog. Navigate to <code>C:\Training</code> and enter <code>Mixer</code> as the file name. The Save as type is set to <em>Galaxy Dump/Load files (*.csv)</em> (page 8-39)</div>
+</div>
+
+<p><strong>Step 4.</strong> Click <strong>Save</strong>. When the export is complete, the progress displays "Dump completed."</p>
+
+<p><strong>Step 5.</strong> Click <strong>Close</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0345_1.png" alt="Export completion dialog showing Dump completed status with details">
+  <div class="caption">Export completion dialog confirming <strong>Dump completed</strong>. The details show each instance that was dumped: Temperature_001, Level_001, Inlet1_001, Outlet_001, and others. The final line confirms <strong>GRDump completed</strong> (page 8-39)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Part B: Edit the CSV File in Excel</h3>
+<p class="page-ref">Reference: Lab 15 Steps 6–16 (pages 8-40 to 8-43)</p>
+
+<p><strong>Step 6.</strong> Open Microsoft Excel.</p>
+
+<p><strong>Step 7.</strong> In Excel, click <strong>Open</strong> and browse to <code>C:\Training</code>.</p>
+
+<p><strong>Step 8.</strong> Using the file type drop-down list, select <strong>All Files (*.*)</strong>, and then select the <code>Mixer.csv</code> file.</p>
+
+<p><strong>Step 9.</strong> Click <strong>Open</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0346_0.png" alt="Excel Open dialog showing All Files filter and Mixer.csv selected">
+  <div class="caption">Excel's Open dialog. Set the file type filter to <strong>All Files (*.*)</strong> (red circle ①), then select <code>Mixer.csv</code> (red circle ②) from the <code>C:\Training</code> folder (page 8-40)</div>
+</div>
+
+<p><strong>Step 10.</strong> The Text Import Wizard - Step 1 of 3 appears. Select the <strong>Delimited</strong> option if necessary.</p>
+
+<p><strong>Step 11.</strong> Leave all other default options and click <strong>Next</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0347_0.png" alt="Text Import Wizard Step 1 of 3 with Delimited option selected">
+  <div class="caption"><strong>Text Import Wizard - Step 1 of 3</strong>. Select <strong>Delimited</strong> (characters such as commas or tabs separate each field). Leave Start import at row: 1 and File origin: Windows (ANSI). The preview shows the CSV metadata and template headers (page 8-41)</div>
+</div>
+
+<p><strong>Step 12.</strong> In the Delimiters area, uncheck the <strong>Tab</strong> check box, and then check the <strong>Comma</strong> check box.</p>
+
+<p><strong>Step 13.</strong> Click <strong>Finish</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0347_1.png" alt="Text Import Wizard Step 2 of 3 with Comma delimiter selected">
+  <div class="caption"><strong>Text Import Wizard - Step 2 of 3</strong>. Uncheck <strong>Tab</strong> and check <strong>Comma</strong> as the delimiter. The data preview shows the CSV content properly split into columns by comma separation (page 8-41)</div>
+</div>
+
+<p><strong>Step 14.</strong> Expand Column A to fully display the cell contents.</p>
+
+<p><strong>Step 15.</strong> For the Mixer100 instance, <strong>ShortDesc</strong> attribute (cell H6), enter <code>Mixing Tank</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0348_0.png" alt="Excel spreadsheet showing expanded Column A with template hierarchy">
+  <div class="caption">Excel spreadsheet with expanded Column A showing the full template hierarchy. The <code>:TEMPLATE=$Mixer</code> section and child templates (<code>$Mixer.Agitator</code>, <code>$Mixer.Inlet1</code>, etc.) are visible. Columns B–O contain attribute values like Area, SecurityGroup, Container, IODevice, and ShortDesc (page 8-42)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0348_1.png" alt="Excel cell H6 edited with Mixing Tank value for Mixer100">
+  <div class="caption">Cell <strong>H6</strong> (ShortDesc column) edited with the value <code>Mixing Tank</code> for the Mixer100 instance. The formula bar confirms the active cell content (page 8-42)</div>
+</div>
+
+<p><strong>Step 16.</strong> Change the remaining ShortDesc values as follows:</p>
+
+<table>
+  <tr><th>Instance</th><th>ShortDesc</th><th>Cell</th></tr>
+  <tr><td>Agitator_001</td><td>Agitator Motor</td><td>H10</td></tr>
+  <tr><td>Inlet1_001</td><td>Inlet Valve 1</td><td>H14</td></tr>
+  <tr><td>Inlet2_001</td><td>Inlet Valve 2</td><td>H18</td></tr>
+  <tr><td>Level_001</td><td>Tank Level</td><td>H22</td></tr>
+  <tr><td>Outlet_001</td><td>Outlet Valve</td><td>H26</td></tr>
+  <tr><td>Pump1_001</td><td>Inlet Pump 1</td><td>H30</td></tr>
+  <tr><td>Pump2_001</td><td>Inlet Pump 2</td><td>H34</td></tr>
+  <tr><td>Temperature_001</td><td>Tank Temperature</td><td>H38</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0349_0.png" alt="Excel spreadsheet with all ShortDesc values updated in column H">
+  <div class="caption">The CSV spreadsheet after all ShortDesc values have been updated. Column H (ShortDesc) now shows descriptive names for all instances: Mixing Tank, Agitator Motor, Inlet Valve 1, Inlet Valve 2, Tank Level, Outlet Valve, Inlet Pump 1, Inlet Pump 2, and Tank Temperature (page 8-43)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Part C: Save and Import Modified CSV</h3>
+<p class="page-ref">Reference: Lab 15 Steps 17–29 (pages 8-44 to 8-46)</p>
+
+<p><strong>Step 17.</strong> On the File menu, click <strong>Save As</strong>, and navigate to <code>C:\Training</code>.</p>
+
+<p><strong>Step 18.</strong> In the File name field, enter <code>Mixer1</code>.</p>
+
+<p><strong>Step 19.</strong> In the Save as type drop-down list, select <strong>CSV UTF-8 (Comma delimited)</strong>.</p>
+
+<p><strong>Step 20.</strong> Click <strong>Save</strong>. A yellow information bar appears with a warning of POSSIBLE DATA LOSS.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0350_0.png" alt="Excel Save As dialog with Mixer1.csv as file name">
+  <div class="caption"><strong>Save As</strong> dialog in Excel. Enter <code>Mixer1</code> as the file name (red circle) and select <strong>CSV UTF-8 (Comma delimited)</strong> as the file type (red circle). The save location is <code>C:\Training</code> (page 8-44)</div>
+</div>
+
+<p><strong>Step 21.</strong> Click <strong>Don't show again</strong> to retain the .csv format.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0350_1.png" alt="Excel yellow POSSIBLE DATA LOSS warning bar with Don't show again button">
+  <div class="caption">The yellow <strong>POSSIBLE DATA LOSS</strong> warning bar in Excel. Click <strong>Don't show again</strong> (red arrow) to save the file in CSV format. This warning indicates that some Excel-specific features cannot be preserved in a CSV file (page 8-44)</div>
+</div>
+
+<p><strong>Step 22.</strong> Close Microsoft Excel.</p>
+
+<p><strong>Step 23.</strong> In the IDE, click the <strong>Galaxy</strong> menu, and then select <strong>Import</strong>.</p>
+
+<p><strong>Step 24.</strong> In the Objects drop-down list, select <strong>From CSV</strong>.</p>
+
+<p><strong>Step 25.</strong> In the Import Objects from CSV dialog box, select the <code>Mixer1.csv</code> file.</p>
+
+<p><strong>Step 26.</strong> Click <strong>Open</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0351_0.png" alt="AVEVA Import menu with From CSV option highlighted">
+  <div class="caption">Navigate to <strong>Import &gt; Objects &gt; From CSV</strong> in the Galaxy menu to begin importing the modified CSV file (page 8-45)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0351_1.png" alt="Import Objects from CSV dialog with Mixer1.csv selected">
+  <div class="caption"><strong>Import Objects from CSV</strong> dialog. Select <code>Mixer1.csv</code> (15 KB) from the <code>C:\Training</code> folder and click <strong>Open</strong> to begin the import (page 8-45)</div>
+</div>
+
+<p><strong>Step 27.</strong> The Galaxy load conflict resolution dialog appears. Select <strong>Only update changed attributes</strong>.</p>
+
+<p><strong>Step 28.</strong> Click <strong>Import</strong>. When the import is complete, the progress displays "Load completed."</p>
+
+<p><strong>Step 29.</strong> Click <strong>Close</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0352_0.png" alt="Galaxy load conflict resolution with Only update changed attributes selected">
+  <div class="caption"><strong>Galaxy load conflict resolution</strong> dialog. Select <strong>Only update changed attributes</strong> (red circle) to update only the ShortDesc values that were modified, without replacing entire objects (page 8-46)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0352_1.png" alt="Import Objects from CSV completion dialog showing Load completed">
+  <div class="caption">Import completion dialog confirming <strong>Load completed</strong>. The details show the bulk assignment process. Objects that are deployed cannot be assigned, but the attributes were successfully updated. Click <strong>Close</strong> to dismiss (page 8-46)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Part D: Verify Imported Changes</h3>
+<p class="page-ref">Reference: Lab 15 Steps 30–32 (page 8-47)</p>
+
+<p><strong>Step 30.</strong> In the IDE, verify the Model view now displays that the imported objects have pending changes that need to be redeployed.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0353_0.png" alt="Model view showing pending change indicators on Mixer100 child objects">
+  <div class="caption">Model &gt; Tagname view after import. <strong>Mixer100</strong> and all child objects now show blue circle icons with refresh/redo arrows, indicating <strong>pending changes</strong> that need to be redeployed (page 8-47)</div>
+</div>
+
+<p><strong>Step 31.</strong> For each object, open the configuration editor, click the <strong>Object Information</strong> tab, and verify the Description fields match those entered in Excel:</p>
+
+<table>
+  <tr><th>Object</th><th>Description</th></tr>
+  <tr><td>Mixer100</td><td>Mixing Tank</td></tr>
+  <tr><td>Agitator_001</td><td>Agitator Motor</td></tr>
+  <tr><td>Inlet1_001</td><td>Inlet Valve 1</td></tr>
+  <tr><td>Inlet2_001</td><td>Inlet Valve 2</td></tr>
+  <tr><td>Level_001</td><td>Tank Level</td></tr>
+  <tr><td>Outlet_001</td><td>Outlet Valve</td></tr>
+  <tr><td>Pump1_001</td><td>Inlet Pump 1</td></tr>
+  <tr><td>Pump2_001</td><td>Inlet Pump 2</td></tr>
+  <tr><td>Temperature_001</td><td>Tank Temperature</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0353_1.png" alt="Mixer100 configuration editor Object Information tab showing Description Mixing Tank">
+  <div class="caption">Mixer100 configuration editor with the <strong>Object Information</strong> tab active. The Description field shows <code>Mixing Tank</code> — confirming the ShortDesc value from the CSV was successfully imported (page 8-47)</div>
+</div>
+
+<p><strong>Step 32.</strong> Close all open configuration editors.</p>
+
+<!-- ============================================================ -->
+<h3>Part E: Deploy and Create Mixer200 via CSV</h3>
+<p class="page-ref">Reference: Lab 15 Steps 33–68 (pages 8-48 to 8-55)</p>
+
+<p><strong>Step 33.</strong> In the Deployment view, deploy Mixer100, and verify the <strong>Cascade Deploy</strong> option is checked.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0354_0.png" alt="Deploy 9 objects dialog with Cascade deploy checked and Deploy changes selected">
+  <div class="caption"><strong>Deploy 9 objects</strong> dialog. Verify <strong>Cascade deploy</strong> is checked (red circle) to deploy all dependent child objects. <strong>Deploy changes</strong> is selected for incremental update. <strong>Force off scan</strong> and <strong>Preserve runtime changes</strong> are checked (page 8-48)</div>
+</div>
+
+<p><strong>Step 34.</strong> Leave all other default options, and click <strong>Deploy</strong>.</p>
+
+<p><strong>Step 35.</strong> When the Deploying Objects progress displays "Deploy complete," click <strong>Close</strong>.</p>
+
+<h4>Creating Mixer200 from CSV</h4>
+<p>Next, you will create another mixer container instance named <strong>Mixer200</strong> by modifying and importing a CSV file. The key technique is to open the CSV, use Find and Replace to rename all objects, save as a new file, and import it.</p>
+
+<p><strong>Step 36.</strong> Open Microsoft Excel, and then click <strong>Open</strong>.</p>
+
+<p><strong>Step 37.</strong> Click <code>Mixer1.csv</code> from the recent files list.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0354_1.png" alt="Excel Open screen showing recent files with Mixer1.csv listed">
+  <div class="caption">Excel Open screen. Click <code>Mixer1.csv</code> from the <strong>Yesterday</strong> recent files list (red circle) to reopen the modified CSV file (page 8-48)</div>
+</div>
+
+<p><strong>Steps 38–41.</strong> Use the Text Import Wizard (Delimited, Comma) to open the CSV, same as before.</p>
+
+<p><strong>Step 42.</strong> Expand Column A to see all contents.</p>
+
+<p><strong>Step 43.</strong> Use Find and Replace to rename <code>Mixer100</code> to <code>Mixer200</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0355_0.png" alt="Find and Replace dialog replacing Mixer100 with Mixer200, 9 replacements made">
+  <div class="caption"><strong>Find and Replace</strong>: Replace all instances of <code>Mixer100</code> with <code>Mixer200</code>. The confirmation shows <strong>"All done. We made 9 replacements."</strong> — this renames the mixer and all container references (page 8-49)</div>
+</div>
+
+<p><strong>Step 44.</strong> Rename the objects ending in <code>_001</code> to end in <code>_002</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0355_1.png" alt="Find and Replace dialog replacing _001 with _002, 8 replacements made">
+  <div class="caption"><strong>Find and Replace</strong>: Replace all instances of <code>_001</code> with <code>_002</code>. The confirmation shows <strong>"All done. We made 8 replacements."</strong> — this renames all contained object tag suffixes (page 8-49)</div>
+</div>
+
+<p><strong>Step 45.</strong> Rename everything named <code>Line1</code> to <code>Line2</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0355_2.png" alt="Find and Replace dialog replacing Line1 with Line2, 9 replacements made">
+  <div class="caption"><strong>Find and Replace</strong>: Replace all instances of <code>Line1</code> with <code>Line2</code>. The confirmation shows <strong>"All done. We made 9 replacements."</strong> — this moves all objects to the Line2 area (page 8-49)</div>
+</div>
+
+<p><strong>Step 46.</strong> Click <strong>Close</strong> on the Find and Replace dialog.</p>
+
+<p><strong>Step 47.</strong> Verify the following:</p>
+<ul>
+  <li>The Tagname has an <code>_002</code> extension</li>
+  <li>The Area is <code>Line2</code></li>
+  <li>The Container name is <code>Mixer200</code></li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0356_0.png" alt="Excel spreadsheet showing renamed objects with _002 suffix and Line2 area">
+  <div class="caption">The CSV data after Find and Replace operations. All tagnames now have the <code>_002</code> suffix, the Area column shows <code>Line2</code>, and the Container column shows <code>Mixer200</code>. The red highlight shows the renamed child objects (page 8-50)</div>
+</div>
+
+<p><strong>Step 48.</strong> On the File menu, click <strong>Save As</strong>, navigate to <code>C:\Training</code>.</p>
+
+<p><strong>Step 49.</strong> In the File name field, enter <code>Mixer2</code>.</p>
+
+<p><strong>Step 50.</strong> Verify <strong>CSV UTF-8 (Comma delimited)</strong> is selected.</p>
+
+<p><strong>Step 51.</strong> Click <strong>Save</strong>.</p>
+
+<p><strong>Step 52.</strong> Close Microsoft Excel.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0357_0.png" alt="Excel Save As dialog with Mixer2 as file name">
+  <div class="caption"><strong>Save As</strong> dialog. Enter <code>Mixer2</code> as the file name (red circle) with <strong>CSV UTF-8 (Comma delimited)</strong> selected (red circle). This creates <code>Mixer2.csv</code> in <code>C:\Training</code> (page 8-51)</div>
+</div>
+
+<p><strong>Step 53.</strong> In the IDE, click the Galaxy menu, and select <strong>Import &gt; Objects &gt; From CSV</strong>.</p>
+
+<p><strong>Step 54.</strong> In the Import Objects from CSV dialog box, select <code>Mixer2.csv</code>.</p>
+
+<p><strong>Step 55.</strong> Click <strong>Open</strong>. The Galaxy load conflict resolution dialog box appears.</p>
+
+<p><strong>Step 56.</strong> Leave the default options (<strong>Skip</strong>) and click <strong>Import</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0358_0.png" alt="Import Objects from CSV dialog with Mixer2.csv selected">
+  <div class="caption"><strong>Import Objects from CSV</strong> dialog. Select <code>Mixer2.csv</code> (9 KB) from <code>C:\Training</code> and click <strong>Open</strong> to import the new Mixer200 instances (page 8-52)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0358_1.png" alt="Galaxy load conflict resolution with Skip option selected">
+  <div class="caption"><strong>Galaxy load conflict resolution</strong> dialog. Leave the default <strong>Skip</strong> option selected — since these are new objects (Mixer200 and _002 suffixes), there should be no conflicts with existing instances (page 8-52)</div>
+</div>
+
+<p><strong>Step 57.</strong> Click <strong>Close</strong> on the import completion dialog.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0359_0.png" alt="Import completion dialog showing Load completed and bulk assign details">
+  <div class="caption">Import completion dialog confirming <strong>Load completed</strong>. The details show Temperature_002 successfully loaded, followed by the Bulk Assign process (Start Bulk Assign → Assign Area → Assign Container → Assign IODevice → End Bulk Assign). Click <strong>Close</strong> (page 8-53)</div>
+</div>
+
+<p><strong>Step 58.</strong> In the IDE, Model view, expand Line2 and verify that the new <strong>Mixer200</strong> instance has been added to the Line2 area.</p>
+
+<p><strong>Step 59.</strong> Expand Mixer200 to view the new contained objects.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0359_1.png" alt="Model view showing Mixer200 under Line2 with all contained objects">
+  <div class="caption">Model &gt; Tagname view after importing Mixer2.csv. <strong>Line2</strong> is expanded showing the new <strong>Mixer200</strong> instance with all contained objects: Agitator_002, Inlet1_002, Inlet2_002, Level_002, Outlet_002, Pump1_002, Pump2_002, and Temperature_002. Also visible are T1, Receiving, and Shipping (page 8-53)</div>
+</div>
+
+<div class="tip">
+  <strong>Auto-Bind Bonus:</strong> Since the Line2 area was assigned to ProdPLC:Topic1 for autobind purposes in a previous lab, all objects assigned to that area will automatically be autobound to the same I/O source. No manual IODevice assignment is needed.
+</div>
+
+<!-- ============================================================ -->
+<h3>Part F: Deploy Mixer200 and Verify</h3>
+<p class="page-ref">Reference: Lab 15 Steps 60–68 (pages 8-54 to 8-55)</p>
+
+<p><strong>Step 60.</strong> Deploy Mixer200 and all its contained objects.</p>
+
+<p><strong>Step 61.</strong> In the Deploy dialog box, leave the default options and click Deploy. When complete, click Close.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0360_0.png" alt="Model view showing Mixer200 expanded under Line2 with all contained objects">
+  <div class="caption">Model view showing <strong>Line2</strong> with the deployed <strong>Mixer200</strong> instance and all contained objects. Other Line2 items (T1, Receiving, Shipping) are also visible. All objects are now deployed and running (page 8-54)</div>
+</div>
+
+<p><strong>Step 62.</strong> View Mixer200 in Object Viewer.</p>
+
+<p><strong>Step 63–64.</strong> In Object Viewer, create a watch window called <code>Mixer200</code>, and add the following attributes:</p>
+
+<div class="lab">
+  <strong>Watch Window Attributes to Add:</strong>
+  <code>Level_002.PV</code>, <code>Inlet2_002.CMD</code>, <code>Temperature_002.PV</code>, <code>Inlet2_002.LSOpen</code>, <code>Agitator_002.PV</code>, <code>Outlet_002.CMD</code>, <code>Agitator_002.PV.Msg</code>, <code>Outlet_002.LSOpen</code>, <code>Agitator_002.Speed.PV</code>, <code>Pump1_002.CMD</code>, <code>Agitator_002.Speed.SP</code>, <code>Pump1_002.PV</code>, <code>Inlet1_002.CMD</code>, <code>Pump2_002.CMD</code>, <code>Inlet1_002.LSOpen</code>, <code>Pump2_002.PV</code>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0360_1.png" alt="Object Viewer watch window showing Mixer200 live attribute values">
+  <div class="caption">Object Viewer <strong>Mixer200</strong> watch window showing live attribute values. Key readings: <code>Level_002.PV = 60.51</code>, <code>Temperature_002.PV = 135.65</code>, <code>Agitator_002.Speed.SP = 25</code>. All Quality values show <strong>CO:Good</strong> and Status shows <strong>Ok</strong>, confirming healthy communication with the simulated process (page 8-54)</div>
+</div>
+
+<p><strong>Step 65.</strong> Select the <strong>Alarms</strong> watch window.</p>
+
+<p><strong>Step 66.</strong> Add <code>Mixer200.AlarmCntsBySeverity</code> to the Alarms watch window, and when prompted, enter <code>-1</code> to add all items in the array.</p>
+
+<p><strong>Step 67.</strong> Add <code>Level_002.AlarmCntsBySeverity</code> to the Alarms watch window, and when prompted, enter <code>-1</code> to add all items in the array.</p>
+
+<p><strong>Step 68.</strong> Save the watch list and minimize Object Viewer.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0361_0.png" alt="Object Viewer Alarms tab showing alarm count arrays for Mixer200 and Level_002">
+  <div class="caption">Object Viewer <strong>Alarms</strong> watch window. <code>Mixer200.AlarmCntsBySeverity[]</code> shows alarm counts by severity level (red oval), and <code>Level_002.AlarmCntsBySeverity[]</code> shows level-specific alarm counts (red oval). Also visible are Mixer100 alarm attributes, Level_001 PV and alarm limits, and Production/Line1/Line2 alarm counts. All Quality values are <strong>CO:Good</strong> (page 8-55)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>26.3 Lab 15 — Summary</h2>
+
+<div class="key-concept">
+  <strong>What You Accomplished in Lab 15:</strong>
+  <ol>
+    <li><strong>Exported</strong> Mixer100 and all contained objects to a CSV file using Export &gt; Selected as CSV</li>
+    <li><strong>Edited</strong> the CSV in Microsoft Excel to add ShortDesc values for all instances</li>
+    <li><strong>Imported</strong> the modified CSV (Mixer1.csv) using Import &gt; Objects &gt; From CSV with "Only update changed attributes" conflict resolution</li>
+    <li><strong>Verified</strong> the imported Description values in each object's configuration editor</li>
+    <li><strong>Deployed</strong> the updated Mixer100 with cascade deploy</li>
+    <li><strong>Created Mixer200</strong> by using Find and Replace in Excel to rename all tagnames (_001 → _002), the mixer (Mixer100 → Mixer200), and the area (Line1 → Line2), then saved as Mixer2.csv and imported</li>
+    <li><strong>Deployed</strong> Mixer200 and all contained objects to Line2</li>
+    <li><strong>Verified</strong> Mixer200 operation in Object Viewer with live attribute monitoring</li>
+    <li><strong>Monitored</strong> alarm count arrays for Mixer200 and Level_002 in the Alarms watch window</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2>26.4 Key Concepts Review</h2>
+
+<div class="key-concept">
+  <strong>CSV Export/Import Workflow:</strong>
+  <pre><code>Export: IDE → Select instances → Right-click → Export → Selected as CSV → Save file
+Edit:   Open CSV in Excel → Modify values → Save As (new name) → Close Excel
+Import: IDE → Galaxy → Import → Objects → From CSV → Select file → Conflict resolution → Import</code></pre>
+</div>
+
+<div class="key-concept">
+  <strong>CSV File Structure:</strong>
+  <pre><code>; Created on: date from Galaxy: name
+:TEMPLATE=$Template
+Tagname, Area, SecurityGroup, Container, ...
+InstanceName, Line1, Default, ParentName, ...
+:TEMPLATE=$Template.Child
+Tagname, Area, SecurityGroup, Container, ...
+ChildName, Line1, ParentName, ParentName, ...</code></pre>
+</div>
+
+<div class="key-concept">
+  <strong>Bulk Instance Creation Technique:</strong>
+  <ul>
+    <li>Export existing instances to CSV</li>
+    <li>Open in Excel and use Find and Replace to rename tag names, areas, and container references</li>
+    <li>Save as a new CSV file</li>
+    <li>Import the new CSV — all instances are created automatically</li>
+    <li>Templates must already exist in the Galaxy</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>26.5 Quiz — CSV Export/Import</h2>
+
+<div class="quiz">
+  <h3>📝 Knowledge Check</h3>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">1. Can templates be exported using "Export Selected as CSV"?</summary>
+    <p class="answer">No. The Export Selected as CSV function only exports object <em>instances</em>. Templates cannot be exported or imported via CSV.</p>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">2. What types of attributes are NOT included in a CSV export?</summary>
+    <p class="answer">Attributes that are <strong>locked</strong> or <strong>runtime-writable only</strong> are not saved to the CSV file. Only unlocked, configuration-time writable attributes are exported.</p>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">3. What happens to objects after a successful CSV import?</summary>
+    <p class="answer">All objects that were changed or created during the Import from CSV process are automatically <strong>checked in</strong>.</p>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">4. What is the prerequisite for successfully importing instances from a CSV file?</summary>
+    <p class="answer">The <strong>templates</strong> from which the instances were derived must already exist in the Galaxy. The CSV only contains instances, not templates.</p>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">5. How do you create a brand new mixer instance (like Mixer200) from an existing CSV export of Mixer100?</summary>
+    <p class="answer">Open the exported CSV in Excel, use <strong>Find and Replace</strong> to rename the tag name (Mixer100 → Mixer200), contained object suffixes (_001 → _002), and area names (Line1 → Line2). Save as a new CSV file and import it. The new instances are created automatically.</p>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">6. What does the "Only update changed attributes" conflict resolution option do?</summary>
+    <p class="answer">It only overwrites attributes where the imported value <strong>differs</strong> from the current value in the Galaxy, leaving all unchanged attributes untouched. This is the most common choice for targeted configuration updates.</p>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;">7. What special characters represent carriage returns in scripts within a CSV file?</summary>
+    <p class="answer">Carriage returns in scripts are saved as <code>\n</code> in the CSV file. To write a literal backslash-n (not interpreted as a carriage return), use <code>\\n</code>.</p>
+  </details>
+</div>
+
+<!-- ============================================================ -->
+<hr>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 8 Section 2 + Lab 15</p>
+
+<nav style="margin-top:2em;">
+  <a href="L25-Object-Export-Import.html">← Lesson 25: Object Export &amp; Import</a> &nbsp;|&nbsp;
+  <a href="L27-Security-Overview.html">Next: Lesson 27 — Security Overview →</a>
+</nav>
+
+</body>
+</html>

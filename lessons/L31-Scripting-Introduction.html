@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 31: Scripting Introduction + Labs 20–21</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L30-DI-Redundancy.html">← Lesson 30: DI Redundancy + Lab 19</a> &nbsp;|&nbsp;
+  <a href="L32-Variables-Control.html">Next: Lesson 32 — Variables &amp; Control Statements →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 31: Introduction to QuickScript.NET + Labs 20–21</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11 Section 1 + Labs 20-21</p>
+<p class="page-ref">Covers QuickScript.NET scripting concepts, the IDE scripting environment, execution types (Startup, OnScan, Execute, OffScan, Shutdown), script syntax, Lab 20 (Auto Reconnect for DDESuiteLinkClient), and Lab 21 (Switching back to primary redundant engine). (pages 470–489)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>31.1 Module Objectives</h2>
+
+<div class="key-concept">
+<strong>By the end of this module you will be able to:</strong>
+<ul>
+  <li>Introduce basic concepts of scripting in Application Server</li>
+  <li>Introduce the scripting tools available in the IDE</li>
+  <li>Create scripts in objects with multiple execution types</li>
+  <li>Apply scripting tools to real examples using System Platform</li>
+</ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>31.2 Script Editing Styles and Syntax</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Script Editing Styles and Syntax (page 483)</p>
+
+<p>Application Server supports two types of scripts:</p>
+
+<div class="key-concept">
+<strong>Simple Scripts</strong> can perform assignments, comparisons, simple math functions, and similar actions. Simple scripts are described in this section.<br><br>
+<strong>Complex Scripts</strong> can perform logical operations using conditional branching with <code>IF-THEN-ELSE</code> type control structures.
+</div>
+
+<p><strong>Comments:</strong> Both single-line and multi-line comments are supported.</p>
+<ul>
+  <li>Single-line comments start with an apostrophe <code>'</code> — no ending <code>'</code> required</li>
+  <li>Multi-line comments start with <code>{</code> and end with <code>}</code> and can span multiple lines</li>
+</ul>
+
+<p><strong>White space rules:</strong> Indent using spaces or the Tab key. Individual statements are indicated by a semicolon (<code>;</code>) marking the end of the statement.</p>
+
+<h3>Required Syntax for Expressions and Scripts</h3>
+<p>The syntax in scripts is similar to the algebraic syntax of a calculator. Most statements follow this form:</p>
+
+<pre><code>a = (b - c) / (2 + x) * xyz;</code></pre>
+
+<p>This places the value of the expression to the right of the equal sign (<code>=</code>) in the variable named <code>a</code>. Key syntax rules:</p>
+
+<ul>
+  <li>A single entity must appear to the left of the assignment operator <code>=</code></li>
+  <li>The operands in an expression can be constants or variables</li>
+  <li>Statements must end with a semicolon <code>;</code></li>
+</ul>
+
+<p>Entities can be concatenated using the plus (<code>+</code>) operator. For example, if a data change script such as the one below is created, each time the value of <code>Number</code> changes, the indirect entity <code>Setpoint</code> changes accordingly:</p>
+
+<pre><code>Number=1;
+Setpoint = "Setpoint" + Text(Number, "#");
+' Where the result is "Setpoint1."</code></pre>
+
+<h3>Simple Script Example</h3>
+<pre><code>React_temp = 150;
+ResultTag = (Sample1 + Sample2)/2;
+' This is a comment.</code></pre>
+
+<p>This section describes the scripting environment and basic scripting syntax. It also discusses the execution types and triggers.</p>
+
+<!-- ============================================================ -->
+<h2>31.3 IDE Scripts Tab</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — IDE Scripts Tab (page 484)</p>
+
+<p>The <strong>Scripts tab</strong> has six areas:</p>
+
+<ol>
+  <li><strong>Scripts</strong> — Shows all scripts currently associated with the object. Columns indicate the trigger type: Startup, On Scan, Execute, Off Scan, and Shutdown. Click <em>Add</em> to add a new script.</li>
+  <li><strong>Inherited Scripts</strong> — Shows all scripts associated with the object's parent. Columns indicate trigger types for inherited scripts.</li>
+  <li><strong>Aliases</strong> — Lets you create and modify aliases that apply to the current script. Aliases are logically descriptive names for typically long Plant reference strings, making scripts more readable.</li>
+  <li><strong>Declarations</strong> — Provides a place for variable declaration statements, such as <code>[DIM MyArray[1] as FLOAT];</code>. These declared variables live from startup to shutdown and can hold values that persist between script executions. They apply only to the script in which they are declared.</li>
+  <li><strong>Basics</strong> — Sets the expression, triggering conditions, and other settings that run the script at runtime. Includes <em>Configure Execution Order</em> (sets priority of multiple scripts) and <em>Historize script state</em> (sends script state to Historian).</li>
+  <li><strong>Script Editor</strong> — Shows the script you are writing.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>31.4 Script Development Environment</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Script Development Environment (page 485)</p>
+
+<h3>Attribute Browser</h3>
+<p>From within the Script Editor the user can leverage the <strong>Attribute-Picker tool</strong> to browse through the attribute namespace of the hosting object and other objects to pick a certain attribute to be included in the script code. The tool does not distinguish between attributes of on-engine and off-engine objects.</p>
+
+<h3>Script Function Browser</h3>
+<p>Like the InTouch script editor, the name of the selected script function and its calling syntax will be added to the script text when the user picks it in the script function browser. In addition to being able to insert the function call, the user can also enter a type declaration statement for object names. The browser provides the ability to distinguish between properties and methods, and to browse for .NET / COM objects imported using the IDE.</p>
+
+<h3>Syntax Validation</h3>
+<p>Script language syntax validation is performed by selecting the <strong>red check mark</strong> above the script window. This identifies and warns of any syntax errors. It does not evaluate the logic, only the syntax. A script with syntax errors can be saved, but an object leveraging such a script cannot be deployed.</p>
+
+<!-- ============================================================ -->
+<h2>31.5 Script Execution Types</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Script Execution Types (page 486)</p>
+
+<p>The editor exposes <strong>five script execution types</strong>. Understanding these is fundamental to writing effective scripts:</p>
+
+<!-- IMAGE: page_0486_0.jpeg — State lifecycle diagram -->
+<div class="screenshot">
+  <img src="../images/page_0486_0.jpeg" alt="Script execution state lifecycle diagram">
+  <div class="caption">Figure 31.1 — Runtime object state lifecycle: Startup → OnScan → Execute (continuous loop) → OffScan → Shutdown. The green arrows between OnScan and Execute represent the repeating scan cycle where scripts run on each execution pass.</div>
+</div>
+
+<h3>Startup</h3>
+<p>Startup scripts are called when an object containing the script is <strong>loaded into memory</strong>, such as during deployment, platform, or engine start. Startup instantiates COM objects and .NET objects. Depending on load and other factors, assignments to object attributes from the Startup method may fail. Attributes that reside off-object are not available to the Startup method.</p>
+
+<h3>OnScan</h3>
+<p>OnScan scripts are called the <strong>first time an AppEngine calls this object to execute</strong> after the object's scan state changes to OnScan. The OnScan method initiates local object attribute values or provides more flexibility in the creation of .NET or COM objects. Attributes that are off-engine are not available to the OnScan method.</p>
+
+<h3>Execute</h3>
+<p>Execute scripts are called <strong>each time the AppEngine performs a scan and the object is OnScan</strong>. The Execute script method is the workhorse of the scripting execution types. Use the Execute method for your runtime scripting to ensure that all attributes and values are available to the script.</p>
+
+<p>If the quality check-box is checked, the Execute method supports these <strong>conditional trigger types</strong>:</p>
+
+<table>
+  <tr><th>Trigger Type</th><th>Behavior</th></tr>
+  <tr><td><code>Periodic</code></td><td>Executes whenever the elapsed time evaluates as true</td></tr>
+  <tr><td><code>Data Change</code></td><td>Executes when a data value or quality changes between scans</td></tr>
+  <tr><td><code>OnTrue</code></td><td>Executes if the expression goes from false on one scan to true on the next</td></tr>
+  <tr><td><code>OnFalse</code></td><td>Executes if the expression goes from true on one scan to false on the next</td></tr>
+  <tr><td><code>WhileTrue</code></td><td>Executes scan-to-scan as long as the expression is true at the beginning of the scan</td></tr>
+  <tr><td><code>WhileFalse</code></td><td>Executes scan-to-scan as long as the expression is false at the beginning of the scan</td></tr>
+</table>
+
+<div class="tip">
+<strong>Important:</strong> For <code>OnTrue</code> and <code>OnFalse</code> trigger types, data changes between scans are not evaluated — only the value at the beginning of each scan cycle is used. If a Boolean changes from True → False → True during a single scan cycle, this is <em>not</em> evaluated as a data change since the value is True at the start of the scan.
+</div>
+
+<p>A trigger period of <code>0</code> means the script executes every scan. Time-based scripts (WhileTrue, WhileFalse, Periodic) are evaluated based on elapsed time from a <em>timestamp</em> generated from the previous execution, not an elapsed time counter. A system clock change can alter the actual interval between executions.</p>
+
+<div class="tip">
+<strong>Example:</strong> A periodic script is set to run every 60 minutes. It executes at 11:13 AM. A time synchronization event adjusts the clock from 11:33 AM to 11:30 AM. The script still executes when system time reaches 12:13 PM, but the actual elapsed time is 63 minutes.
+</div>
+
+<h3>OffScan</h3>
+<p>OffScan scripts are called when the object is taken <strong>OffScan</strong>. This is primarily used to clean up the object. If an object is taken OffScan (directly or indirectly because its engine is taken OffScan), all in-progress asynchronous scripts for that object are requested to shut down by setting a Boolean shutdown attribute to <code>true</code>. A well-written script checks this attribute before and after time-consuming operations.</p>
+
+<div class="pitfall">
+<strong>Warning:</strong> If the script takes more than 30 seconds to complete, a warning appears in the logger that the script is not responding to the shutdown command. However, the script is allowed to complete and is not terminated by force. This all takes place on the engine's main thread and could potentially hang the engine.
+</div>
+
+<h3>Shutdown</h3>
+<p>Shutdown scripts are called when the object is about to be <strong>removed from memory</strong>, usually as a result of the AppEngine stopping. Shutdown scripts are primarily used to destroy COM objects and .NET objects and to free memory.</p>
+
+<!-- ============================================================ -->
+<h2>31.6 Language Definition</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Language Definition (page 488)</p>
+
+<ul>
+  <li>All QuickScript .NET keywords and variable name identifiers are <strong>not case sensitive</strong>, but case is preserved throughout editor sessions.</li>
+  <li>Single-line comments: <code>'</code> — multi-line comments: <code>{ ... }</code></li>
+  <li>Spaces and indentation can be used freely for readability, except at least one space must appear between adjacent identifiers, and spaces/line breaks cannot appear within identifiers and numbers.</li>
+  <li>Individual statements are distinguished by a semicolon (<code>;</code>).</li>
+</ul>
+
+<pre><code>Dim A;          ' This is a single line comment.
+{This is an example of a
+multi-line comment}</code></pre>
+
+<p>For comprehensive information on QuickScript.NET operations, operator precedence, variables, control structures, and sample scripts, reference the <em>Application Server Scripting Guide</em> located at:<br>
+<code>C:\Program Files (x86)\ArchestrA\Framework\Docs\1033\Scripting.pdf</code></p>
+
+<!-- ============================================================ -->
+<h2>31.7 Autocomplete</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Autocomplete (page 489)</p>
+
+<p>QuickScript autocomplete is active by default in the Script Editor and incorporates several features:</p>
+
+<ul>
+  <li>Provides an autocomplete <strong>Attribute reference</strong> when you type a generic object name such as <code>"Me."</code>. Runtime attributes appear in an autocomplete list box.</li>
+  <li>Provides <strong>method parameter help</strong> in an autocomplete list box including context-specific suggestions covering definitions, keywords, script elements, and programmatic constructs such as <code>try...catch</code> or <code>while...endwhile</code>.</li>
+  <li><strong>Automatic word completion</strong> of Attribute references, methods, programmatic constructs, and other script elements.</li>
+</ul>
+
+<p>Press <strong>Ctrl + Space</strong> to display all available autocomplete options and variables for the selected location in the script.</p>
+
+<!-- ============================================================ -->
+<h2>31.8 Attribute References — Relative References</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Attribute References (pages 489–490)</p>
+
+<p>References that go up the hierarchy to parent objects are called <strong>relative references</strong>. A valid reference string must always contain at least a relative reference or one substring.</p>
+
+<p>Relative references, such as <code>Me</code>, are valid reference strings and are especially useful in templates because absolute references typically do not apply or make sense.</p>
+
+<!-- IMAGE: page_0489_0.png — Object hierarchy diagram -->
+<div class="screenshot">
+  <img src="../images/page_0489_0.png" alt="Object hierarchy diagram showing Me, MyContainer, MyArea, MyEngine, MyPlatform">
+  <div class="caption">Figure 31.2 — Object hierarchy for relative references. From innermost to outermost: Me → MyContainer → MyArea → MyEngine → MyPlatform. Relative references allow scripts to traverse upward in this hierarchy.</div>
+</div>
+
+<p>When you use relative references like <code>MyContainer</code>, you can refer to contained objects within that container. For example, a reference to <code>&lt;MyContainer.InletValve.PV&gt;</code> is equivalent to <code>&lt;Tank1.InletValve.PV&gt;</code> in the following hierarchy:</p>
+
+<div class="key-concept">
+<strong>Hierarchy Example — Tank1:</strong>
+<ul>
+  <li><strong>Tank1</strong> — Cannot reference at this level because this is not contained</li>
+  <li>&nbsp;&nbsp;&nbsp;↳ <strong>Inlet Valve (InletValve)</strong> — Can reference at this level because this object is contained</li>
+  <li>&nbsp;&nbsp;&nbsp;↳ <strong>Outlet Valve (OutletValve)</strong> — Can reference at this level because this object is contained</li>
+</ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>31.9 Lab 20 — Adding Auto Reconnect to the DDESuiteLinkClient Object</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Lab 20 (pages 491–500)</p>
+
+<div class="lab">
+<strong>Lab Objectives:</strong>
+<ul>
+  <li>Create scripts in an object</li>
+  <li>Create scripts with multiple execution types</li>
+  <li>Add reconnect functionality to a DDESuiteLinkClient object</li>
+</ul>
+</div>
+
+<p>In this lab, you will configure <code>$gDDESuiteLinkClient</code> to automatically reconnect to the data source when the connection is lost. You will extend the object by adding attributes and scripts, and add diagnostic information indicating the number of disconnects the object has experienced since it last went on scan.</p>
+
+<h3>Step 1 — Add the Auto Reconnect Functionality</h3>
+
+<p>First, you will create a script that automatically reconnects to the data source when the connection is lost.</p>
+
+<ol>
+  <li>In the IDE, Templates tab, Training\Global toolset, open the <code>$gDDESuiteLinkClient</code> configuration editor.</li>
+  <li>On the <strong>Scripts tab</strong>, click the <strong>Add Script</strong> button.</li>
+  <li>Name the new script <code>Reconnect</code> and press Enter.</li>
+  <li>Configure the Reconnect script as follows:</li>
+</ol>
+
+<div class="key-concept">
+<strong>Reconnect Script Configuration:</strong>
+<ul>
+  <li><strong>Aliases:</strong> locked</li>
+  <li><strong>Declarations:</strong> locked</li>
+  <li><strong>Execution type:</strong> Execute (default) and locked</li>
+  <li><strong>Basics:</strong> locked</li>
+  <li><strong>Expression:</strong> <code>Me.ConnectionStatus &lt;&gt; 2</code></li>
+  <li><strong>Trigger type:</strong> WhileTrue (default)</li>
+  <li><strong>Trigger Period:</strong> <code>00:00:05.0000000</code></li>
+  <li><strong>Script body:</strong> <code>Me.Reconnect = true;</code></li>
+</ul>
+<p>This script attempts to reconnect every 5 seconds when not connected to the data source.</p>
+</div>
+
+<p>This script will attempt to reconnect every 5 seconds when not connected to the data source.</p>
+
+<p>Now, validate the script syntax using the <strong>Validate Script</strong> button. If nothing happens, the validation is successful.</p>
+
+<h3>Step 2 — Add Disconnect Counter Attribute</h3>
+
+<ol start="6">
+  <li>On the <strong>Attributes tab</strong>, create and configure a new attribute:
+    <ul>
+      <li><strong>Name:</strong> <code>Disconnect.Cnt</code></li>
+      <li><strong>Data type:</strong> Integer</li>
+      <li><strong>Writeability:</strong> Calculated</li>
+    </ul>
+  </li>
+</ol>
+
+<h3>Step 3 — Add the Disconnect Monitor Script</h3>
+
+<p>Now add a script to monitor the connection status.</p>
+
+<ol start="7">
+  <li>On the <strong>Scripts tab</strong>, add a script named <code>Disconnect.Monitor</code>.</li>
+  <li>Configure the Disconnect.Monitor script as follows:</li>
+</ol>
+
+<!-- IMAGE: page_0484_0.png — Scripts tab showing Disconnect.Monitor -->
+<div class="screenshot">
+  <img src="../images/page_0484_0.png" alt="Scripts tab showing Disconnect.Monitor script configuration">
+  <div class="caption">Figure 31.3 — The Scripts tab for $gDDESuiteLinkClient showing the Disconnect.Monitor script. The expression <code>Me.ConnectionStatus &lt;&gt; 2</code> with trigger type <code>OnTrue</code> causes the counter to increment each time the connection drops. The Reconnect script is also visible in the left panel.</div>
+</div>
+
+<div class="key-concept">
+<strong>Disconnect.Monitor Script Configuration (Execute type):</strong>
+<ul>
+  <li><strong>Aliases:</strong> locked</li>
+  <li><strong>Declarations:</strong> locked</li>
+  <li><strong>Execution type:</strong> Execute (default) and locked</li>
+  <li><strong>Basics:</strong> locked</li>
+  <li><strong>Expression:</strong> <code>Me.ConnectionStatus &lt;&gt; 2</code></li>
+  <li><strong>Trigger type:</strong> OnTrue</li>
+  <li><strong>Script body:</strong> <code>Me.Disconnect.Cnt = Me.Disconnect.Cnt + 1;</code></li>
+</ul>
+<p>This script increases the counter by one every time the condition is true (i.e., when the connection drops).</p>
+</div>
+
+<p>Click the <strong>Validate Script</strong> button to verify syntax.</p>
+
+<h3>Step 4 — Add OnScan Execution Type</h3>
+
+<!-- IMAGE: page_0486_1.png — Execution type dropdown -->
+<div class="screenshot">
+  <img src="../images/page_0486_1.png" alt="Script editor showing execution type dropdown with Startup, OnScan, Execute, OffScan, Shutdown options">
+  <div class="caption">Figure 31.4 — The Disconnect.Monitor script editor with the Execution type dropdown expanded, showing all five execution types: Startup, OnScan, Execute (currently selected), OffScan, and Shutdown. The expression <code>Me.ConnectionStatus &lt;&gt; 2</code> is visible in the Basics area.</div>
+</div>
+
+<ol start="10">
+  <li>While still in the Disconnect.Monitor script, change the <strong>Execution type</strong> to <code>OnScan</code>.</li>
+  <li>In the script body, enter <code>Me.Disconnect.Cnt = 0;</code></li>
+</ol>
+
+<p>This script will reset the counter to zero every time the object goes on scan. Notice that the locking of the Aliases and Declarations did not change because you are still in the same script.</p>
+
+<ol start="12">
+  <li>Validate the script.</li>
+</ol>
+
+<p>Notice the list of scripts on the left now lists the two scripts associated with this object and displays an "x" in the column representing each execution type that contains a script.</p>
+
+<ol start="13">
+  <li>Save, close, and check in the object with an appropriate comment. Notice that the changes propagated to both R_ProdPLC instances.</li>
+  <li>Click Close.</li>
+  <li>Deploy both R_ProdPLC1 and R_ProdPLC2.</li>
+</ol>
+
+<h3>Step 5 — Test the Scripts in Runtime</h3>
+
+<p>Next, use Object Viewer to verify the execution of the scripts.</p>
+
+<ol start="16">
+  <li>In the Deployment view, view R_ProdPLC1 in Object Viewer.</li>
+  <li>Create a new watch window named R_ProdPLC1, and add the following attributes:
+    <ul>
+      <li><code>ConnectionStatus</code></li>
+      <li><code>Disconnect.Cnt</code></li>
+      <li><code>Disconnect.Monitor.ExecutionCnt</code></li>
+      <li><code>Reconnect.ExecutionCnt</code></li>
+    </ul>
+  </li>
+  <li>Save the watch list.</li>
+  <li>Connect to the machine where the ProdPlatform is deployed.</li>
+  <li>In the OCMC, right-click <code>OI.MBTCP.1</code> and select <strong>Deactivate</strong>.</li>
+</ol>
+
+<p>A confirmation message appears.</p>
+
+<ol start="21">
+  <li>Click <strong>Yes</strong> to confirm deactivation. Notice the OCMC now displays a red icon, indicating the server has stopped.</li>
+  <li>Connect to the machine where the GRPlatform is deployed. In Object Viewer, the watch window now indicates:
+    <ul>
+      <li><code>R_ProdPLC1.ConnectionStatus</code> — the object is currently disconnected</li>
+      <li><code>R_ProdPLC1.Disconnect.Cnt</code> — the object has disconnected once</li>
+      <li><code>R_ProdPLC1.Reconnect.ExecutionCnt</code> — how many times the object has tried to reconnect</li>
+    </ul>
+  </li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>31.10 Lab 20 — Deployment View Context</h2>
+<p>The following screenshots show the deployment structure used throughout this lab, providing context for the runtime environment where the scripts execute.</p>
+
+<!-- IMAGE: page_0470_0.png — Deployment overview -->
+<div class="screenshot">
+  <img src="../images/page_0470_0.png" alt="Deployment view showing TrainingGalaxy with GRPlatform and ProdPlatform">
+  <div class="caption">Figure 31.5 — Deployment view showing TrainingGalaxy with GRPlatform (AppEngine1 as Backup) and ProdPlatform (AppEngine1 and DIO_Engine1). This is the initial deployment structure before lab modifications.</div>
+</div>
+
+<!-- IMAGE: page_0470_1.png — Deployment expanded tree -->
+<div class="screenshot">
+  <img src="../images/page_0470_1.png" alt="Deployment view with expanded Production area showing R_ProdPLC1 and R_ProdPLC2">
+  <div class="caption">Figure 31.6 — Expanded Deployment tree showing the Production area with R_ProdPLC1, R_ProdPLC2, and the DIO_Engine1. The R_ProdPLC objects are the redundant PLC instances that the reconnect scripts will monitor.</div>
+</div>
+
+<!-- IMAGE: page_0470_2.png — Deployment with DIO_Engine2 -->
+<div class="screenshot">
+  <img src="../images/page_0470_2.png" alt="Deployment view showing DIO_Engine2 under Unassigned Host">
+  <div class="caption">Figure 31.7 — Deployment view showing DIO_Engine2 under Unassigned Host, with GRPlatform (AppEngine1 Backup) and ProdPlatform (AppEngine1). This represents the deployment state after engine assignments.</div>
+</div>
+
+<!-- IMAGE: page_0470_3.png — Deployment GRPlatform view -->
+<div class="screenshot">
+  <img src="../images/page_0470_3.png" alt="Deployment view showing GRPlatform with AppEngine1 Backup and DIO_Engine2">
+  <div class="caption">Figure 31.8 — Deployment view focused on GRPlatform showing AppEngine1 (Backup) and DIO_Engine2. The backup AppEngine is the runtime host for the R_ProdPLC scripts.</div>
+</div>
+
+<!-- IMAGE: page_0471_0.png — Deployment with R_ProdPLC2 -->
+<div class="screenshot">
+  <img src="../images/page_0471_0.png" alt="Deployment view showing R_ProdPLC2 assigned to DIO_Engine2">
+  <div class="caption">Figure 31.9 — Deployment view showing R_ProdPLC2 assigned under DIO_Engine2 on GRPlatform. Both R_ProdPLC instances are deployed and running with the reconnect scripts.</div>
+</div>
+
+<!-- IMAGE: page_0471_1.png — Model-Tagname view -->
+<div class="screenshot">
+  <img src="../images/page_0471_1.png" alt="Model-Tagname view showing full object hierarchy">
+  <div class="caption">Figure 31.10 — Model-Tagname view showing the complete object hierarchy under TrainingGalaxy. Includes AppEngine1, DIO_Engine1, DIO_Engine2, GRPlatform, ProdPlatform, ProdPLC, R_ProdPLC1, R_ProdPLC2, and Simulator objects under the ControlSystem grouping.</div>
+</div>
+
+<h3>IO Device Configuration Context</h3>
+<p>The following screenshots show the IO device mapping for the PLCs used in the labs. These provide context for what data the DDESuiteLinkClient is communicating with.</p>
+
+<!-- IMAGE: page_0472_0.png — IO Devices R_ProdPLC1 -->
+<div class="screenshot">
+  <img src="../images/page_0472_0.png" alt="IO Devices view showing R_ProdPLC1 Topic1 with mixer IO points">
+  <div class="caption">Figure 31.11 — IO Devices view showing R_ProdPLC1's Topic1 with mapped IO points for Mixer100 and Mixer200, including Agitator, Inlet, Level, Outlet, Pump, and Temperature tags. This is the data source that the reconnect script monitors.</div>
+</div>
+
+<!-- IMAGE: page_0473_0.png — IO Devices ProdPLC full -->
+<div class="screenshot">
+  <img src="../images/page_0473_0.png" alt="IO Devices view showing ProdPLC Topic1 with full mixer IO mapping">
+  <div class="caption">Figure 31.12 — IO Devices view showing ProdPLC's Topic1 with the complete IO tag mapping for both mixers. Tags include Agitator_001/002, Inlet1/Inlet2, Level, Outlet, Pump1/Pump2, and Temperature for Mixer100 and Mixer200.</div>
+</div>
+
+<!-- IMAGE: page_0474_0.png — IO Devices with Line markers -->
+<div class="screenshot">
+  <img src="../images/page_0474_0.png" alt="IO Devices view with !Line1 and !Line2 production line markers">
+  <div class="caption">Figure 31.13 — IO Devices view showing ProdPLC with production line markers (!Line1, !Line2) mapped to Plant.Production.Line1 and Plant.Production.Line2. These plant-level IO points provide context for the production environment.</div>
+</div>
+
+<!-- IMAGE: page_0475_0.png — IO Devices R_ProdPLC1 full -->
+<div class="screenshot">
+  <img src="../images/page_0475_0.png" alt="IO Devices view showing R_ProdPLC1 with !Line markers and full IO mapping">
+  <div class="caption">Figure 31.14 — IO Devices view showing R_ProdPLC1 with the !Line1/!Line2 production markers and complete IO mapping. The redundant PLC has the same IO configuration as ProdPLC, enabling failover.</div>
+</div>
+
+<h3>Lab 20 — Runtime Verification Screenshots</h3>
+<p>The following screenshots show the runtime monitoring used to verify the reconnect scripts during Lab 20.</p>
+
+<!-- IMAGE: page_0476_0.png — Object Viewer monitoring -->
+<div class="screenshot">
+  <img src="../images/page_0476_0.png" alt="Object Viewer showing real-time process monitoring data">
+  <div class="caption">Figure 31.15 — Object Viewer showing real-time monitoring of process tags including Level_001.PV (79.9022), Temperature_001.PV (259.3407), Agitator_001.CMD, and Pump1_001.CMD. All values show Quality "Good" and Status "Ok" before deactivation.</div>
+</div>
+
+<!-- IMAGE: page_0477_0.png — DIO Redundancy status -->
+<div class="screenshot">
+  <img src="../images/page_0477_0.png" alt="DIO Redundancy tab showing ProdPLC connection status and source configuration">
+  <div class="caption">Figure 31.16 — DIO Redundancy tab showing ProdPLC attributes: ConnectionStatus=Connected, DISourceActive=R_ProdPLC1, DISourcePrimary=R_ProdPLC2, DISourceStandby=R_ProdPLC2, DisableFailoverCmd=false, SwitchCnt=0. Both primary and backup sources are connected.</div>
+</div>
+
+<!-- IMAGE: page_0477_1.png — Modify Boolean Value dialog -->
+<div class="screenshot">
+  <img src="../images/page_0477_1.png" alt="Modify Boolean Value dialog for ProdPLC.FailoverCmd">
+  <div class="caption">Figure 31.17 — Modify Boolean Value dialog for ProdPLC.FailoverCmd. Setting this to True triggers a forced failover between the primary and standby DI sources, used to test the reconnect functionality.</div>
+</div>
+
+<!-- IMAGE: page_0478_0.png — DIO Redundancy after failover -->
+<div class="screenshot">
+  <img src="../images/page_0478_0.png" alt="DIO Redundancy tab after failover showing DISourceActive switched to R_ProdPLC2">
+  <div class="caption">Figure 31.18 — DIO Redundancy tab after forced failover. DISourceActive is now R_ProdPLC2, SwitchCnt=1, SwitchReason=ForceFailover. The system has successfully switched from the primary to the backup source.</div>
+</div>
+
+<!-- IMAGE: page_0478_1.png — DIO Redundancy multiple switches -->
+<div class="screenshot">
+  <img src="../images/page_0478_1.png" alt="DIO Redundancy tab showing multiple failover switches with highlighted rows">
+  <div class="caption">Figure 31.19 — DIO Redundancy tab after additional failover testing. Three rows are highlighted (DISourceActive, DISourcePrimary, DISourceStandby), SwitchCnt=2, SwitchReason=ForceFailover. The system tracks all switchover events.</div>
+</div>
+
+<!-- IMAGE: page_0479_0.png — DIO Redundancy ScanStateCmd -->
+<div class="screenshot">
+  <img src="../images/page_0479_0.png" alt="DIO Redundancy tab showing ScanStateCmd=true and R_ProdPLC1.ScanStateCmd">
+  <div class="caption">Figure 31.20 — DIO Redundancy tab showing R_ProdPLC1.ScanStateCmd=true and the redundancy state with SwitchCnt=2. The ScanStateCmd attribute controls whether the PLC is actively scanning data.</div>
+</div>
+
+<!-- IMAGE: page_0479_1.png — Modify Boolean for ScanStateCmd -->
+<div class="screenshot">
+  <img src="../images/page_0479_1.png" alt="Modify Boolean Value dialog for R_ProdPLC1.ScanStateCmd set to False">
+  <div class="caption">Figure 31.21 — Modify Boolean Value dialog for R_ProdPLC1.ScanStateCmd being set to False. This takes the redundant PLC off-scan, which should trigger the Disconnect.Monitor script's OnScan execution type to reset the disconnect counter.</div>
+</div>
+
+<!-- IMAGE: page_0479_2.png — DIO Redundancy after ScanStateCmd false -->
+<div class="screenshot">
+  <img src="../images/page_0479_2.png" alt="DIO Redundancy tab showing StatusPrimaryDISource=Offscan after ScanStateCmd set to false">
+  <div class="caption">Figure 31.22 — DIO Redundancy tab after setting ScanStateCmd=false. StatusPrimaryDISource=Offscan, SwitchCnt=3, SwitchReason=Offscan. The system detected the source went off-scan and switched to the backup.</div>
+</div>
+
+<!-- IMAGE: page_0480_0.png — Object Viewer after reset -->
+<div class="screenshot">
+  <img src="../images/page_0480_0.png" alt="Object Viewer showing ProdPLC attributes after ScanStateCmd reset with ForceFailoverCmd highlighted">
+  <div class="caption">Figure 31.23 — Object Viewer showing ProdPLC attributes after the ScanStateCmd has been reset. ForceFailoverCmd is highlighted (false). SwitchCnt=3, SwitchReason=Offscan. Both StatusPrimaryDISource and StatusBackupDISource show Connected.</div>
+</div>
+
+<!-- IMAGE: page_0480_1.png — DIO Redundancy after re-enable -->
+<div class="screenshot">
+  <img src="../images/page_0480_1.png" alt="DIO Redundancy tab showing ScanStateCmd=true after re-enabling with DISourceActive=R_ProdPLC1">
+  <div class="caption">Figure 31.24 — DIO Redundancy tab after re-enabling ScanStateCmd=true. DISourceActive has returned to R_ProdPLC1, confirming the primary source is back online. The Disconnect.Cnt has been reset to 0 by the OnScan script.</div>
+</div>
+
+<h3>Step 6 — Final Verification</h3>
+
+<ol start="23">
+  <li>Switch back to the ProdPlatform machine, and in the OCMC, activate <code>OI.MBTCP.1</code>.</li>
+  <li>Switch back to the GRPlatform machine. In Object Viewer, after a few seconds, the watch window displays that data is once again connected.</li>
+  <li>Add the following attributes to the watch window: <code>ScanState</code> and <code>ScanStateCmd</code>.</li>
+  <li>Set the ScanStateCmd attribute to <code>False</code>. Click OK. The ScanState now displays false.</li>
+  <li>Set the ScanStateCmd attribute back to <code>True</code>. The ScanState now displays true and the Disconnect.Cnt attribute has been reset to 0.</li>
+  <li>Save the watch list and minimize Object Viewer.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>31.11 Lab 21 — Switching Back to the Primary Redundant Engine</h2>
+<p class="page-ref">Reference: Module 11, Section 1 — Lab 21 (page 501)</p>
+
+<div class="lab">
+<strong>Lab Introduction:</strong>
+<p>In this lab, you will create a script to run on the Active engine that will be triggered when the primary machine is running as the "Backup" machine. The Active engine will automatically switch from the backup server to the primary server when the primary server is available. This is useful for load balancing and forcing use on specific equipment.</p>
+</div>
+
+<p>Lab 21 builds on the scripting concepts learned in Lab 20. The key concept is creating a script that:</p>
+<ul>
+  <li>Runs on the <strong>Active</strong> engine</li>
+  <li>Detects when the primary machine is running as "Backup"</li>
+  <li>Automatically switches back to the primary server when it becomes available</li>
+  <li>Is useful for <strong>load balancing</strong> and <strong>forcing use on specific equipment</strong></li>
+</ul>
+
+<div class="tip">
+<strong>Key Takeaway from Lab 21:</strong> Scripts can be used not just for data monitoring (as in Lab 20) but also for controlling engine failover behavior, enabling automatic recovery to the preferred server once it returns to service.
+</div>
+
+<!-- Decorative image -->
+<div class="screenshot">
+  <img src="../images/page_0481_0.jpeg" alt="Training participants working at computers">
+  <div class="caption">Figure 31.25 — Training environment: participants completing the scripting labs on their workstations.</div>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>31.12 Lesson Summary</h2>
+
+<div class="key-concept">
+<strong>Key Concepts Covered:</strong>
+<ul>
+  <li><strong>QuickScript.NET</strong> supports simple scripts (assignments, math) and complex scripts (IF-THEN-ELSE logic)</li>
+  <li><strong>Five execution types:</strong> Startup, OnScan, Execute, OffScan, Shutdown — each serves a specific purpose in the object lifecycle</li>
+  <li><strong>Trigger types for Execute:</strong> Periodic, Data Change, OnTrue, OnFalse, WhileTrue, WhileFalse</li>
+  <li><strong>Syntax:</strong> Case-insensitive, semicolon-terminated statements, single-line (<code>'</code>) and multi-line (<code>{ }</code>) comments</li>
+  <li><strong>Relative references</strong> (e.g., <code>Me</code>) allow scripts to traverse the object hierarchy</li>
+  <li><strong>Lab 20:</strong> Built auto-reconnect logic using WhileTrue trigger (Reconnect script) and OnTrue trigger (Disconnect.Monitor script), with OnScan to reset counters</li>
+  <li><strong>Lab 21:</strong> Created scripts for automatic failback to the primary redundant engine</li>
+</ul>
+</div>
+
+<hr>
+
+<!-- Quiz -->
+<div class="quiz">
+<h3>📝 Knowledge Check</h3>
+<ol>
+  <li><strong>What are the two types of scripts supported by Application Server?</strong><br>
+  <span class="answer">Simple scripts (assignments, comparisons, math) and complex scripts (IF-THEN-ELSE logic).</span></li>
+
+  <li><strong>What trigger type should you use for a script that should run continuously while a condition is true?</strong><br>
+  <span class="answer">WhileTrue — executes scan-to-scan as long as the expression validates as true at the beginning of the scan.</span></li>
+
+  <li><strong>Why does the Disconnect.Monitor script use OnTrue rather than WhileTrue?</strong><br>
+  <span class="answer">OnTrue fires exactly once when the expression transitions from false to true, ensuring the counter increments by exactly 1 per disconnection event. WhileTrue would increment the counter on every scan while disconnected.</span></li>
+
+  <li><strong>What is the purpose of the OnScan execution type in the Disconnect.Monitor script?</strong><br>
+  <span class="answer">It resets the Disconnect.Cnt to 0 every time the object goes on scan, providing a clean count starting from the most recent on-scan event.</span></li>
+
+  <li><strong>How do you indicate the end of a statement in QuickScript.NET?</strong><br>
+  <span class="answer">With a semicolon (;) at the end of the statement.</span></li>
+</ol>
+</div>
+
+<hr>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11 Section 1 + Labs 20-21</p>
+
+<nav>
+  <a href="L30-DI-Redundancy.html">← Lesson 30: DI Redundancy + Lab 19</a> &nbsp;|&nbsp;
+  <a href="L32-Variables-Control.html">Next: Lesson 32 — Variables &amp; Control Statements →</a>
+</nav>
+
+</body>
+</html>

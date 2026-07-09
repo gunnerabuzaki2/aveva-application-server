@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 25: Object Export and Import</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L24-Lab13-Configuring-Alarms.html">← Lesson 24: Lab 13 — Configuring Alarms</a> &nbsp;|&nbsp;
+  <a href="L26-CSV-Export-Import.html">Next: Lesson 26 — CSV Export &amp; Import →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 25: Object Export and Import</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 8 Section 1 + Lab 14</p>
+<p class="page-ref">Covers exporting/importing automation objects between Galaxies, version management, import preferences, and hands-on lab exercises for upgrading, downgrading, and duplicating objects. (pages 8-3 to 8-30)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>25.1 Overview — Module 8 Objectives</h2>
+<p class="page-ref">Reference: Module 8 Objectives (page 8-2)</p>
+
+<p>Module 8 covers the essential object management operations in AVEVA Application Server. This lesson focuses on Section 1 — Object Export and Import — along with Lab 14, which provides hands-on practice with the complete export/import lifecycle.</p>
+
+<div class="key-concept">
+  <strong>Module Objectives:</strong>
+  <ul>
+    <li><strong>Export objects</strong> — Save configured objects to external files (.aaPKG) for backup or sharing between Galaxies</li>
+    <li><strong>Import objects</strong> — Bring objects from external package files into an active Galaxy</li>
+    <li><strong>Upgrade objects</strong> — Update internal class versions for software compatibility</li>
+    <li><strong>Revert to previous object versions</strong> — Roll back to a known good state by importing an older export</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>25.2 Exporting Automation Objects</h2>
+<p class="page-ref">Reference: Section 1 — Object Export and Import (pages 8-3 to 8-5)</p>
+
+<p>Use the IDE's <strong>Export Selected as CSV</strong> function to share objects with other users or to recreate them in other Galaxies. The resulting file (<code>.aaPKG</code> extension) contains the selected objects, their associated templates, and the configuration state of those objects. The export file can later be imported into the same or another Galaxy.</p>
+
+<div class="key-concept">
+  <strong>Key behaviors of the export process:</strong>
+  <ul>
+    <li>Subsequent exports retain the <strong>default folder as last used</strong> for the duration of the IDE session. If the designated file already exists, you are prompted to confirm overwrite.</li>
+    <li>If any of the selected objects are currently <strong>checked out</strong>, only the <strong>checked-in versions</strong> are exported.</li>
+    <li>When exporting an <strong>object instance</strong>, it will also include all <strong>parents</strong> of that object all the way back to and including the base template.</li>
+  </ul>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0310_0.png" alt="Right-click context menu showing Export submenu on a Mixer object">
+  <div class="caption">Right-click context menu on the $Mixer object within the Deployment tree. The <strong>Export</strong> submenu is expanded showing four options: <em>Selected objects</em> (highlighted), <em>Selected as protected</em>, <em>Selected as CSV</em>, and <em>Localization</em>. You can multi-select objects using Shift+Click or Ctrl+Click before exporting (page 8-4)</div>
+</div>
+
+<h3>Exporting the Entire Galaxy</h3>
+<p>Exporting an entire Galaxy is similar to using the Galaxy Database Manager utility to back up the database. However, there are important differences:</p>
+
+<table>
+  <tr><th>Feature</th><th>Galaxy Export (.aaPKG)</th><th>Database Manager Backup</th></tr>
+  <tr><td>Change logs</td><td><strong>Not</strong> exported</td><td><strong>Saved</strong> in backup</td></tr>
+  <tr><td>Security model settings</td><td><strong>Removed</strong> from export</td><td><strong>Retained</strong> in backup</td></tr>
+  <tr><td>Portability</td><td>Can be imported into any Galaxy</td><td>Restore to same server only</td></tr>
+</table>
+
+<div class="pitfall">
+  <strong>⚠️ Important:</strong> Script functions are <strong>NOT</strong> included in an export. You must ensure that script function libraries are transferred separately when moving objects between Galaxies.
+</div>
+
+<h3>The Export Dialog</h3>
+<p>After selecting <strong>Export → Selected objects</strong>, the Export Automation Object(s) dialog box appears. Browse to the destination path and enter a file name with the <code>.aaPKG</code> extension, then click <strong>Save</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0311_0.png" alt="Export Selected objects Save dialog showing path C:\Training and filename $StorageV2">
+  <div class="caption">The <strong>Export Selected objects</strong> dialog box. The user has navigated to <code>C:\Training</code> and entered the filename <code>$StorageV2</code>. The "Save as type" field shows <em>Galaxy export/import files (*.aaPKG)</em>. Click <strong>Save</strong> to begin the export (page 8-5)</div>
+</div>
+
+<h3>Export Completion</h3>
+<p>When the export process finishes, the <strong>Exporting object(s)</strong> dialog confirms success. The details pane shows each object processed and a summary message.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0311_1.png" alt="Export completed dialog showing successful export of $UserDefined and $Storage">
+  <div class="caption">The <strong>Export completed</strong> dialog. The details show that both <code>$UserDefined</code> and <code>$Storage</code> were processed successfully, with a highlighted summary message: "Exported the selected objects successfully." Click <strong>Close</strong> to dismiss (page 8-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0311_2.png" alt="Windows Explorer showing exported $StorageV2.aaPKG and $StorageV3.aaPKG files">
+  <div class="caption">Windows File Explorer showing the exported <code>.aaPKG</code> files in the <code>C:\Training</code> directory: <code>$StorageV2.aaPKG</code> (2,127 KB) and <code>$StorageV3.aaPKG</code> (2,127 KB). These files are portable packages that can be imported into any Galaxy (page 8-5)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Export maintains containment and hierarchy:</strong> The export preserves the relationships between objects — including containment, hierarchy, and template derivation. If an object is currently checked out, the last checked-in version of the object's configuration is exported. The resulting <code>.aaPKG</code> file can be used to import the chosen objects into another existing Galaxy.
+</div>
+
+<!-- ============================================================ -->
+<h2>25.3 Importing Automation Objects</h2>
+<p class="page-ref">Reference: Section 1 — Object Export and Import (pages 8-6 to 8-9)</p>
+
+<p>Objects can be reused from another Galaxy in your Galaxy. This saves time if the objects are already set up in another Galaxy. Importing instances previously exported from a Galaxy retains previous associations — such as assignment, containment, derivation, and area — whenever possible.</p>
+
+<h3>Supported Import File Formats</h3>
+<table>
+  <tr><th>Format</th><th>Description</th></tr>
+  <tr><td><code>.aaPKG</code></td><td>Standard AVEVA package file — contains objects, templates, and configuration state</td></tr>
+  <tr><td><code>.aaPDF</code></td><td>Developer-created file using AVEVA Object Toolkit — contains configuration data and implementation code for one or more base templates</td></tr>
+</table>
+
+<div class="pitfall">
+  <strong>⚠️ Import Conflicts:</strong> Before starting, you cannot have two objects with the same name or more than one copy of the same version of an object in the same Galaxy. When you import an object, these conflicts are identified and you can manage them through the Import Preferences dialog.
+</div>
+
+<h3>Launching the Import</h3>
+<p>To import Automation objects, go to the <strong>Galaxy</strong> tab, select <strong>Import → Objects → From package</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0312_0.png" alt="IDE Galaxy backstage Import panel showing Objects section with From package option">
+  <div class="caption">The IDE Import panel. Under the <strong>Objects</strong> section (expanded), the <em>From package</em> option is available for importing objects from package files. Other options include <em>From CSV</em> and <em>Explore product hub</em>. The <em>Tagname dictionary from CSV</em> option is greyed out (page 8-6)</div>
+</div>
+
+<h3>Selecting the Package File</h3>
+<div class="screenshot">
+  <img src="../images/page_0313_0.png" alt="Import Objects from package dialog showing $StorageV2.aaPKG selected">
+  <div class="caption">The <strong>Import Objects from package</strong> dialog. Navigate to the folder containing your <code>.aaPKG</code> or <code>.aaPDF</code> files and select the file to import. Here, <code>$StorageV2.aaPKG</code> is selected from <code>C:\Training</code>. The file type filter shows <em>Package files (*.aaPKG; *.aaPDF)</em>. Click <strong>Open</strong> (page 8-7)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>25.4 Import Preferences and Conflict Resolution</h2>
+<p class="page-ref">Reference: Section 1 — Object Export and Import (pages 8-8 to 8-9)</p>
+
+<p>The <strong>Import Preferences</strong> dialog appears after selecting the package file. This critical dialog controls how conflicts are resolved when imported objects overlap with existing objects in the Galaxy.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0314_0.png" alt="Import Preferences dialog with four conflict resolution sections">
+  <div class="caption">The <strong>Import Preferences</strong> dialog with four configuration sections. Section 1 defaults to "Overwrite if version is higher," Section 2 defaults to "Migrate," Section 3 defaults to "Skip," and Section 4 has "Never overwrite unprotected with protected" checked. Click <strong>Import</strong> to proceed (page 8-8)</div>
+</div>
+
+<h3>Section 1: Objects with Same Tagname and Codebase</h3>
+<table>
+  <tr><th>Option</th><th>Behavior</th><th>Default?</th></tr>
+  <tr><td>Skip: Do not import</td><td>Leaves the existing object unchanged</td><td>No</td></tr>
+  <tr><td>Overwrite if imported version is higher</td><td>Replaces existing only if the imported object is newer</td><td><strong>Yes</strong></td></tr>
+  <tr><td>Overwrite regardless of version</td><td>Replaces existing regardless of version comparison</td><td>No</td></tr>
+</table>
+
+<h3>Section 2: Base Templates with Different Revision or Minor Version</h3>
+<table>
+  <tr><th>Option</th><th>Behavior</th><th>Default?</th></tr>
+  <tr><td>Skip: Do not migrate</td><td>Does not migrate objects with an older Codebase when a newer one exists</td><td>No</td></tr>
+  <tr><td>Migrate</td><td>Migrates an older codebase when the replacement object is available</td><td><strong>Yes</strong></td></tr>
+</table>
+
+<h3>Section 3: Objects with Same Tagname but Different Codebase</h3>
+<table>
+  <tr><th>Option</th><th>Behavior</th><th>Default?</th></tr>
+  <tr><td>Skip: Do not import</td><td>Leaves the existing object unchanged</td><td><strong>Yes</strong></td></tr>
+  <tr><td>Rename object in Galaxy</td><td>Imports the new object; renames the existing Galaxy object</td><td>No</td></tr>
+  <tr><td>Rename importing object</td><td>Imports the new object; renames the incoming object</td><td>No</td></tr>
+</table>
+
+<h3>Section 4: Template Protection Change Management</h3>
+<div class="key-concept">
+  <strong>Protection setting:</strong> The checkbox <em>"Never overwrite an unprotected object with a protected object"</em> is <strong>checked by default</strong>. This prevents protected objects from overwriting unprotected ones. Unchecking this box allows protected objects to overwrite unprotected objects during import.
+</div>
+
+<h3>Post-Import Rules</h3>
+<p>After the import process completes, the following rules apply:</p>
+<ul>
+  <li>If a <strong>toolset</strong> does not exist, it is created.</li>
+  <li>If the object belongs to a <strong>security group</strong> that does not exist, it is associated with the <em>Default</em> security group.</li>
+  <li>If the object belongs to an <strong>area</strong> that does not exist, it is associated with the <em>Unassigned Area</em>.</li>
+  <li>If the <strong>host</strong> to which the object is assigned does not exist, it is assigned to <em>Unassigned Host</em>.</li>
+  <li>If you selected <strong>Migrate</strong>, migrated objects are marked with "software upgrade required" if they are deployed — these objects will be upgraded when redeployed.</li>
+</ul>
+
+<div class="tip">
+  <strong>Tip:</strong> If you import a new version of an existing instance, the new version is marked as <strong>requiring deployment</strong> if the existing object is already deployed. You must redeploy to activate the changes.
+</div>
+
+<!-- ============================================================ -->
+<h2>25.5 Lab 14 — Exporting and Importing Objects</h2>
+<p class="page-ref">Reference: Lab 14 (pages 8-11 to 8-30)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Use the Export Selected objects and Import Objects from package features of the IDE</li>
+    <li>Upgrade and downgrade object versions through export/import</li>
+    <li>Create copies of objects within the Galaxy</li>
+  </ul>
+  <p><strong>Introduction:</strong> In this lab, you will use the Export Selected objects and Import Objects from package features of the IDE. Specifically, you will use these features to upgrade and downgrade object versions. Then, you will make copies of objects within the Galaxy.</p>
+</div>
+
+<!-- ============================================================ -->
+<h3>Part A: Creating the $Storage Object</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-12 to 8-14)</p>
+
+<p><strong>Step 1.</strong> In the IDE, Templates tab, Application template toolset, create a new derived template from the <code>$UserDefined</code> template named <code>$Storage</code>.</p>
+
+<p><strong>Step 2.</strong> Move the new <code>$Storage</code> template to the <code>Training\Project</code> template toolset.</p>
+
+<p><strong>Step 3.</strong> Right-click <code>$Storage</code> and select <strong>Properties</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0318_0.png" alt="Templates panel showing $Storage highlighted in the Project toolset">
+  <div class="caption">The <strong>Templates</strong> panel showing the Project toolset. The <code>$Storage</code> template (highlighted) has been created under <code>Training\Project</code> alongside <code>$Meter</code>, <code>$Mixer</code>, <code>$Motor</code>, and <code>$Valve</code>. The <code>$Mixer</code> is expanded showing its child attributes (page 8-12)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0318_1.png" alt="Right-click context menu on $Storage showing Properties option">
+  <div class="caption">Right-click context menu on the <code>$Storage</code> object. The menu includes standard object management options: Open, Check Out, Validate, Delete, Rename, Export, and <strong>Properties</strong> (highlighted at the bottom with shortcut Alt+Enter). Select Properties to view the object's attributes (page 8-12)</div>
+</div>
+
+<p><strong>Step 4.</strong> Click the <strong>Attributes</strong> tab.</p>
+<p><strong>Step 5.</strong> Scroll down to verify that the <code>ConfigVersion</code> attribute displays <strong>1</strong> in the Value column. The "1" indicates that this is the first version of the object.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0319_0.png" alt="$Storage Properties dialog showing ConfigVersion = 1 on the Attributes tab">
+  <div class="caption"><strong>$Storage Properties</strong> dialog on the <em>Attributes</em> tab. The <code>ConfigVersion</code> row (circled in red) shows <strong>Value = 1</strong>, confirming this is version 1 of the object. Other visible attributes include <code>CodeBase</code> (ArchestrA.UserDefined.4), <code>MinorVersion</code> (272), and various system attributes (page 8-13)</div>
+</div>
+
+<p><strong>Step 6.</strong> Click <strong>Close</strong>.</p>
+
+<h3>Adding Initial Attributes (Version 1)</h3>
+<p><strong>Step 7.</strong> Open the <code>$Storage</code> configuration editor.</p>
+<p><strong>Step 8.</strong> Add an attribute named <strong>Pressure</strong>.</p>
+<p><strong>Step 9.</strong> Configure Pressure as follows:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0319_1.png" alt="Attribute editor showing Pressure attribute with Integer data type and User writeable category">
+  <div class="caption">Attribute configuration for <strong>Pressure</strong>. Data type: Integer, Writeability: User writeable (default), Initial value: 0. Click the shield/checkmark button to save the attribute definition (page 8-13)</div>
+</div>
+
+<p><strong>Step 10.</strong> Add and configure another attribute named <strong>Density</strong> with the same settings (Integer, User writeable, Initial value 0).</p>
+
+<div class="screenshot">
+  <img src="../images/page_0320_0.png" alt="Attribute editor showing Density attribute configuration">
+  <div class="caption">Attribute configuration for <strong>Density</strong>. Same settings as Pressure: Data type: Integer, Writeability: User writeable, Initial value: 0. This is the second custom attribute added to $Storage (page 8-14)</div>
+</div>
+
+<p><strong>Step 11.</strong> Save and close, and check in the object with an appropriate comment.</p>
+<p><strong>Step 12.</strong> Right-click <code>$Storage</code> and select <strong>Properties</strong>.</p>
+<p><strong>Step 13.</strong> Click the <strong>Attributes</strong> tab.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0320_1.png" alt="$Storage Properties showing ConfigVersion = 2 after first check-in">
+  <div class="caption"><strong>$Storage Properties</strong> dialog. The <code>ConfigVersion</code> (highlighted in red) has increased to <strong>2</strong>. The new <code>Density</code> attribute is visible with Value 0. The <code>ConfigVersion</code> increases by 1 each time changes to the object are checked in (page 8-14)</div>
+</div>
+
+<div class="key-concept">
+  <strong>ConfigVersion tracking:</strong> The <code>ConfigVersion</code> attribute increments automatically each time object changes are checked in. Version 1 = initial creation. Version 2 = after adding Pressure and Density. This version number is critical for import conflict resolution.
+</div>
+
+<p><strong>Step 14.</strong> Click <strong>Close</strong>.</p>
+
+<!-- ============================================================ -->
+<h3>Part B: Exporting Version 2 of $Storage</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-15 to 8-16)</p>
+
+<p><strong>Step 15.</strong> Right-click <code>$Storage</code> and select <strong>Export → Selected objects</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0321_0.png" alt="Context menu showing Export submenu with Selected objects highlighted">
+  <div class="caption">Right-click context menu with the <strong>Export</strong> submenu expanded. <em>Selected objects</em> is highlighted for selection. The tree view in the background shows the Deployment hierarchy with $Storage and other objects (page 8-15)</div>
+</div>
+
+<p><strong>Step 16.</strong> Navigate to <code>C:\Training</code>.</p>
+<p><strong>Step 17.</strong> In the File name field, enter <code>$StorageV2</code>. This corresponds with ConfigVersion 2.</p>
+<p><strong>Step 18.</strong> Click <strong>Save</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0321_1.png" alt="Export Selected objects dialog with filename $StorageV2">
+  <div class="caption">The <strong>Export Selected objects</strong> dialog. The filename is set to <code>$StorageV2</code> to correspond with ConfigVersion 2 of the object. The destination is <code>C:\Training</code> and the file type is <em>Galaxy export/import files (*.aaPKG)</em> (page 8-15)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0322_0.png" alt="Export completion dialog confirming $UserDefined and $Storage processed successfully">
+  <div class="caption">Export completed dialog. Both <code>$UserDefined</code> and <code>$Storage</code> were processed successfully. The <code>$Storage</code> object has been exported along with all parent objects in the derivation hierarchy. Click <strong>Close</strong> (page 8-16)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Part C: Creating Version 3 and Exporting</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-16 to 8-18)</p>
+
+<p><strong>Step 19.</strong> Click <strong>Close</strong>.</p>
+<p><strong>Step 20.</strong> Open the <code>$Storage</code> configuration editor.</p>
+<p><strong>Step 21.</strong> Add and configure two new attributes:</p>
+
+<table>
+  <tr><th>Attribute Name</th><th>Data Type</th><th>Category</th></tr>
+  <tr><td>Viscosity</td><td>Integer</td><td>User writeable (default)</td></tr>
+  <tr><td>Hardness</td><td>Integer (default)</td><td>User writeable (default)</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0322_1.png" alt="$Storage configuration editor showing all four attributes: Density, Hardness, Pressure, Viscosity">
+  <div class="caption"><strong>$Storage</strong> configuration editor on the <em>Attributes</em> tab. All four attributes are now visible in the attributes list: <strong>Density</strong>, <strong>Hardness</strong> (new), <strong>Pressure</strong>, and <strong>Viscosity</strong> (new). The Inherited checkbox is checked and search bar shows "Search Current Attributes (Ctrl + E)" (page 8-16)</div>
+</div>
+
+<p><strong>Step 22.</strong> Save and close, and check in the object with an appropriate comment.</p>
+<p><strong>Step 23.</strong> Right-click <code>$Storage</code> and select <strong>Properties</strong>.</p>
+<p><strong>Step 24.</strong> Click the <strong>Attributes</strong> tab. The <code>$Storage</code> object has been upgraded to <strong>version 3</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0323_0.png" alt="$Storage Properties showing ConfigVersion = 3">
+  <div class="caption"><strong>$Storage Properties</strong> dialog on the Attributes tab. The <code>ConfigVersion</code> (highlighted in red) now shows <strong>Value = 3</strong>, confirming the object has been upgraded to version 3 after adding Viscosity and Hardness attributes (page 8-17)</div>
+</div>
+
+<p><strong>Step 25.</strong> Click <strong>Close</strong>.</p>
+
+<h3>Exporting Version 3</h3>
+<p><strong>Step 26.</strong> Right-click <code>$Storage</code> and select <strong>Export → Selected objects</strong>.</p>
+<p><strong>Step 27.</strong> In the Export Selected objects dialog box, File name field, enter <code>$StorageV3</code>.</p>
+<p><strong>Step 28.</strong> Click <strong>Save</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0324_0.png" alt="Export context menu with Selected objects highlighted for version 3 export">
+  <div class="caption">Right-click context menu with <strong>Export → Selected objects</strong> highlighted. This is the second export, this time for ConfigVersion 3 of the $Storage object (page 8-18)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0324_1.png" alt="Export dialog showing $StorageV3 filename with existing $StorageV2.aaPKG visible">
+  <div class="caption">The <strong>Export Selected objects</strong> dialog showing the filename <code>$StorageV3</code>. The previously exported <code>$StorageV2.aaPKG</code> file is visible in the file list, confirming both versions are being saved as separate packages (page 8-18)</div>
+</div>
+
+<p><strong>Step 29.</strong> When the Exporting object(s) progress is complete, click <strong>Close</strong>.</p>
+
+<!-- ============================================================ -->
+<h3>Part D: Deleting $Storage and Importing V2</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-19 to 8-24)</p>
+
+<p><strong>Step 30.</strong> Right-click <code>$Storage</code> and select <strong>Delete</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0325_0.png" alt="Context menu showing Delete option highlighted on $Storage">
+  <div class="caption">Right-click context menu with <strong>Delete</strong> (Del shortcut) highlighted. This will remove the $Storage object from the Galaxy. The background shows the object tree with SStorage, SValve, and other objects (page 8-19)</div>
+</div>
+
+<p><strong>Step 31.</strong> Click <strong>Delete</strong> to confirm deletion of the <code>$Storage</code> object.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0325_1.png" alt="Delete confirmation dialog showing $Storage can be deleted">
+  <div class="caption">The <strong>Delete</strong> confirmation dialog. The table shows <code>$Storage</code> with a green checkmark under "Can be deleted," confirming the object is eligible for removal. Click <strong>Delete</strong> (blue button) to confirm, or <strong>Cancel</strong> to abort (page 8-19)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0326_0.png" alt="Project toolset showing $Storage is no longer present after deletion">
+  <div class="caption">The Project toolset after deletion. <code>$Storage</code> no longer appears in the tree — only <code>$Meter</code>, <code>$Mixer</code> (expanded), <code>$Motor</code>, and <code>$Valve</code> remain. This confirms the object was successfully removed (page 8-20)</div>
+</div>
+
+<h3>Importing $StorageV2.aaPKG</h3>
+<p><strong>Step 32.</strong> Click the <strong>Galaxy</strong> menu to get to the backstage area.</p>
+<p><strong>Step 33.</strong> In the upper-left corner, click <strong>Import</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0326_1.jpeg" alt="Galaxy backstage view showing Import option circled in red">
+  <div class="caption">The <strong>Galaxy backstage</strong> view. The left sidebar shows Home, New, Open, User, AVEVA Connect, <strong>Import</strong> (circled in red), Export, Configure, and Close. The main panel shows the Galaxies section with Server: <em>S00ENG</em> and the <em>Default Galaxy</em> tile. Click <strong>Import</strong> to begin (page 8-20)</div>
+</div>
+
+<p><strong>Step 34.</strong> In the Objects drop-down list, select <strong>From package</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0327_0.png" alt="Import panel with Objects section expanded showing From package option">
+  <div class="caption">The <strong>Import</strong> panel with the Objects section expanded. The <em>From package</em> option (for importing objects from package files) is the first item. Other options include <em>From CSV</em>, <em>Tagname dictionary from CSV</em>, and <em>Explore product hub</em>. The <em>Visualization</em> section is collapsed below (page 8-21)</div>
+</div>
+
+<p><strong>Step 35.</strong> Select <code>$StorageV2.aaPKG</code>.</p>
+<p><strong>Step 36.</strong> Click <strong>Open</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0327_1.png" alt="Import Objects from package dialog with $StorageV2.aaPKG selected">
+  <div class="caption">The <strong>Import Objects from package</strong> dialog showing <code>$StorageV2.aaPKG</code> selected (highlighted in blue). Both <code>$StorageV2.aaPKG</code> and <code>$StorageV3.aaPKG</code> are visible in the file list, each at 2,406 KB. Click <strong>Open</strong> to proceed (page 8-21)</div>
+</div>
+
+<p><strong>Step 37.</strong> In the Import preferences dialog box, leave the default options and click <strong>Import</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0328_0.png" alt="Import Preferences dialog with default settings for V2 import">
+  <div class="caption"><strong>Import Preferences</strong> dialog with default settings. Section 1: "Overwrite if version is higher" (selected). Section 2: "Migrate" (selected). Section 3: "Skip: Do not import" (selected). Section 4: "Never overwrite unprotected with protected" (checked). Click <strong>Import</strong> to proceed (page 8-22)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0329_0.png" alt="Import completion dialog showing $Storage created and 2 objects imported">
+  <div class="caption"><strong>Import completed</strong> dialog with detailed log: (1) <code>$UserDefined</code> was skipped because an identical or newer version exists; (2) <code>$Storage</code> does not exist so a new object was created; (3) Object was migrated and created successfully; (4) Summary: "Imported total of 2 object(s) from 1 file(s)." Click <strong>Close</strong> (page 8-23)</div>
+</div>
+
+<p><strong>Step 38.</strong> Click <strong>Close</strong>.</p>
+<p><strong>Step 39.</strong> In the upper-left corner, click the back arrow to return to the IDE. <code>$Storage</code> appears again in the Project toolset.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0329_1.png" alt="Project toolset showing $Storage has been restored after import">
+  <div class="caption">The Project toolset after import. <code>$Storage</code> (circled in red) has been restored to the hierarchy, appearing between <code>$Motor</code> and <code>$Valve</code>. The object was successfully imported from the <code>$StorageV2.aaPKG</code> file (page 8-23)</div>
+</div>
+
+<h3>Verifying the Imported Version</h3>
+<p><strong>Step 40.</strong> Open the <code>$Storage</code> properties.</p>
+<p><strong>Step 41.</strong> On the Attributes tab, verify configuration version <strong>2</strong> was imported.</p>
+<p><strong>Step 42.</strong> Click <strong>Close</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0330_0.png" alt="$Storage Properties showing ConfigVersion = 2 after importing V2 package">
+  <div class="caption"><strong>$Storage Properties</strong> dialog on the Attributes tab. The <code>ConfigVersion</code> shows <strong>Value = 2</strong>, confirming that Version 2 of the object was successfully imported. Only the original attributes (Pressure, Density) exist — the V3 attributes (Viscosity, Hardness) are not present (page 8-24)</div>
+</div>
+
+<!-- ============================================================ -->
+<h3>Part E: Upgrading by Importing V3</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-25 to 8-26)</p>
+
+<p>Now, you will import the <code>$StorageV3.aaPKG</code> file to upgrade the object to version 3.</p>
+
+<p><strong>Step 43.</strong> Click the <strong>Galaxy</strong> menu to get backstage, and then click <strong>Import</strong>.</p>
+<p><strong>Step 44.</strong> In the Object drop-down list, select <strong>From package</strong>.</p>
+<p><strong>Step 45.</strong> In the Import Objects from package dialog box, select <code>$StorageV3.aaPKG</code>.</p>
+<p><strong>Step 46.</strong> Click <strong>Open</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0331_0.png" alt="Import dialog with $StorageV3.aaPKG selected for upgrade">
+  <div class="caption">The <strong>Import Objects from package</strong> dialog. This time, <code>$StorageV3.aaPKG</code> is selected (highlighted) to upgrade the existing V2 object to V3. Both package files are visible in the <code>C:\Training</code> directory (page 8-25)</div>
+</div>
+
+<p><strong>Step 47.</strong> In the Import preferences dialog box, leave the default options and click <strong>Import</strong>.</p>
+<p><strong>Step 48.</strong> When the import is complete, click <strong>Close</strong>.</p>
+<p><strong>Step 49.</strong> Click the back arrow to return to the IDE.</p>
+
+<h3>Verifying the Upgrade</h3>
+<p><strong>Step 50.</strong> Open the <code>$Storage</code> properties.</p>
+<p><strong>Step 51.</strong> On the Attributes tab, verify configuration version <strong>3</strong> was imported.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0332_0.png" alt="$Storage Properties showing ConfigVersion = 3 after V3 import">
+  <div class="caption"><strong>$Storage Properties</strong> dialog on the Attributes tab. The <code>ConfigVersion</code> shows <strong>Value = 3</strong>, confirming the upgrade was successful. The <code>ConfigVersion</code> row is highlighted in light blue, and the <code>Density</code> attribute shows a security classification icon (page 8-26)</div>
+</div>
+
+<p><strong>Step 52.</strong> Click <strong>Close</strong>.</p>
+<p><strong>Step 53.</strong> In the <code>$Storage</code> configuration editor, verify that all four attributes are now visible in the attributes list.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0332_1.png" alt="$Storage configuration editor showing all four attributes after V3 upgrade">
+  <div class="caption"><strong>$Storage</strong> configuration editor on the Attributes tab. All four attributes are confirmed: <strong>Density</strong>, <strong>Hardness</strong>, <strong>Pressure</strong>, and <strong>Viscosity</strong>. The Inherited checkbox is checked and the toolbar shows Filter, Add, Copy, Remove, and view toggle buttons (page 8-26)</div>
+</div>
+
+<p><strong>Step 54.</strong> Close the configuration editor.</p>
+
+<!-- ============================================================ -->
+<h3>Part F: Downgrading by Importing V2 Again</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-27 to 8-28)</p>
+
+<p>Now, you will downgrade the <code>$Storage</code> object by importing a previous version of the object.</p>
+
+<p><strong>Step 55.</strong> Use the backstage area to import <code>$StorageV2.aaPKG</code>.</p>
+<p><strong>Step 56.</strong> In the Import preferences dialog box, Objects with same Tagname and Codebase as an existing object area, select the <strong>Overwrite objects regardless of configuration version</strong> option.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0333_0.png" alt="Import Preferences with Overwrite regardless of version selected for downgrade">
+  <div class="caption"><strong>Import Preferences</strong> dialog configured for downgrade. In Section 1, <strong>"Overwrite objects regardless of configuration version"</strong> is selected (highlighted with blue dot and red outline). Section 2 shows "Migrate" selected. This forces the system to replace the V3 object with the older V2 package (page 8-27)</div>
+</div>
+
+<div class="tip">
+  <strong>Tip — The "Overwrite regardless" option is essential for downgrades:</strong> The default setting only overwrites when the imported version is <em>higher</em>. To import an <em>older</em> version (a downgrade), you must explicitly select "Overwrite objects regardless of configuration version."
+</div>
+
+<p><strong>Step 57.</strong> Click <strong>Import</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0333_1.png" alt="Import completion dialog showing overwrite of $Storage from V2 package">
+  <div class="caption"><strong>Import completed</strong> dialog. The log shows: (1) Processing file <code>$StorageV2.aaPKG</code>; (2) <code>$UserDefined</code> was skipped (identical/newer exists); (3) <code>$Storage</code> exists — the import will <strong>overwrite the existing object</strong>; (4) Summary: "Imported total of 2 object(s) from 1 file(s)." Click <strong>Close</strong> (page 8-27)</div>
+</div>
+
+<p><strong>Step 58.</strong> Click <strong>Close</strong>.</p>
+
+<h3>Verifying the Downgrade</h3>
+<p><strong>Step 59.</strong> Return to the IDE and open the <code>$Storage</code> properties, then on the Attributes tab, verify configuration version <strong>2</strong> was imported.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0334_0.png" alt="$Storage Properties showing ConfigVersion = 2 after downgrade">
+  <div class="caption"><strong>$Storage Properties</strong> dialog on the Attributes tab. The <code>ConfigVersion</code> shows <strong>Value = 2</strong> (highlighted), confirming the downgrade from V3 to V2 was successful. The object now contains only the original two custom attributes (page 8-28)</div>
+</div>
+
+<p><strong>Step 60.</strong> Click <strong>Close</strong>.</p>
+<p><strong>Step 61.</strong> In the <code>$Storage</code> configuration editor, verify that the two attributes that were added in version 3 no longer exist.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0334_1.png" alt="$Storage configuration editor showing only Density and Pressure after downgrade">
+  <div class="caption"><strong>$Storage</strong> configuration editor after downgrade. Only <strong>Density</strong> and <strong>Pressure</strong> remain in the attributes list — the V3 attributes (Hardness, Viscosity) have been removed by the downgrade import. The Inherited checkbox is checked (page 8-28)</div>
+</div>
+
+<p><strong>Step 62.</strong> Close the configuration editor.</p>
+
+<!-- ============================================================ -->
+<h3>Part G: Duplicating an Object by Import</h3>
+<p class="page-ref">Reference: Lab 14 (pages 8-29 to 8-30)</p>
+
+<p>Next, you will import an object to create a duplicate of the object.</p>
+
+<p><strong>Step 63.</strong> Right-click <code>$Storage</code> and rename the object <code>$Storage1</code>.</p>
+<p><strong>Step 64.</strong> Use the backstage area to import <code>$StorageV2.aaPKG</code> file.</p>
+<p><strong>Step 65.</strong> In the Import preferences dialog box, leave the default options and click <strong>Import</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0329_0.png" alt="Import completion showing $Storage created as new since original was renamed">
+  <div class="caption">Import completed dialog. Since <code>$Storage</code> was renamed to <code>$Storage1</code>, the import found that <code>$Storage</code> does not exist in the Galaxy and created a new object. The log shows: "$Storage does not exist in the Galaxy. Creating a new object." Summary: "Imported total of 2 object(s) from 1 file(s)." Click <strong>Close</strong> (page 8-29)</div>
+</div>
+
+<p><strong>Step 66.</strong> Click <strong>Close</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0326_0.png" alt="Project toolset showing $Storage1 has been renamed from original $Storage">
+  <div class="caption">The Project toolset after renaming. The original <code>$Storage</code> has been renamed to <code>$Storage1</code>. After importing <code>$StorageV2.aaPKG</code>, both <code>$Storage</code> (new import) and <code>$Storage1</code> (renamed original) now exist in the project hierarchy (page 8-29)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Creating duplicates by import:</strong> By renaming an existing object before importing a package with the same name, you can create a duplicate. The import creates a new <code>$Storage</code> object because the original was renamed to <code>$Storage1</code>. Both objects are identical except for their tag names.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0326_0.png" alt="Final project view showing both $Storage and $Storage1 in the tree">
+  <div class="caption">In the IDE, both objects now appear in the Project toolset: <code>$Storage</code> (imported) and <code>$Storage1</code> (renamed original). They are identical except for their tag names. <strong>&lt;End of Lab&gt;</strong> (page 8-30)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>25.6 Summary of Export/Import Workflow</h2>
+
+<div class="key-concept">
+  <strong>Complete Object Lifecycle Management:</strong>
+  <ol>
+    <li><strong>Create</strong> a new derived template from a base (e.g., <code>$UserDefined → $Storage</code>)</li>
+    <li><strong>Modify</strong> the object (add attributes, change configurations) and check in</li>
+    <li><strong>Export</strong> the object as a versioned <code>.aaPKG</code> file (e.g., <code>$StorageV2.aaPKG</code>, <code>$StorageV3.aaPKG</code>)</li>
+    <li><strong>Upgrade</strong> by importing a higher-versioned package (default preferences)</li>
+    <li><strong>Downgrade</strong> by importing an older package with "Overwrite regardless" option</li>
+    <li><strong>Duplicate</strong> by renaming the existing object, then importing the same package</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2>25.7 Quiz</h2>
+
+<div class="quiz">
+  <h3>Knowledge Check</h3>
+
+  <details>
+    <summary><strong>1.</strong> What file extension is used for AVEVA Application Server object export/import packages?</summary>
+    <p class="answer">.aaPKG — This is the Galaxy export/import file format that contains selected objects, their associated templates, and configuration state.</p>
+  </details>
+
+  <details>
+    <summary><strong>2.</strong> What happens to checked-out objects during an export?</summary>
+    <p class="answer">Only the checked-in versions are exported. The current checked-out (uncommitted) changes are NOT included in the export.</p>
+  </details>
+
+  <details>
+    <summary><strong>3.</strong> What is the difference between a Galaxy Export and a Database Manager Backup?</summary>
+    <p class="answer">A Galaxy Export does NOT save change logs and removes security model settings. A Database Manager Backup saves change logs and retains security model settings. Export is portable between Galaxies; backup restore is server-specific.</p>
+  </details>
+
+  <details>
+    <summary><strong>4.</strong> Which import preference must be selected to downgrade an object (import an older version over a newer one)?</summary>
+    <p class="answer">"Overwrite objects regardless of configuration version" — The default "Overwrite if version is higher" setting will NOT allow an older version to overwrite a newer one.</p>
+  </details>
+
+  <details>
+    <summary><strong>5.</strong> What is the ConfigVersion attribute and how does it change?</summary>
+    <p class="answer">ConfigVersion is an attribute that tracks the configuration revision of an object. It increases by 1 each time changes to the object are checked in. Version 1 = initial creation, Version 2 = after first modification, etc.</p>
+  </details>
+
+  <details>
+    <summary><strong>6.</strong> What is NOT included in an object export?</summary>
+    <p class="answer">Script functions (script function libraries) are NOT included in an export. They must be transferred separately. Additionally, change logs and security model settings are not included.</p>
+  </details>
+
+  <details>
+    <summary><strong>7.</strong> How can you create a duplicate of an existing object using the import feature?</summary>
+    <p class="answer">Rename the existing object to a different tag name (e.g., $Storage → $Storage1), then import the original .aaPKG file. Since the original name no longer exists, the import creates a new object with that name, resulting in two identical objects with different tag names.</p>
+  </details>
+</div>
+
+<hr>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 8 Section 1 + Lab 14</p>
+
+</body>
+</html>

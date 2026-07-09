@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 23: Alarms and Events Overview</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <p><a href="L22-History-Configuration.html">← Lesson 22: History Configuration</a> &nbsp;|&nbsp;
+  <a href="L24-Lab13-Configuring-Alarms.html">Lesson 24: Lab 13 — Configuring Alarms →</a></p>
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 23: Alarms and Events Overview</h1>
+<p class="page-ref">Module 7, Section 1 — Pages 7-3 through 7-22</p>
+
+<h2>Module Objectives</h2>
+<p>By the end of this section, you will be able to:</p>
+<ul>
+  <li>Explain the difference between alarms and events in Application Server</li>
+  <li>Describe the five types of alarms and configure each</li>
+  <li>Understand plant state-based alarming and alarm modes (Enable/Silence/Disable)</li>
+  <li>Configure alarm severities, priorities, and aggregation</li>
+  <li>Use alarm shelving to temporarily suppress alarms</li>
+  <li>Understand alarm historization to AVEVA Historian</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>23.1 What is an Alarm / Event?</h2>
+<p class="page-ref">Page 7-3</p>
+
+<p>The alarm and event capabilities in Application Server automate the detection, notification, historization, and viewing of both application (process) alarms/events and system/software alarms/events.</p>
+
+<div class="key-concept">
+  <strong>Event:</strong> A general occurrence of a condition at a specific point in time. Events represent state changes that are <em>not</em> inherently abnormal. The system detects events, stores them historically, and reports them to clients.<br><br>
+  <strong>Alarm:</strong> A special, prioritized type of event that represents an <em>abnormal</em> condition requiring immediate user attention. Alarms are handled in a special real-time manner with dedicated clients for viewing.
+</div>
+
+<h3>Examples of Alarms (Abnormal Conditions)</h3>
+<ul>
+  <li>A process measurement exceeds a predefined limit (e.g., high temperature alarm)</li>
+  <li>A process device is not in the desired state (e.g., a pump that should be running has stopped)</li>
+  <li>System hardware is not operating within desired limits (e.g., CPU utilization exceeds a threshold)</li>
+</ul>
+
+<h3>Examples of Events (State Changes)</h3>
+<ul>
+  <li>A plant process has started (e.g., new batch or campaign)</li>
+  <li>An operator changes a plant parameter (e.g., temperature setpoint)</li>
+  <li>A system engineer changes runtime configuration (e.g., deploying a new AutomationObject)</li>
+  <li>A system engineer starts or stops a component (e.g., stopping an engine)</li>
+  <li>A Platform comes back online after failure/shutdown</li>
+  <li>A user logs into the system</li>
+  <li>A severe software problem is detected (e.g., failed Application Object component)</li>
+</ul>
+
+<div class="pitfall">
+  <strong>NOT Alarms or Events:</strong>
+  <ul style="margin-bottom:0;">
+    <li>Galaxy Repository configuration actions (import, check-out)</li>
+    <li>Installation of Bootstrap software</li>
+    <li>AVEVA Logger messages (these are ancillary to events, not events themselves)</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.2 Platform as an Alarm Provider</h2>
+<p class="page-ref">Page 7-4</p>
+
+<div class="screenshot">
+  <img src="../images/page_0274_0.jpeg" alt="Platform as Alarm Provider diagram">
+  <div class="caption">Figure 23-1: The Platform acts as a single Alarm Provider, routing all alarms and events from subscribed Areas to the Distributed Alarm infrastructure. Objects ($Object1, $Object2, $Object3) report to $AREA, which reports to $WINPLATFORM. The Platform routes to the Distributed Alarm Manager, which delivers to Clients. ($APPENGINE and $DIOBJECT also report their own alarms and events.) <span class="page-ref">(page 7-4)</span></div>
+</div>
+
+<p>A Platform acts as a single <strong>Alarm Provider</strong> that provides alarms to the Distributed Alarm subsystem. A Boolean checkbox in the Platform AutomationObject indicates whether it is subscribed to Areas for alarm/event reporting.</p>
+
+<div class="key-concept">
+  <strong>The Platform's responsibilities:</strong>
+  <ul style="margin-bottom:0;">
+    <li>Routes all alarms/events for subscribed Areas to the distributed alarming infrastructure</li>
+    <li>Acts as a <strong>router</strong> between Alarm/Event Notification Distributors (inside Areas, Platforms, Engines, DI Devices) and the distributed infrastructure</li>
+    <li>Routes alarm acknowledgments, enables, and disables back to the appropriate AutomationObject</li>
+    <li>Acknowledgments, enables, and disables carry <strong>User information</strong> for security purposes</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.3 Event Handling — Platform as Event Provider</h2>
+<p class="page-ref">Page 7-5</p>
+
+<p>A Platform also acts as an <strong>Event Provider</strong> that provides events to the InTouch Distributed Alarm subsystem. This provider routes all events generated by AutomationObjects hosted by that Platform to Application Server. The provider acts as a router between the NotificationDistributor (inside every Area, Platform, Engine, etc.) and the InTouch Distributed Alarm subsystem.</p>
+
+<div class="tip">
+  <strong>Key difference:</strong> Unlike the Alarm Provider, the Event Provider does <em>not</em> need to deal with subscriptions to Areas.
+</div>
+
+<!-- ============================================================ -->
+<h2>23.4 Types of Alarms</h2>
+<p class="page-ref">Pages 7-5 to 7-8</p>
+
+<p>Application Server supports five types of alarms. The alarm type that can be configured depends on the <strong>data type</strong> of the attribute's value.</p>
+
+<table>
+  <thead>
+    <tr><th>Alarm Type</th><th>Description</th><th>Data Type</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Limit</strong></td><td>Threshold-based; triggers when value crosses predefined limits (LoLo, Lo, Hi, HiHi)</td><td>Float, Integer, Double</td></tr>
+    <tr><td><strong>Deviation</strong></td><td>Compares value to a target; triggers when deviation exceeds minor/major limits</td><td>Float, Integer, Double</td></tr>
+    <tr><td><strong>Rate of Change (ROC)</strong></td><td>Identifies when a value changes too quickly over time (calculated slope)</td><td>Float, Integer, Double</td></tr>
+    <tr><td><strong>Bad Value</strong></td><td>Triggers when an attribute returns a "bad quality" value</td><td>Any</td></tr>
+    <tr><td><strong>Diagnostic</strong></td><td>System-level diagnostic alarm</td><td>Various</td></tr>
+  </tbody>
+</table>
+
+<!-- --- Limit Alarms --- -->
+<h3>23.4.1 Limit Alarms</h3>
+<p class="page-ref">Page 7-5</p>
+
+<p>A limit alarm compares the current value to one or more predetermined alarm limits within the attribute's full range of values. If the value exceeds a limit, an alarm occurs. You can individually select and configure values and priorities for LoLo, Lo, Hi, and HiHi alarm limits, and set individual messages for each.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0275_0.png" alt="Limit alarm levels diagram showing LoLo, Lo, Hi, HiHi thresholds">
+  <div class="caption">Figure 23-2: Limit alarm levels visualized on tank silhouettes — LoLo (10), Lo (20), Hi (80), and HiHi (90). The blue zones show value ranges that trigger respective alarms. <span class="page-ref">(page 7-5)</span></div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0275_1.png" alt="Limit Alarms configuration panel">
+  <div class="caption">Figure 23-3: Limit Alarms configuration panel in the IDE. Hi and Lo are enabled with priority 500 and limit values of 75.0 and 25.0 respectively. HiHi and LoLo are unchecked (inactive). Alarm deadband and time deadband are set to 0. <span class="page-ref">(page 7-5)</span></div>
+</div>
+
+<h3>23.4.2 Alarm Deadband and Time Deadband</h3>
+<p class="page-ref">Page 7-6</p>
+
+<div class="key-concept">
+  <strong>Alarm Deadband:</strong> An engineering-units threshold that must be crossed to reset an active alarm. For example, if the HiHi limit is 80 and the deadband is 5, the value must <em>drop below 75</em> to reset the alarm.<br><br>
+  <strong>Time Deadband:</strong> The length of time an attribute value must continuously remain in an alarm (or unalarmed) condition before the alarm CONDITION Boolean is updated. This prevents rapid alarm chatter.
+</div>
+
+<p>Timestamps use the most current input value timestamp. If no timestamp is available, the AppEngine timestamp is used as a fallback.</p>
+
+<!-- --- Deviation Alarms --- -->
+<h3>23.4.3 Deviation Alarms</h3>
+<p class="page-ref">Page 7-6</p>
+
+<p>A deviation alarm compares the current attribute value to a target EU value, then compares the absolute difference against configured minor/major deviation limits.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0276_0.png" alt="Deviation alarm diagram with deadband">
+  <div class="caption">Figure 23-4: Deviation alarm concept — Left: Target 50 EU (No Alarm); Middle: 10 EU Minor Deviation at 60 EU with 5 EU deadband; Right: 20 EU Major Deviation at 70 EU with 5 EU deadband. <span class="page-ref">(page 7-6)</span></div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0276_1.png" alt="Deviation Alarms configuration dialog">
+  <div class="caption">Figure 23-5: Deviation Alarms configuration dialog showing Target set to 50.0 EU, Deviation deadband of 0.0 EU, and Settling period of 30 seconds. Minor and Major alarm checkboxes are visible. <span class="page-ref">(page 7-6)</span></div>
+</div>
+
+<p>The <strong>settling period</strong> is the time allowed for the attribute value to reach an expected target value after a device starts — no alarm can occur during this period.</p>
+
+<!-- --- ROC Alarms --- -->
+<h3>23.4.4 Rate of Change (ROC) Alarms</h3>
+<p class="page-ref">Page 7-7</p>
+
+<p>A rate of change alarm identifies when an attribute value is changing too quickly over time. The rate is calculated as the slope:</p>
+
+<p style="text-align:center;font-style:italic;">Slope = |Current Value − Previous Value| / Time Interval</p>
+
+<p><strong>Example:</strong> If a tank volume increases from 17 to 45 liters over 5 minutes, the slope is (45−17)/5 = 5.6 L/min. If the ROC limit is 5.0 L/min, an alarm triggers.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0277_0.png" alt="Tank level illustration for ROC alarms">
+  <div class="caption">Figure 23-6: ROC alarm illustration — Three tank snapshots at 30-second intervals (15:05:25, 15:05:55, 15:06:25) show level rising from 40 → 50 → 70, demonstrating an accelerating fill rate. <span class="page-ref">(page 7-7)</span></div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0277_1.png" alt="ROC Alarms configuration dialog">
+  <div class="caption">Figure 23-7: ROC Alarms configuration dialog with Up/Down directional limits, "Changes per: Sec" time unit, and "Evaluate every: 5000 ms" evaluation interval. <span class="page-ref">(page 7-7)</span></div>
+</div>
+
+<!-- --- Bad Value Alarms --- -->
+<h3>23.4.5 Bad Value Alarms</h3>
+<p class="page-ref">Page 7-8</p>
+
+<p>The Bad Value alarm triggers when an attribute returns a value determined to be of <strong>bad quality</strong>. This is useful for detecting data quality anomalies from I/O systems.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0278_0.png" alt="Bad value alarm configuration">
+  <div class="caption">Figure 23-8: Bad Value alarm configuration dialog showing Alarm message set to <code>me.Level.PV.Description</code> and Priority of 500 (range 0–999). <span class="page-ref">(page 7-8)</span></div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.5 Plant State-Based Alarms</h2>
+<p class="page-ref">Pages 7-8 to 7-9</p>
+
+<p>You can map alarm modes to plant operational states on a per-Galaxy basis to control how alarms are reported. Five plant states are pre-defined:</p>
+
+<table>
+  <thead>
+    <tr><th>Plant State</th><th>Default Alarm State</th><th>Available Alarm States</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Running</strong></td><td>Enable</td><td>Enable (read-only — cannot change from Enable)</td></tr>
+    <tr><td><strong>Maintenance</strong></td><td>Disable</td><td>Enable / Disable / Silence</td></tr>
+    <tr><td><strong>Startup</strong></td><td>Silence</td><td>Enable / Disable / Silence</td></tr>
+    <tr><td><strong>Shutdown</strong></td><td>Disable</td><td>Enable / Disable / Silence</td></tr>
+    <tr><td><strong>Testing</strong></td><td>Silence</td><td>Enable / Disable / Silence</td></tr>
+  </tbody>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0278_1.png" alt="Alarms and Events configuration window - States tab">
+  <div class="caption">Figure 23-9: Alarms and Events configuration window, States tab. Shows alarm severities (Critical/High/Medium/Low), alarm states (UNACK/ACK/RTN), plant states with their AlarmMode settings, and options for aggregated alarm counters by severity. <span class="page-ref">(page 7-8)</span></div>
+</div>
+
+<div class="key-concept">
+  <strong>Operating Rules for Plant States:</strong>
+  <ul style="margin-bottom:0;">
+    <li>You can define new plant states, rename them, or remove them — <strong>except the "Running" state</strong></li>
+    <li>The "Running" state can be renamed, but its alarm state is read-only and <strong>cannot be changed from Enable</strong></li>
+    <li>After configuring plant states in the Galaxy, assign them to Area objects via the <code>PlantState</code> attribute</li>
+    <li>The <code>PlantAlarmMode</code> attribute auto-updates to match the PlantState's alarm state</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.6 Enabling, Silencing, and Disabling Alarms</h2>
+<p class="page-ref">Pages 7-9 to 7-10</p>
+
+<p>Alarms can be enabled, disabled, or silenced at runtime. This can be applied at the <strong>Area level</strong>, <strong>container Object level</strong>, <strong>individual Object</strong>, or <strong>individual alarm level</strong> within an Object.</p>
+
+<h3>Alarm States (from most permissive to most restrictive)</h3>
+
+<table>
+  <thead>
+    <tr><th>State</th><th>Behavior</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Enabled</strong></td>
+      <td>All alarms are reported to clients and saved as historical data. Most permissive state. Requires <code>AlarmModeCmd</code> and <code>AlarmInhibit</code> enabled for the Object, its container, and its area.</td>
+    </tr>
+    <tr>
+      <td><strong>Silenced</strong></td>
+      <td>Alarms are detected, saved to history, and sent to clients — but clients do <em>not display</em> them. More restrictive than Enabled, less than Disabled.</td>
+    </tr>
+    <tr>
+      <td><strong>Disabled</strong></td>
+      <td>No alarms are detected. Alarms stay "Return to Normal" until re-enabled. Most restrictive state; no acknowledgment required.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="key-concept">
+  <strong>Hierarchy behavior:</strong>
+  <ul style="margin-bottom:0;">
+    <li>When an Object's alarms are <strong>silenced</strong>, all individual enabled/silenced alarms are forced to silenced. Individual alarms can still be disabled.</li>
+    <li>When an Object's alarms are <strong>disabled</strong>, all individual alarms are forced to disabled.</li>
+    <li><strong>Inhibiting</strong> an individual alarm (when Object is enabled or silenced) forces that individual alarm to disabled.</li>
+  </ul>
+</div>
+
+<h3>Setting Alarm State with Object Attributes</h3>
+<p class="page-ref">Pages 7-9 to 7-10</p>
+
+<p>Four core attributes control alarm mode and report status:</p>
+
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>AlarmModeCmd</code></td>
+      <td>Writeable</td>
+      <td>Sets the commanded alarm mode (Enable/Silence/Disable). Set via script, UI, or input extension.</td>
+    </tr>
+    <tr>
+      <td><code>AlarmInhibit</code></td>
+      <td>Writeable</td>
+      <td><strong>"Kill switch"</strong> — when TRUE, disables ALL alarms for the Object and all contained objects immediately. When FALSE, inhibition is removed.</td>
+    </tr>
+    <tr>
+      <td><code>AlarmMode</code></td>
+      <td>Calculated</td>
+      <td>Derived from <code>AlarmModeCmd</code>, <code>AlarmInhibit</code>, and the parent Object's <code>AlarmMode</code>. Always resolves to the <strong>most restrictive</strong> setting.</td>
+    </tr>
+    <tr>
+      <td><code>_AlarmModeEnum</code></td>
+      <td>System</td>
+      <td>Enum representation of the alarm mode.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0280_0.png" alt="Parent-Child AlarmMode hierarchy diagram">
+  <div class="caption">Figure 23-10: Parent-Child alarm mode hierarchy diagram. The Parent Object's AlarmMode (calculated from AlarmModeCmd and AlarmInhibit) is passed as input to the Child Object, which combines it with its own AlarmModeCmd and AlarmInhibit to determine the Child's AlarmMode. <span class="page-ref">(page 7-10)</span></div>
+</div>
+
+<div class="pitfall">
+  <strong>Important hierarchy rules:</strong>
+  <ul style="margin-bottom:0;">
+    <li>The system always resolves to the <strong>most restrictive setting</strong> at every level</li>
+    <li>Object-level mode applies to all individual alarms within that Object</li>
+    <li>Each individual alarm is <strong>autonomous</strong> — changing one does not affect others</li>
+    <li>Inhibiting an individual alarm does <em>not</em> affect contained objects; inhibiting the Object affects everything beneath it</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.7 Alarm Attributes Reference</h2>
+<p class="page-ref">Page 7-11</p>
+
+<p>Each alarm type exposes a set of built-in attributes for managing alarm state, acknowledgment, and timestamps:</p>
+
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&lt;Attribute&gt;.Acked</code></td><td>Boolean — TRUE when acknowledged. Resets to FALSE on new alarm (InAlarm changes from FALSE to TRUE).</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.AckMsg</code></td><td>String — Operator comment at acknowledgment. Sets Acked=TRUE and TimeAlarmAcked. Max 256 characters.</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.AlarmMode</code></td><td>Current alarm mode: Enable, Disable, or Silence.</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.AlarmModeCmd</code></td><td>Commanded mode: Enable, Disable, or Silence.</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.Category</code></td><td>Fixed predefined category label (not user-modifiable).</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.DescAttrName</code></td><td>Alarm description (InternationalizedString, max 329 chars). Can use <code>me.AttrName</code> reference. Falls back to Object's ShortDesc.</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.InAlarm</code></td><td>Alarm state. Forced Off when disabled; quality follows host primitive (GOOD when disabled).</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.Inhibit</code></td><td>If TRUE, disables this single alarm only. Does not affect other alarms.</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.Priority</code></td><td>Urgency value: 1–999 (1 = most urgent).</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.TimeAlarmAcked</code></td><td>Timestamp of last acknowledgment.</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.TimeAlarmOff</code></td><td>Timestamp when alarm cleared (InAlarm went off).</td></tr>
+    <tr><td><code>&lt;Attribute&gt;.TimeAlarmOn</code></td><td>Timestamp when alarm triggered (InAlarm went on).</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>23.8 Alarm Severities and Runtime Ranking</h2>
+<p class="page-ref">Page 7-12</p>
+
+<p>Alarm Severities are rankings with descriptive labels that can be mapped to customizable priority ranges at the Galaxy level:</p>
+
+<table>
+  <thead>
+    <tr><th>Severity</th><th>Description</th><th>Default Priority Range</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Critical</td><td>1 – 250</td></tr>
+    <tr><td>2</td><td>High</td><td>251 – 500</td></tr>
+    <tr><td>3</td><td>Medium</td><td>501 – 750</td></tr>
+    <tr><td>4</td><td>Low</td><td>751 – 999</td></tr>
+  </tbody>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0282_0.jpeg" alt="Alarms and Events configuration - Alarms tab with severity mapping">
+  <div class="caption">Figure 23-11: Alarms and Events configuration, Alarms tab. Shows severity levels 1–4 with Shelve/Historize checkboxes, priority ranges, and severity icons. Also shows Alarm Modes (Inhibited/Disabled, Silenced, Shelved) and Event types (System, Application, User) with historization enabled. <span class="page-ref">(page 7-12)</span></div>
+</div>
+
+<h3>Runtime Ranking Rules</h3>
+
+<p>The most urgent alarm has the lowest severity number, but additional criteria determine runtime ranking:</p>
+
+<table>
+  <thead>
+    <tr><th>Criteria</th><th>More Urgent</th><th>Less Urgent</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Alarm Mode</td><td>Enabled</td><td>Silenced</td></tr>
+    <tr><td>InAlarm</td><td>TRUE (InAlarm)</td><td>FALSE (normal)</td></tr>
+    <tr><td>Acked</td><td>FALSE (unacked)</td><td>TRUE (acked)</td></tr>
+    <tr><td>Severity Level</td><td>1 (Critical)</td><td>4 (Low)</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>23.9 Alarm Aggregation</h2>
+<p class="page-ref">Pages 7-13 to 7-15</p>
+
+<p>Alarm aggregation provides an efficient way to identify whether any alarms on an Object are currently in the InAlarm state, the overall status of the most important alarm, and how many alarms are active at each severity and containment level.</p>
+
+<h3>Aggregated Alarm States</h3>
+
+<table>
+  <thead>
+    <tr><th>State</th><th>Aggregated?</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>UNACK_ALM</strong></td><td>✅ Yes</td><td>Unacknowledged and in alarm</td></tr>
+    <tr><td><strong>ACK_ALM</strong></td><td>✅ Yes</td><td>Acknowledged but still in alarm</td></tr>
+    <tr><td><strong>UNACK_RTN</strong></td><td>✅ Yes</td><td>Unacknowledged and returned to normal</td></tr>
+    <tr><td>ACK_RTN</td><td>❌ No</td><td>Acknowledged and returned to normal (not aggregated)</td></tr>
+  </tbody>
+</table>
+
+<div class="key-concept">
+  <strong>Note:</strong> Silenced alarms are still aggregated, even though they do not appear in runtime clients.
+</div>
+
+<h3>Aggregation Levels</h3>
+
+<ul>
+  <li><strong>Attribute:</strong> Aggregation on a specific attribute (analog attributes only).</li>
+  <li><strong>Object:</strong> Aggregation of all alarms on the Object, all contained objects, and their descendants. Child object values are added to parent values.</li>
+  <li><strong>Area:</strong> Aggregation of alarms on the Area itself, all objects assigned to it, and all sub-Areas. If the Area's AlarmMode is silenced, all alarms in the Area are silenced.</li>
+</ul>
+
+<h3>Five Aggregation Attributes</h3>
+
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Description</th><th>Runtime</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AlarmCntsBySeverity</code></td><td>Array of alarm counts in UNACK_ALM, ACK_ALM, or UNACK_RTN states, aggregated by severity levels 1–4.</td><td>Read-Only</td></tr>
+    <tr><td><code>AlarmMostUrgentAcked</code></td><td>TRUE (default) when no alarms are InAlarm or waiting to be acked, OR the most urgent alarm(s) have been acknowledged.</td><td>Read-Only</td></tr>
+    <tr><td><code>AlarmMostUrgentInAlarm</code></td><td>FALSE (default) when no alarms are InAlarm or waiting to be acked. TRUE when the most urgent alarm(s) are InAlarm.</td><td>Read-Only</td></tr>
+    <tr><td><code>AlarmMostUrgentMode</code></td><td>The AlarmMode of the most urgent alarm(s). Defaults to Object's AlarmMode when no alarms active.</td><td>Read-Only</td></tr>
+    <tr><td><code>AlarmMostUrgentSeverity</code></td><td>Severity 1–4 of the most urgent alarm(s). Returns 0 when no alarms active.</td><td>Read-Only</td></tr>
+  </tbody>
+</table>
+
+<h3>Configuring Alarm State Aggregation</h3>
+<p class="page-ref">Page 7-15</p>
+
+<p>To enable aggregation, check the <strong>Aggregate Alarms</strong> checkbox on the Area Object editor. This sets the <code>AlarmAggregationStateCmd</code> attribute to True.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0285_0.png" alt="SgArea Editor General tab showing Aggregate Alarms checkbox">
+  <div class="caption">Figure 23-12: SgArea Editor, General tab. The <strong>Aggregate Alarms</strong> checkbox (checked) and <strong>Shelve Alarms</strong> checkbox (checked) are visible at the bottom. Three historization sections are available for Active, Unacknowledged, and Disabled/Silenced alarm counters. <span class="page-ref">(page 7-15)</span></div>
+</div>
+
+<h3>Monitoring Aggregated Alarm State at Runtime</h3>
+<p class="page-ref">Page 7-16</p>
+
+<div class="screenshot">
+  <img src="../images/page_0286_0.png" alt="Object Viewer showing alarm state information">
+  <div class="caption">Figure 23-13: Object Viewer showing runtime alarm state information. The table displays AttributeReference, Value, Timestamp, Quality, and Status columns. Navigation tabs include Platforms, AppEngine, Simulator, Mixer100, ProdPLC, Alarms, and more. <span class="page-ref">(page 7-16)</span></div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.10 Shelving Alarms</h2>
+<p class="page-ref">Pages 7-17 to 7-18</p>
+
+<p>Shelving allows you to <strong>temporarily hide</strong> alarms from displays for a fixed period of time. Alarms continue to be historized even when shelved.</p>
+
+<div class="key-concept">
+  <strong>How Shelving Differs from Silencing:</strong>
+  <ul style="margin-bottom:0;">
+    <li>Shelved alarms have a <strong>built-in timeout</strong> — they are automatically unshelved when the period expires</li>
+    <li>Shelving applies only to <strong>individual alarms</strong>, not entire Areas or Objects</li>
+    <li>The system enforces <strong>role-based limitations</strong> on permission to shelve, severity levels that can be shelved, and total number of shelved alarms per user</li>
+    <li>The system tracks who shelved the alarm, from what workstation, the reason, start time, and expiration</li>
+  </ul>
+</div>
+
+<h3>Seven Shelving Attributes</h3>
+
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Access</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AlarmShelveCmd</code></td><td>Writeable</td><td>Command to shelve or unshelve. Default: Duration=0, Reason=""</td></tr>
+    <tr><td><code>AlarmShelved</code></td><td>Read-Only</td><td>Boolean: TRUE if shelved, FALSE if unshelved.</td></tr>
+    <tr><td><code>AlarmShelveStartTime</code></td><td>Read-Only</td><td>Date/time when shelving began.</td></tr>
+    <tr><td><code>AlarmShelveStopTime</code></td><td>Read-Only</td><td>Start time + duration.</td></tr>
+    <tr><td><code>AlarmShelveReason</code></td><td>Read-Only</td><td>Reason string for shelving.</td></tr>
+    <tr><td><code>AlarmShelveUser</code></td><td>Read-Only</td><td>Name of user who shelved/unshelved.</td></tr>
+    <tr><td><code>AlarmShelveNode</code></td><td>Read-Only</td><td>Computer node from which shelving occurred.</td></tr>
+  </tbody>
+</table>
+
+<h3>Enabling and Shelving Alarms at Runtime</h3>
+<p class="page-ref">Page 7-18</p>
+
+<div class="screenshot">
+  <img src="../images/page_0288_0.jpeg" alt="Alarms tab showing Shelve checkboxes and Object Viewer shelving interface">
+  <div class="caption">Figure 23-14: Alarm shelving configuration (top) and Object Viewer shelving interface (bottom). The Alarms tab shows Shelve checkboxes enabled for Medium and Low severity. Object Viewer navigates to Mixer100.Alarm.Condition.AlarmShelveCmd with a Modify String Value dialog for editing the shelving command. <span class="page-ref">(page 7-18)</span></div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0288_1.png" alt="Object Viewer with AlarmShelveCmd attribute detail">
+  <div class="caption">Figure 23-15: Object Viewer showing the full alarm attribute list for Mixer100, including Alarm.Condition.Acked, AlarmMode, AlarmShelveCmd, and more. The Modify String Value dialog shows the AlarmShelveCmd value format: <code>Duration=0; Reason=*</code>. <span class="page-ref">(page 7-18)</span></div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.11 Alarm Historization</h2>
+<p class="page-ref">Pages 7-19 to 7-22</p>
+
+<h3>Default Alarm Severity to Priority Mapping</h3>
+
+<table>
+  <thead>
+    <tr><th>Severity</th><th>Description</th><th>Shelve</th><th>Historize</th><th>Priority Range</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Critical</td><td>No</td><td>Yes</td><td>1 – 250</td></tr>
+    <tr><td>2</td><td>High</td><td>No</td><td>Yes</td><td>251 – 500</td></tr>
+    <tr><td>3</td><td>Medium</td><td>Yes</td><td>Yes</td><td>501 – 750</td></tr>
+    <tr><td>4</td><td>Low</td><td>Yes</td><td>Yes</td><td>751 – 999</td></tr>
+  </tbody>
+</table>
+
+<div class="tip">
+  <strong>Note:</strong> Mapped alarm severities are <em>not</em> shared across galaxies in a multi-Galaxy environment. Each Galaxy has its own priority-to-severity mapping.
+</div>
+
+<h3>Saving Alarms and Events as Historical Data</h3>
+<p class="page-ref">Page 7-20</p>
+
+<p>Alarms and events detected at runtime are saved as historical data to the Historian for the host engine. Alarm-related events such as Acknowledge are also saved. These can be viewed in <strong>AVEVA Historian Client Web</strong>.</p>
+
+<p>Alarm configuration can be added to templates or instances on the Attributes tab for Boolean, Float, Integer, and Double data types. For Boolean attributes, you can select either a <strong>Bad value alarm</strong> or a <strong>State alarm</strong> with the following categories:</p>
+
+<p style="text-align:center;">
+<code>Discrete</code> &nbsp; <code>Value LoLo</code> &nbsp; <code>Value Lo</code> &nbsp; <code>Value Hi</code> &nbsp; <code>Value HiHi</code> &nbsp;
+<code>DeviationMinor</code> &nbsp; <code>DeviationMajor</code> &nbsp; <code>ROC Lo</code> &nbsp; <code>ROC Hi</code> &nbsp;
+<code>SPC</code> &nbsp; <code>Process</code> &nbsp; <code>System</code> &nbsp; <code>Batch</code> &nbsp; <code>Software</code>
+</p>
+
+<div class="screenshot">
+  <img src="../images/page_0290_0.png" alt="State alarm configuration with Category dropdown">
+  <div class="caption">Figure 23-16: State alarm configuration dialog with expanded Category dropdown showing all available categories (Discrete, Value LoLo through HiHi, Deviation, ROC, SPC, Process, System, Batch, Software). Priority defaults to 500 (range 0–999). <span class="page-ref">(page 7-20)</span></div>
+</div>
+
+<h3>Configuring Alarm Historization</h3>
+<p class="page-ref">Page 7-21</p>
+
+<p>What alarms and events are historized to Historian is configured in the Alarms and Events dialog box. You can also configure Area Objects to save alarm state counts as historical data:</p>
+
+<ul>
+  <li>Active alarms</li>
+  <li>Unacknowledged alarms</li>
+  <li>Disabled or silenced alarms</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0291_0.jpeg" alt="Alarms and Events dialog with historization settings">
+  <div class="caption">Figure 23-17: Alarms and Events dialog, Alarms tab. Shows Historize checkboxes (all checked) for all severity levels. Below: Alarm Modes (Inhibited/Disabled, Silenced, Shelved) and Event types (System, Application, User) — all with historization enabled. <span class="page-ref">(page 7-21)</span></div>
+</div>
+
+<h3>Viewing Alarm and Event Trends</h3>
+<p class="page-ref">Page 7-22</p>
+
+<div class="screenshot">
+  <img src="../images/page_0292_0.jpeg" alt="Alarm trend pop-up for Agitator_001">
+  <div class="caption">Figure 23-18: Alarm trend pop-up for Agitator_001 showing a Limit.Lo (Low Limit) alarm. The alarm triggered at 2:31:31 pm, cleared at 2:33:09 pm (2-minute duration), with a limit of 25.0. The blue line shows Agitator_001.Speed.SP with a red horizontal alarm threshold line. <span class="page-ref">(page 7-22)</span></div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0292_1.jpeg" alt="Event trend pop-up showing Verified Write event">
+  <div class="caption">Figure 23-19: Event trend pop-up showing a "Verified Write" event for a Speed setpoint change. The write was performed by John Johnson (Lkf\johnj) and verified by James Smith (LKF\jamess). The purple marker on the trend line indicates the event point. <span class="page-ref">(page 7-22)</span></div>
+</div>
+
+<!-- ============================================================ -->
+<h2>Quiz: Alarms and Events Overview</h2>
+
+<div class="quiz">
+  <h3>Test Your Knowledge</h3>
+
+  <p><strong>Q1:</strong> What is the key difference between an alarm and an event in Application Server?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">An event is a general occurrence of a condition at a specific time (state changes, not inherently abnormal). An alarm is a special type of event that represents an <em>abnormal</em> condition requiring immediate user attention. Alarms are handled in a special real-time manner with dedicated clients for viewing.</p></details>
+
+  <p><strong>Q2:</strong> Name the five types of alarms supported by Application Server.</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Limit, Deviation, Diagnostic, Rate of Change (ROC), and Bad Value alarms.</p></details>
+
+  <p><strong>Q3:</strong> A HiHi alarm limit is set to 80 with an alarm deadband of 5 EU. At what value must the process variable drop to clear the alarm?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The value must drop below 75 EU (80 − 5 = 75) to clear the HiHi alarm.</p></details>
+
+  <p><strong>Q4:</strong> What are the three alarm states, from most permissive to most restrictive?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Enabled (most permissive) → Silenced → Disabled (most restrictive).</p></details>
+
+  <p><strong>Q5:</strong> What happens when the <code>AlarmInhibit</code> attribute is set to TRUE?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">ALL alarms for the Object and all contained objects are disabled immediately. When set back to FALSE, inhibition is removed and the system checks AlarmMode and parent status to determine the alarm state.</p></details>
+
+  <p><strong>Q6:</strong> Which alarm states are aggregated, and which is NOT?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">UNACK_ALM, ACK_ALM, and UNACK_RTN are aggregated. ACK_RTN is NOT aggregated.</p></details>
+
+  <p><strong>Q7:</strong> What is the default alarm state for the "Running" plant state, and can it be changed?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The Running state defaults to Enable and its alarm state is <em>read-only</em> — it cannot be changed from Enable. The state name can be renamed, but the alarm mode cannot be modified.</p></details>
+
+  <p><strong>Q8:</strong> How does shelving differ from silencing an alarm?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Key differences: (1) Shelved alarms have a built-in timeout and are auto-unshelved when expired; (2) Shelving applies only to individual alarms, not entire Areas or Objects; (3) Role-based access controls limit who can shelve; (4) The system tracks the user, workstation, reason, start time, and expiration of shelving.</p></details>
+
+  <p><strong>Q9:</strong> What are the default priority ranges for each alarm severity?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Critical (1): 1–250, High (2): 251–500, Medium (3): 501–750, Low (4): 751–999.</p></details>
+
+  <p><strong>Q10:</strong> When viewing alarm trends in Historian Client Web, how can you identify an alarm vs. an event on the trend line?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Alarms display with highlighted areas on the trend line — clicking the highlight shows alarm details (type, duration, limit). Events display with event icons (e.g., a purple + marker) — clicking the icon shows event details (type, user, verification).</p></details>
+</div>
+
+<!-- ============================================================ -->
+
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 7 Section 1</p>
+
+</body>
+</html>

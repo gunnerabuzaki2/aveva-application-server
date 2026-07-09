@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 27: Security Overview + Lab 16 — Configuring Security</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <p><a href="L26-CSV-Export-Import.html">← Lesson 26: CSV Export/Import</a> &nbsp;|&nbsp;
+  <a href="L28-Object-Security.html">Lesson 28: Object Security →</a></p>
+  <details>
+    <summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 27: Security Overview + Lab 16 — Configuring Security</h1>
+<p class="page-ref">Module 9, Section 1 + Lab 16 — Pages 9-3 through 9-37</p>
+
+<h2>Module Objectives</h2>
+<p>By the end of this section, you will be able to:</p>
+<ul>
+  <li>Describe how AVEVA Application Server handles security</li>
+  <li>Explain the security models available in the IDE</li>
+  <li>Configure general security permissions and operational permissions</li>
+  <li>Enable OS Group-based authentication in a Galaxy</li>
+  <li>Create and configure security groups</li>
+  <li>Add security roles and assign permissions to them</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>27.1 Security Overview</h2>
+<p class="page-ref">Pages 9-3 through 9-4</p>
+
+<p>Security in AVEVA Application Server is designed to prevent users from performing unauthorized activities. This includes users of:</p>
+<ul>
+  <li><strong>IDE</strong> — for configuring and managing objects</li>
+  <li><strong>Operations Control Management Console (OCMC)</strong> — for performing maintenance and system administration functions</li>
+  <li><strong>Runtime operations</strong> — any live process control activities</li>
+</ul>
+
+<div class="pitfall">
+  <strong>Important Limitation:</strong> The security system is <em>not</em> designed to stop malicious access. Passwords are encrypted but stored in an accessible database. For higher-level security, IT teams can integrate with Microsoft tools using OS authentication, password timeout, and electronic signature authentication.
+</div>
+
+<h3>The Security Model</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0365_0.jpeg" alt="Security Model diagram">
+  <div class="caption">Figure 27-1: The Security Model diagram shows the hierarchical relationships between Development Security (IDE configuration), Runtime Security (operational permissions), Security Classifications, Security Groups, Roles, and Users. Security Classifications are assigned to AutomationObject attributes; Security Groups grant Operational Permissions to Roles; Users belong to one or more Roles. <span class="page-ref">(page 9-3)</span></div>
+</div>
+
+<p>The security model has two major domains:</p>
+
+<div class="key-concept">
+  <strong>Development Security (General Permissions):</strong> Controls access to the IDE for configuring and managing objects in the Development/Testing/Troubleshooting environment.<br><br>
+  <strong>Runtime Security (Operational Permissions):</strong> Controls access to live operational activities. This involves:
+  <ul style="margin-bottom:0;">
+    <li><strong>Security Classifications</strong> — assigned to each AutomationObject attribute to define who can write to it</li>
+    <li><strong>Security Groups</strong> — group objects that need identical security behavior</li>
+    <li><strong>Roles</strong> — generalize user functions (e.g., Intake Operator, Dispatcher)</li>
+    <li><strong>Users</strong> — the final component; users can be granted multiple Roles</li>
+  </ul>
+</div>
+
+<p>For example, a DiscreteDevice may have attributes for operation (set by an operator) and tuning (set by a technician). Rather than configuring access for every user on every object individually, the system uses Security Groups, Roles, and Classifications to simplify management.</p>
+
+<h3>Security Groups</h3>
+<ul>
+  <li>Group objects that need to behave identically with respect to security</li>
+  <li>Every AutomationObject belongs to exactly <strong>one</strong> Security Group</li>
+  <li>Default: all new objects belong to the <strong>Default Security Group</strong> (cannot be removed)</li>
+</ul>
+
+<h3>Roles</h3>
+<ul>
+  <li>Generalize user functions (e.g., Software Engineer, Intake Operator, Dispatcher)</li>
+  <li>Granted permissions onto Security Groups</li>
+  <li>If a Role has Tuning access to a Security Group, that Role has write permissions to all attributes classified as Tuning in that group</li>
+  <li>Also granted utility function permissions (e.g., Deploy, Can Edit)</li>
+</ul>
+
+<h3>Users</h3>
+<ul>
+  <li>The final component defining system access</li>
+  <li>Users can be granted as many Roles as needed</li>
+  <li>Default users: <strong>Administrator</strong> and <strong>DefaultUser</strong> (cannot be deleted)</li>
+</ul>
+
+<h3>Security Configuration Steps</h3>
+<p>Security is configured in the Configure Security dialog box by:</p>
+<ol>
+  <li>Enabling Security</li>
+  <li>Defining your Security Model</li>
+  <li>Mapping Users to the Security Model</li>
+  <li>Mapping Automation Objects to the Security Model</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>27.2 Authentication Modes</h2>
+<p class="page-ref">Pages 9-5 through 9-7</p>
+
+<div class="screenshot">
+  <img src="../images/page_0367_0.png" alt="Authentication Mode settings">
+  <div class="caption">Figure 27-2: The Security Settings window shows the Authentication mode tab with radio buttons for None, Galaxy, OS User based, OS Group based, and Authentication providers. OS Group based is selected, with Login time set to 3000 milliseconds. <span class="page-ref">(page 9-5)</span></div>
+</div>
+
+<p>The Authentication Mode page lets you choose the Galaxy security mode:</p>
+
+<table>
+  <tr><th>Mode</th><th>Description</th></tr>
+  <tr><td><strong>None</strong></td><td>Default for new Galaxies. Open Security — all functions open to all users. No authentication, no login dialogs.</td></tr>
+  <tr><td><strong>Galaxy</strong></td><td>Uses local Galaxy configuration for authentication. Creates a user security system controlled by the Galaxy database.</td></tr>
+  <tr><td><strong>OS User based</strong></td><td>Enables authorization of individual OS users. Leverages the operating system (NT) user authentication on an individual user basis.</td></tr>
+  <tr><td><strong>OS Group based</strong></td><td>Enables authorization based on OS Group membership. Maps OS groups to Galaxy security roles. Includes Login time and Role update intervals.</td></tr>
+  <tr><td><strong>Authentication providers</strong></td><td>Uses AVEVA Identity Manager (AIM) with OS security and Azure Active Directory (AD).</td></tr>
+</table>
+
+<h3>OS Group Based — Configurable Intervals</h3>
+<ul>
+  <li><strong>Login time</strong> (ms): Timeout for validating user membership against OS groups. After timeout, defaults to local cache. Use for intermittent/slow networks. Min: 0 (off), Max: 9,999,999, Default: 0 (disabled).</li>
+  <li><strong>Role update</strong> (ms): Time between each validation attempt per OS group. Minimizes network usage. Operates independently of Login time.</li>
+</ul>
+
+<div class="tip">
+  <strong>Authentication Mode Behaviors:</strong>
+  <ul style="margin-bottom:0;">
+    <li>Open security gives all users DefaultUser credentials — no login dialogs</li>
+    <li>Switching modes disables users from the old mode (not deleted, just disabled)</li>
+    <li>When switching to any mode other than None, you must log in after closing the dialog</li>
+    <li>When Galaxy authentication is selected, the IDE customizes the UI to the user's preferences</li>
+    <li>OS User Based: user provides domain, username, and password</li>
+    <li>OS Group Based: user provides domain, username, and password; OS groups mapped to Galaxy roles</li>
+  </ul>
+</div>
+
+<h3>User Authentication</h3>
+<p>Client utilities (IDE, OCMC, InTouch for System Platform) require users to be authenticated. An authenticated user is granted the <strong>sum of all Permissions</strong> within their assumed Roles.</p>
+
+<!-- ============================================================ -->
+<h2>27.3 Security Permissions</h2>
+<p class="page-ref">Pages 9-9 through 9-10</p>
+
+<h3>General Permissions</h3>
+<p>General permissions relate to application configuration and administration tasks. You <strong>cannot</strong> modify the General permissions for the Administrator role. They include:</p>
+
+<table>
+  <tr><th>IDE Permissions</th><th>SMC Permissions</th></tr>
+  <tr><td>Can Start the IDE</td><td>Can Start the SMC</td></tr>
+  <tr><td>Importing and Exporting</td><td>Can Start/Stop Engine/Platform</td></tr>
+  <tr><td>General Configuration</td><td>Can Write to GObject Attributes using ObjectViewer</td></tr>
+  <tr><td>System Configuration</td><td></td></tr>
+  <tr><td>DeviceIntegration Objects</td><td></td></tr>
+  <tr><td>Application Configuration</td><td></td></tr>
+  <tr><td>Framework Configuration</td><td></td></tr>
+  <tr><td>User Configuration</td><td></td></tr>
+  <tr><td>Deployment Permissions</td><td></td></tr>
+  <tr><td>Graphic Management Permissions</td><td></td></tr>
+  <tr><td>Manage Alarm Strategy</td><td></td></tr>
+</table>
+
+<h3>Operational Permissions</h3>
+<p>Operational permissions relate to the Security Groups listed on the Security Groups page. By default, the Administrator has all permissions.</p>
+
+<table>
+  <tr><th>Permission</th><th>Description</th></tr>
+  <tr><td><strong>Can Modify "Operate" Attributes</strong></td><td>Daily operational tasks: changing setpoints, outputs, control modes</td></tr>
+  <tr><td><strong>Can Modify "Tune" Attributes</strong></td><td>Tune attributes in live runtime: alarm setpoint sensitivity, PID tuning</td></tr>
+  <tr><td><strong>Can Modify "Configure" Attributes</strong></td><td>Major configuration changes; requires object set to Off scan</td></tr>
+  <tr><td><strong>Can Acknowledge Alarms</strong></td><td>Manually acknowledge active alarms in runtime</td></tr>
+  <tr><td><strong>Can Shelve Alarms</strong></td><td>Temporarily suppress or restore alarm notifications</td></tr>
+  <tr><td><strong>Can Modify Alarm Modes</strong></td><td>Change operational mode of an alarm</td></tr>
+  <tr><td><strong>Can Modify Plant States</strong></td><td>Modify plant states controlling state-based alarm rules</td></tr>
+  <tr><td><strong>Can Verify Writes</strong></td><td>Authentication signature for Verified Writes security classification</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Security Levels Summary:</strong>
+  <ul style="margin-bottom:0;">
+    <li><strong>Full Access:</strong> All General + All Operational permissions (Administrator role)</li>
+    <li><strong>Limited Access:</strong> Selective General + Selective Operational permissions per role</li>
+    <li><strong>No Access:</strong> Permissions unchecked — user is denied that function</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>27.4 Lab 16 — Configuring Security</h2>
+<p class="page-ref">Pages 9-11 through 9-37</p>
+
+<div class="lab">
+  <strong>Lab 16 — Configuring Security</strong><br>
+  In this lab, you will enable OS Group-based security in the Galaxy, create security groups based on plant areas, add OS user groups as security roles, and configure General and Operational permissions for each role.
+</div>
+
+<h3>Lab Objectives</h3>
+<ul>
+  <li>Configure security in a Galaxy</li>
+  <li>Enable OS Group security</li>
+  <li>Create and use security groups</li>
+  <li>Add security roles and assign permissions</li>
+  <li>Configure general permissions</li>
+</ul>
+
+<!-- Step 1-2 -->
+<h3>Enable Security in the Galaxy</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0374_0.png" alt="IDE Configure menu with Security option">
+  <div class="caption">Figure 27-3: In the IDE, select Galaxy menu → Configure. In the Configure area, select Security (shield icon) to open the security configuration. <span class="page-ref">(page 9-12)</span></div>
+</div>
+
+<p><strong>Step 1:</strong> In the IDE, on the Galaxy menu, select <strong>Configure</strong>.</p>
+<p><strong>Step 2:</strong> In the Configure area, select <strong>Security</strong>.</p>
+
+<!-- Step 3-4 -->
+<div class="screenshot">
+  <img src="../images/page_0375_0.png" alt="Select OS Group based authentication mode">
+  <div class="caption">Figure 27-4: On the Authentication mode tab, select "OS Group based" and enter 3000 in the Login time field. Increasing Login time creates a more seamless experience when testing different users. <strong>Do NOT click Save at this point!</strong> <span class="page-ref">(page 9-13)</span></div>
+</div>
+
+<p><strong>Step 3:</strong> On the Authentication mode tab, select the <strong>OS Group based</strong> option.</p>
+<p><strong>Step 4:</strong> In the Login time field, enter <strong>3000</strong>.</p>
+
+<div class="tip">
+  <strong>Why 3000 ms?</strong> Increasing the Login time allows for a more seamless logging-in and testing of different users later in the lab.
+</div>
+
+<div class="pitfall">
+  <strong>Important:</strong> Do <strong>NOT</strong> click Save at this point! You still need to configure security groups and roles before saving.
+</div>
+
+<!-- Step 5-9 -->
+<h3>Configure Security Groups</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0376_0.png" alt="Security Groups tab showing Default group">
+  <div class="caption">Figure 27-5: The Security groups tab shows the Default security group with its assigned objects. All new objects belong to the Default group by default. <span class="page-ref">(page 9-14)</span></div>
+</div>
+
+<p><strong>Step 5:</strong> Click the <strong>Security groups</strong> tab.</p>
+<p><strong>Step 6:</strong> Click the <strong>Add new Security group</strong> (+) button.</p>
+<p><strong>Step 7:</strong> In the Security groups list, enter <strong>Line1</strong>, and then press Enter.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0376_2.png" alt="Security Groups list with Default and Line1">
+  <div class="caption">Figure 27-6: After adding Line1, the Security groups list now shows Default and Line1. <span class="page-ref">(page 9-14)</span></div>
+</div>
+
+<p><strong>Step 8:</strong> Add 2 more security groups: <strong>Line2</strong> and <strong>ControlSystem</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0377_0.png" alt="Security Groups list with all four groups">
+  <div class="caption">Figure 27-7: The Security groups list now contains four groups: ControlSystem, Default, Line1, and Line2. <span class="page-ref">(page 9-15)</span></div>
+</div>
+
+<p><strong>Step 9:</strong> Select the <strong>Default</strong> security group.</p>
+
+<!-- Step 10-11 -->
+<h3>Assign Objects to Security Groups</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0378_0.png" alt="Dragging objects from Default to Line1">
+  <div class="caption">Figure 27-8: Select instances from the Default group and drag them to the Line1 security group. Objects to move: Agitator_001, Inlet1_001, Inlet2_001, Level_001, Line1, Mixer100, Outlet_001, Pump1_001, Pump2_001, Temperature_001. <span class="page-ref">(page 9-16)</span></div>
+</div>
+
+<p><strong>Step 10:</strong> In the Objects for Security group 'Default' list, select the following instances and drag them to the <strong>Line1</strong> security group:</p>
+<ul>
+  <li>Agitator_001</li>
+  <li>Inlet1_001</li>
+  <li>Inlet2_001</li>
+  <li>Level_001</li>
+  <li>Line1</li>
+  <li>Mixer100</li>
+  <li>Outlet_001</li>
+  <li>Pump1_001</li>
+  <li>Pump2_001</li>
+  <li>Temperature_001</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0379_0.png" alt="Line1 security group showing moved objects">
+  <div class="caption">Figure 27-9: Click Line1 to verify the instances have been moved. The Objects for Security group "Line1" now shows: Agitator_001, Inlet1_001, Inlet2_001, Level_001, Line1, Mixer100, Outlet_001, Pump1_001, Pump2_001, Temperature_001. <span class="page-ref">(page 9-17)</span></div>
+</div>
+
+<p><strong>Step 11:</strong> Click <strong>Line1</strong> to verify the instances have been moved.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0379_1.png" alt="Default security group after Line1 objects removed">
+  <div class="caption">Figure 27-10: Default security group after the Line1 objects have been removed — the moved instances are no longer listed here. <span class="page-ref">(page 9-17)</span></div>
+</div>
+
+<!-- Step 12-13 -->
+<p><strong>Step 12:</strong> Move the following instances from the Default security group to the <strong>Line2</strong> security group:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0380_0.png" alt="Dragging objects from Default to Line2">
+  <div class="caption">Figure 27-10a: Select objects from the Default security group and drag them to the Line2 security group. Objects to move: Agitator_002, Inlet1_002, Inlet2_002, Level_002, Line2, Mixer200, Outlet_002, Pump1_002, Pump2_002, Temperature_002. <span class="page-ref">(page 9-18)</span></div>
+</div>
+<ul>
+  <li>Agitator_002</li>
+  <li>Inlet1_002</li>
+  <li>Inlet2_002</li>
+  <li>Level_002</li>
+  <li>Line2</li>
+  <li>Mixer200</li>
+  <li>Outlet_002</li>
+  <li>Pump1_002</li>
+  <li>Pump2_002</li>
+  <li>Temperature_002</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0381_0.png" alt="Line2 security group showing moved objects">
+  <div class="caption">Figure 27-11: Click Line2 to verify the instances have been moved. The Objects for Security group "Line2" now shows all Line2 equipment. <span class="page-ref">(page 9-19)</span></div>
+</div>
+
+<p><strong>Step 13:</strong> Click <strong>Line2</strong> to verify the instances have been moved.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0381_1.png" alt="Default security group after Line2 objects removed">
+  <div class="caption">Figure 27-11a: Default security group after the Line2 objects have been removed — showing the remaining system-level objects that have not yet been moved to any group. <span class="page-ref">(page 9-19)</span></div>
+</div>
+
+<!-- Step 14-15 -->
+<p><strong>Step 14:</strong> Move the following instances from the Default security group to the <strong>ControlSystem</strong> security group:</p>
+<ul>
+  <li>AppEngine1</li>
+  <li>ControlSystem</li>
+  <li>GRPlatform</li>
+  <li>ProdPlatform</li>
+  <li>ProdPLC</li>
+  <li>Simulator</li>
+</ul>
+
+<div class="tip">
+  <strong>Note:</strong> For single-node environments, skip ProdPlatform.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0382_0.png" alt="ControlSystem security group showing objects">
+  <div class="caption">Figure 27-12: Click ControlSystem to verify the instances have been moved. The Objects for Security group "ControlSystem" now shows: AppEngine1, ControlSystem, GRPlatform, ProdPlatform, ProdPLC, Simulator. <span class="page-ref">(page 9-20)</span></div>
+</div>
+
+<p><strong>Step 15:</strong> Click <strong>ControlSystem</strong> to verify the instances have been moved.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0382_1.png" alt="Default security group with remaining system objects">
+  <div class="caption">Figure 27-13: After all assignments, the Default security group contains only the objects that were not moved — system objects like $gAppEngine, $gArea, $gDDESuiteLinkClient, $gOPCClient, etc. <span class="page-ref">(page 9-20)</span></div>
+</div>
+
+<!-- Step 16 -->
+<h3>Configure Security Roles</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0383_0.png" alt="Roles tab showing Administrator and Default roles">
+  <div class="caption">Figure 27-14: Click the Roles tab. The Define security roles list shows Administrator (Access level: 9999) and Default (Access level: 0). The right panel shows the General permissions for the selected role. <span class="page-ref">(page 9-21)</span></div>
+</div>
+
+<p><strong>Step 16:</strong> Click the <strong>Roles</strong> tab.</p>
+
+<!-- Step 17-22 -->
+<h3>Add OS Groups as Roles</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0384_1.png" alt="Select groups dialog box">
+  <div class="caption">Figure 27-15: Click the Add new Role (+) button. The Select groups dialog box appears, showing Available OS groups from the system. <span class="page-ref">(page 9-22)</span></div>
+</div>
+
+<p><strong>Step 17:</strong> Click the <strong>Add new Role</strong> (+) button.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0385_0.png" alt="Select Groups dialog with CLOUD domain selected">
+  <div class="caption">Figure 27-16: In the Select from the list dropdown, select the domain name ("CLOUD" in this example) or leave the default if no domain controller is available. The Available OS groups list now displays domain groups. <span class="page-ref">(page 9-23)</span></div>
+</div>
+
+<p><strong>Step 18:</strong> In the Select from the list dropdown, select the domain name (<strong>CLOUD</strong>) or leave the default (".") if no domain controller is available.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0386_1.png" alt="Adding Application Administrators group">
+  <div class="caption">Figure 27-17: Select Application Administrators from Available OS groups, then click the Add selected OS Group (+) button. The group appears in the Selected groups list. <span class="page-ref">(page 9-24)</span></div>
+</div>
+
+<p><strong>Step 19:</strong> In the Available OS groups list, select <strong>Application Administrators</strong>.</p>
+<p><strong>Step 20:</strong> Click the <strong>Add selected OS Group</strong> (+) button.</p>
+<p><strong>Step 21:</strong> Repeat to add the following OS Groups:</p>
+<ul>
+  <li>Application Developers 1</li>
+  <li>Plant Maintenance 1</li>
+  <li>Plant Operators 1</li>
+  <li>Plant Operators 2</li>
+  <li>Plant Supervisors 1</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0386_2.png" alt="All groups added to Selected groups">
+  <div class="caption">Figure 27-18: All six OS groups have been added to the Selected groups list: CLOUD\Application Administrators, CLOUD\Application Developers 1, CLOUD\Plant Maintenance 1, CLOUD\Plant Operators 1, CLOUD\Plant Operators 2, CLOUD\Plant Supervisors 1. Click OK to confirm. <span class="page-ref">(page 9-24)</span></div>
+</div>
+
+<p><strong>Step 22:</strong> Click <strong>OK</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0387_0.png" alt="Roles tab with all OS groups added">
+  <div class="caption">Figure 27-19: The OS Groups are now added to the Define security roles list. All new roles have Access level 0. <strong>Do NOT click Save at this point!</strong> <span class="page-ref">(page 9-25)</span></div>
+</div>
+
+<!-- Step 23-25 -->
+<h3>Configure the Default Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0388_0.png" alt="Default role permissions configuration">
+  <div class="caption">Figure 27-20: Select the Default role. Uncheck IDE Permissions (and all children), SMC Permissions > Can Start SMC, and SMC Permissions > Can Start/Stop Engine/Platform. The only permission left checked is "Can Write to GObject Attributes using ObjectViewer." Also uncheck the Default security group in Operational permissions. <span class="page-ref">(page 9-26)</span></div>
+</div>
+
+<p><strong>Step 23:</strong> In the Define security roles list, select the <strong>Default</strong> security role.</p>
+<p><strong>Step 24:</strong> In the General permissions list, uncheck:</p>
+<ul>
+  <li>IDE Permissions (this unchecks all sub-permissions)</li>
+  <li>SMC Permissions → Can Start the SMC</li>
+  <li>SMC Permissions → Can Start/Stop Engine/Platform</li>
+</ul>
+<p>The only permission checked will be <strong>Can Write to GObject Attributes using ObjectViewer</strong>.</p>
+<p><strong>Step 25:</strong> In the Operational permissions list, uncheck the <strong>Default</strong> security group.</p>
+
+<div class="pitfall">
+  <strong>Warning:</strong> All users inherit permissions from the built-in Default role. Assigning "Can Write to GObject Attributes using ObjectViewer" to this role is <em>not</em> good practice — it is done here only to allow testing through Object Viewer in a later lab.
+</div>
+
+<!-- Step 26 -->
+<h3>Configure the Administrator Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0389_0.png" alt="Administrator role permissions configuration">
+  <div class="caption">Figure 27-21: Select the Administrator role. All General permissions (IDE Permissions and SMC Permissions) are checked by default. All Operational permissions (Default, Line1, Line2, ControlSystem) are also checked. <span class="page-ref">(page 9-27)</span></div>
+</div>
+
+<p><strong>Step 26:</strong> Select the <strong>Administrator</strong> role and configure permissions as follows:</p>
+<table>
+  <tr><th>Category</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>General</td><td>IDE Permissions</td><td>Checked (default)</td></tr>
+  <tr><td>General</td><td>SMC Permissions</td><td>Checked (default)</td></tr>
+  <tr><td>Operational</td><td>Default</td><td>Checked (default)</td></tr>
+  <tr><td>Operational</td><td>Line1</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Line2</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>ControlSystem</td><td>Checked</td></tr>
+</table>
+
+<!-- Step 27 -->
+<h3>Configure Application Administrators Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0390_0.png" alt="Application Administrators role permissions">
+  <div class="caption">Figure 27-22: Select the Application Administrators role. All General permissions (IDE + SMC) and all Operational permissions (Default, Line1, Line2, ControlSystem) are checked. <span class="page-ref">(page 9-28)</span></div>
+</div>
+
+<p><strong>Step 27:</strong> Select the <strong>Application Administrators</strong> role and configure:</p>
+<table>
+  <tr><th>Category</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>General</td><td>IDE Permissions</td><td>Checked</td></tr>
+  <tr><td>General</td><td>SMC Permissions</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Default</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Line1</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Line2</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>ControlSystem</td><td>Checked</td></tr>
+</table>
+
+<!-- Step 28-29 -->
+<h3>Configure Application Developers 1 Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0392_0.png" alt="Application Developers 1 operational permissions">
+  <div class="caption">Figure 27-23: With Application Developers 1 selected, General permissions show IDE Permissions checked (except User Configuration) and SMC Permissions checked (except Can Start/Stop Engine/Platform). Operational permissions show Can Modify "Configure" and "Operate" Attributes checked for Default, Line1, Line2, and ControlSystem. <span class="page-ref">(page 9-30)</span></div>
+</div>
+
+<p><strong>Step 28:</strong> Select <strong>Application Developers 1</strong> and configure:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0391_0.png" alt="Application Developers 1 general permissions detail">
+  <div class="caption">Figure 27-23a: Application Developers 1 General permissions: IDE Permissions is checked (but User Configuration is unchecked). SMC Permissions is checked (but Can Start/Stop Engine/Platform is unchecked). <span class="page-ref">(page 9-29)</span></div>
+</div>
+
+<table>
+  <tr><th>Category</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>General</td><td>IDE Permissions</td><td>Checked</td></tr>
+  <tr><td>General</td><td>User Configuration</td><td>Unchecked</td></tr>
+  <tr><td>General</td><td>SMC Permissions</td><td>Checked</td></tr>
+  <tr><td>General</td><td>Can Start/Stop Engine/Platform</td><td>Unchecked</td></tr>
+</table>
+
+<p><strong>Step 29:</strong> Configure Operational permissions for Application Developers 1:</p>
+<table>
+  <tr><th>Security Group</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>Default</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+  <tr><td>Line1</td><td>Can Modify "Configure" Attributes</td><td>Checked</td></tr>
+  <tr><td>Line1</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+  <tr><td>Line2</td><td>Can Modify "Configure" Attributes</td><td>Checked</td></tr>
+  <tr><td>Line2</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+  <tr><td>ControlSystem</td><td>Can Modify "Configure" Attributes</td><td>Checked</td></tr>
+  <tr><td>ControlSystem</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+</table>
+
+<div class="tip">
+  <strong>Note:</strong> All currently deployed objects belong to the Default security group. Application developers need Operate permissions for this group to place objects off scan for redeployment.
+</div>
+
+<!-- Step 30 -->
+<h3>Configure Plant Maintenance 1 Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0393_0.png" alt="Plant Maintenance 1 role permissions">
+  <div class="caption">Figure 27-24: Select Plant Maintenance 1. SMC Permissions are checked except Can Start/Stop Engine/Platform. For Line1, Line2, and ControlSystem: Can Modify "Configure" and "Tune" Attributes are checked. Can Modify "Operate" Attributes is unchecked. <span class="page-ref">(page 9-31)</span></div>
+</div>
+
+<p><strong>Step 30:</strong> Configure <strong>Plant Maintenance 1</strong>:</p>
+<table>
+  <tr><th>Category</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>General</td><td>SMC Permissions</td><td>Checked</td></tr>
+  <tr><td>General</td><td>Can Start/Stop Engine/Platform</td><td>Unchecked</td></tr>
+  <tr><td>Operational</td><td>Line1 — Can Modify "Configure" Attributes</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Line1 — Can Modify "Tune" Attributes</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Line2 — Can Modify "Configure" Attributes</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>Line2 — Can Modify "Tune" Attributes</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>ControlSystem — Can Modify "Configure" Attributes</td><td>Checked</td></tr>
+  <tr><td>Operational</td><td>ControlSystem — Can Modify "Tune" Attributes</td><td>Checked</td></tr>
+</table>
+
+<div class="key-concept">
+  <strong>Plant Maintenance Role Logic:</strong> Maintenance personnel are granted <strong>Tune</strong> and <strong>Configure</strong> permissions (to adjust alarm setpoints, PID tuning, and reconfigure objects) but <em>not</em> Operate permissions (no direct process control). They also lack "Can Start the IDE" and "Can Start/Stop Engine/Platform" — preventing them from opening the IDE or controlling engine lifecycles.
+</div>
+
+<!-- Step 31 -->
+<h3>Configure Plant Operators 1 Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0394_0.png" alt="Plant Operators 1 role permissions">
+  <div class="caption">Figure 27-25: Plant Operators 1 has no IDE permissions. Operational permissions for Line1: Can Acknowledge Alarms and Can Modify "Operate" Attributes are checked. All other lines and permissions are unchecked. <span class="page-ref">(page 9-32)</span></div>
+</div>
+
+<p><strong>Step 31:</strong> Configure <strong>Plant Operators 1</strong>:</p>
+<table>
+  <tr><th>Security Group</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>Line1</td><td>Can Acknowledge Alarms</td><td>Checked</td></tr>
+  <tr><td>Line1</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+</table>
+
+<!-- Step 32 -->
+<h3>Configure Plant Operators 2 Role</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0395_0.png" alt="Plant Operators 2 role permissions">
+  <div class="caption">Figure 27-26: Plant Operators 2 has no IDE permissions. Operational permissions for Line2: Can Acknowledge Alarms and Can Modify "Operate" Attributes are checked. All other lines and permissions are unchecked. <span class="page-ref">(page 9-33)</span></div>
+</div>
+
+<p><strong>Step 32:</strong> Configure <strong>Plant Operators 2</strong>:</p>
+<table>
+  <tr><th>Security Group</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>Line2</td><td>Can Acknowledge Alarms</td><td>Checked</td></tr>
+  <tr><td>Line2</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+</table>
+
+<!-- Step 33-34 -->
+<h3>Configure Plant Supervisors 1 Role & Save</h3>
+
+<div class="screenshot">
+  <img src="../images/page_0396_0.png" alt="Plant Supervisors 1 role permissions">
+  <div class="caption">Figure 27-27: Plant Supervisors 1 has operational permissions for Line1, Line2, and ControlSystem: Can Acknowledge Alarms, Can Modify "Operate" Attributes, and Can Verify Writes are all checked. No IDE permissions. <span class="page-ref">(page 9-34)</span></div>
+</div>
+
+<p><strong>Step 33:</strong> Configure <strong>Plant Supervisors 1</strong>:</p>
+<table>
+  <tr><th>Security Group</th><th>Permission</th><th>Setting</th></tr>
+  <tr><td>Line1</td><td>Can Acknowledge Alarms</td><td>Checked</td></tr>
+  <tr><td>Line1</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+  <tr><td>Line1</td><td>Can Verify Writes</td><td>Checked</td></tr>
+  <tr><td>Line2</td><td>Can Acknowledge Alarms</td><td>Checked</td></tr>
+  <tr><td>Line2</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+  <tr><td>Line2</td><td>Can Verify Writes</td><td>Checked</td></tr>
+  <tr><td>ControlSystem</td><td>Can Acknowledge Alarms</td><td>Checked</td></tr>
+  <tr><td>ControlSystem</td><td>Can Modify "Operate" Attributes</td><td>Checked</td></tr>
+  <tr><td>ControlSystem</td><td>Can Verify Writes</td><td>Checked</td></tr>
+</table>
+
+<p><strong>Step 34:</strong> Click <strong>Save</strong> to apply the security configuration.</p>
+
+<div class="key-concept">
+  <strong>Role Permission Summary:</strong>
+  <table>
+    <tr><th>Role</th><th>IDE</th><th>Operate</th><th>Tune/Configure</th><th>Alarms</th><th>Verify Writes</th></tr>
+    <tr><td>Administrator</td><td>✅ Full</td><td>✅ All Groups</td><td>✅ All Groups</td><td>✅ All Groups</td><td>✅ All Groups</td></tr>
+    <tr><td>App Administrators</td><td>✅ Full</td><td>✅ All Groups</td><td>✅ All Groups</td><td>✅ All Groups</td><td>✅ All Groups</td></tr>
+    <tr><td>App Developers 1</td><td>✅ (no User Mgmt)</td><td>✅ All Groups</td><td>✅ All Groups</td><td>—</td><td>—</td></tr>
+    <tr><td>Plant Maintenance 1</td><td>❌</td><td>❌</td><td>✅ Lines+Ctrl</td><td>—</td><td>—</td></tr>
+    <tr><td>Plant Operators 1</td><td>❌</td><td>✅ Line1</td><td>❌</td><td>✅ Line1</td><td>❌</td></tr>
+    <tr><td>Plant Operators 2</td><td>❌</td><td>✅ Line2</td><td>❌</td><td>✅ Line2</td><td>❌</td></tr>
+    <tr><td>Plant Supervisors 1</td><td>❌</td><td>✅ All Lines</td><td>❌</td><td>✅ All Lines</td><td>✅ All Lines</td></tr>
+  </table>
+</div>
+
+<!-- Step 35-41 -->
+<h3>Test Security — Login as Different Roles</h3>
+
+<p>After saving, security is enabled. You will be prompted to log in. Test the security by logging in as different users:</p>
+
+<h4>Test 1: Plant Maintenance (should be denied IDE access)</h4>
+
+<div class="screenshot">
+  <img src="../images/page_0397_0.png" alt="Sign in dialog with Plant Maintenance user">
+  <div class="caption">Figure 27-28: The Sign in to TrainingGalaxy dialog appears. Enter the username for a Plant Maintenance 1 user (e.g., CLOUD\KevinG). Click Next. <span class="page-ref">(page 9-35)</span></div>
+</div>
+
+<p><strong>Step 35:</strong> Log in as a member of the Plant Maintenance 1 security role:</p>
+<table>
+  <tr><th>Role</th><th>Name</th><th>Username</th></tr>
+  <tr><td>Plant Maintenance 1</td><td>Kevin Green</td><td>CLOUD\KevinG</td></tr>
+  <tr><td>Plant Maintenance 1</td><td>Monica Reed</td><td>CLOUD\MonicaR</td></tr>
+</table>
+
+<p><strong>Step 36:</strong> Click <strong>Next</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0397_1.png" alt="Password entry for Plant Maintenance user">
+  <div class="caption">Figure 27-29: Enter the password (ww) and click Sign in. <span class="page-ref">(page 9-35)</span></div>
+</div>
+
+<p><strong>Step 37:</strong> In the Enter password field, enter <strong>ww</strong>.</p>
+<p><strong>Step 38:</strong> Click <strong>Sign in</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0398_0.png" alt="Access denied dialog for Plant Maintenance user">
+  <div class="caption">Figure 27-30: An "Access Denied" dialog appears: "This user does not have access to the System Platform IDE." This is expected because the Plant Maintenance role was not granted "Can Start the IDE" permission. Click OK. <span class="page-ref">(page 9-36)</span></div>
+</div>
+
+<div class="key-concept">
+  <strong>This confirms the security is working!</strong> Plant Maintenance personnel can tune and configure objects at runtime but cannot open the IDE. Click OK, then log in as an Application Developer to continue.
+</div>
+
+<h4>Test 2: Application Developer (should gain IDE access)</h4>
+
+<p><strong>Step 39:</strong> Click <strong>OK</strong> on the access denied dialog.</p>
+<p><strong>Step 40:</strong> Log in as a member of the Application Developers 1 security role:</p>
+<table>
+  <tr><th>Role</th><th>Name</th><th>Username</th><th>Password</th></tr>
+  <tr><td>Application Developers 1</td><td>Thomas Miller</td><td>CLOUD\ThomasM</td><td>ww</td></tr>
+  <tr><td>Application Developers 1</td><td>Carol Morris</td><td>CLOUD\CarolM</td><td>ww</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0398_1.png" alt="Sign in with Application Developer user">
+  <div class="caption">Figure 27-31: Sign in with CLOUD\ThomasM and password ww. This user has IDE permissions and should be able to access the IDE. <span class="page-ref">(page 9-36)</span></div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0399_0.jpeg" alt="IDE showing logged in as Application Developer">
+  <div class="caption">Figure 27-32: After a few moments, the IDE closes and reopens. The user is logged in as CLOUD\ThomasM (visible in the right panel). The IDE is accessible because Application Developers have "Can Start the IDE" permission. Notice that most objects need to be deployed because their SecurityGroup attribute was modified. <span class="page-ref">(page 9-37)</span></div>
+</div>
+
+<p><strong>Step 41:</strong> Click the profile icon to verify the user logged in to the IDE.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0399_1.png" alt="Model browser showing plant structure">
+  <div class="caption">Figure 27-33: The Model browser shows the plant structure: TrainingGalaxy → Plant → ControlSystem (with AppEngine1, GRPlatform, ProdPlatform, ProdPLC, Simulator), Packaging, Production, Receiving, Shipping. Objects will need redeployment due to SecurityGroup changes. <span class="page-ref">(page 9-37)</span></div>
+</div>
+
+<div class="tip">
+  <strong>Note:</strong> You will deploy the objects in the next lab (Lab 17 — Implementing Object Security). The security group assignments modified the SecurityGroup attribute on objects, requiring redeployment.
+</div>
+
+<!-- ============================================================ -->
+<h2>Quiz: Security Overview + Lab 16</h2>
+
+<div class="quiz">
+  <h3>Test Your Knowledge</h3>
+
+  <p><strong>Q1:</strong> What are the four authentication modes available in the Security configuration?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">None (Open Security), Galaxy, OS User based, and OS Group based. There is also an Authentication providers option for AIM/Azure AD integration.</p></details>
+
+  <p><strong>Q2:</strong> In the Security Model, what is the relationship between Security Groups, Roles, and Users?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Security Groups contain AutomationObjects. Roles are granted Operational Permissions onto Security Groups. Users belong to one or more Roles and receive the sum of all permissions from their assigned Roles.</p></details>
+
+  <p><strong>Q3:</strong> What is the difference between "Can Modify Operate Attributes" and "Can Modify Configure Attributes"?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">"Can Modify Operate Attributes" allows daily operational tasks like changing setpoints, outputs, and control modes. "Can Modify Configure Attributes" allows major configuration changes and requires the object to be set to Off scan first.</p></details>
+
+  <p><strong>Q4:</strong> Why did the Plant Maintenance user receive an "Access Denied" message when trying to open the IDE?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The Plant Maintenance 1 role was not granted "Can Start the IDE" permission (under IDE Permissions in General permissions). This role only had SMC Permissions and Operational permissions (Tune and Configure) for the production lines.</p></details>
+
+  <p><strong>Q5:</strong> What happens to all new objects created in a Galaxy with respect to Security Groups?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">All new objects belong to the Default Security Group by default. This group cannot be removed. Objects must be manually moved to other security groups as needed.</p></details>
+
+  <p><strong>Q6:</strong> What is the Login time setting used for in OS Group based authentication, and why did the lab set it to 3000?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Login time (in milliseconds) is the timeout period for validating user membership against OS groups. After the timeout, the system defaults to the local cache. The lab set it to 3000 ms to allow for a more seamless experience when testing different users, especially in intermittent or slow network scenarios.</p></details>
+
+  <p><strong>Q7:</strong> What is the Plant Supervisors 1 role allowed to do that Plant Operators 1 is not?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Plant Supervisors 1 has access to all three operational areas (Line1, Line2, ControlSystem) and has Can Verify Writes permission. Plant Operators 1 only has access to Line1 (Can Acknowledge Alarms + Can Modify Operate Attributes) and no Verify Writes permission.</p></details>
+
+  <p><strong>Q8:</strong> After enabling security and assigning new Security Groups, what must happen to deployed objects before they function correctly?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Objects must be redeployed because their SecurityGroup attribute was modified when they were moved between security groups. The IDE will show objects needing deployment, and this will be addressed in Lab 17.</p></details>
+
+  <p><strong>Q9:</strong> Can you modify the General permissions for the Administrator role? Why or why not?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">No, you cannot modify the General permissions for the Administrator role. The system enforces that the Administrator always has full General permissions to prevent accidental lockout from critical system functions.</p></details>
+
+  <p><strong>Q10:</strong> What security limitation should be aware of regarding password storage in Galaxy authentication mode?</p>
+  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Passwords are encrypted but stored in a database that is accessible. The system is not designed to stop determined programmers from accessing it. For higher-level security, use OS-based authentication with Microsoft tools, password timeout, and electronic signature authentication.</p></details>
+</div>
+
+<!-- ============================================================ -->
+
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 9 Section 1 + Lab 16</p>
+
+</body>
+</html>

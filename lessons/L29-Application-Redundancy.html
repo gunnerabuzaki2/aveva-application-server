@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 29: Application Redundancy + Lab 18</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L28-Object-Security.html">← Lesson 28: Object Security</a> &nbsp;|&nbsp;
+  <a href="L30-DI-Redundancy.html">Next: Lesson 30 — Device Integration Redundancy →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 29: Application Redundancy + Lab 18</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 10 Section 1</p>
+<p class="page-ref">Application redundancy concepts, topology (primary/secondary), redundancy message channel (RMC), configuring $WinPlatform and $AppEngine for redundancy, deployment models, failover states, and Lab 18 step-by-step hands-on exercises. (pages 10-1 to 10-29)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>29.1 Module 10 — Table of Contents</h2>
+<p class="page-ref">Reference: Module 10 Cover (page 10-1)</p>
+
+<p>Module 10 — Application Redundancy covers two key topics:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0427_0.jpeg" alt="Module 10 table of contents showing Application Redundancy and Device Integration Redundancy">
+  <div class="caption">Module 10 — Application Redundancy table of contents. Section 1 covers Application Redundancy concepts and Lab 18 (Configuring Application Redundancy). Section 2 covers Device Integration Redundancy and Lab 19 (Configuring the Redundant DI Object). (page 10-1)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>29.2 Working with Redundancy</h2>
+<p class="page-ref">Reference: Section 1 — Application Redundancy (pages 10-3 to 10-6)</p>
+
+<p>You can set up and run Application Server in a redundant environment. In Application Server, two types of redundancy ensure continued runtime operation:</p>
+
+<ul>
+  <li><strong>AppEngine object pairings</strong> — for computer or software failures</li>
+  <li><strong>Data acquisition communications</strong> — to one or more PLCs</li>
+</ul>
+
+<p>A <strong>failover</strong> is the condition during which runtime operations are moved from one critical component to another. Failover can occur due to failure conditions or it can be forced manually (a <strong>forced failover</strong>).</p>
+
+<div class="key-concept">
+  <strong>Two Types of Redundancy:</strong>
+  <ul>
+    <li><strong>AppEngine Redundancy:</strong> You must configure both an AppEngine and two WinPlatforms. The Plant infrastructure automatically generates the backup AppEngine when redundancy is enabled.</li>
+    <li><strong>Data Acquisition Redundancy:</strong> You must configure two DI objects (data sources) and a RedundantDIObject.</li>
+  </ul>
+</div>
+
+<h3>29.2.1 Primary/Backup and Active/Standby</h3>
+
+<p>When you configure redundancy, you configure the <strong>Primary object</strong> and the <strong>Backup object</strong>:</p>
+
+<ul>
+  <li><strong>Primary object:</strong> The main or central object that provides the functionality during runtime. For AppEngines, this is the object you enable for redundancy. For data acquisition, this is the DIObject you intend to use first as your data source in runtime.</li>
+  <li><strong>Backup object:</strong> The object that provides the functionality of the Primary object when the Primary object fails. For AppEngines, this is the object created by the Plant infrastructure when the Primary object is enabled for redundancy.</li>
+</ul>
+
+<p>When you deploy these objects to a runtime environment, the configuration objects become the <strong>Active object</strong> and the <strong>Standby object</strong>:</p>
+
+<ul>
+  <li><strong>Active object:</strong> The object that is currently executing functions. For an AppEngine, it is the object that is hosting and executing Application objects.</li>
+  <li><strong>Standby object:</strong> The object that is waiting for a failure in the Active object or for a force-failover. For an AppEngine, it is the object that monitors the status of the Active AppEngine.</li>
+</ul>
+
+<div class="key-concept">
+  <strong>Important:</strong> The relationship between configuration time (Primary/Backup) and runtime (Active/Standby) object pairs is <em>not static</em>. In the runtime, either the Primary or Backup object can be the Active object at any particular time. Whenever one becomes the Active object, the other automatically becomes the Standby.
+</div>
+
+<h3>29.2.2 Redundancy Topology</h3>
+<p class="page-ref">Reference: pages 10-3 to 10-4</p>
+
+<p>Each production computer hosting a redundancy-enabled AppEngine must have a <strong>minimum of two network cards</strong>. One NIC is for the Plant network. The other must be for a dedicated Ethernet connection between computers for the <strong>Redundancy Message Channel (RMC)</strong>. The RMC handles redundancy monitoring, message handling, and data synchronization between redundant pairs.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0430_0.jpeg" alt="Primary/Backup topology diagram showing two servers connected by Primary Connection and RMC">
+  <div class="caption">Primary/Backup topology diagram. The Primary server hosts <code>AppEngine1</code> on <code>WinPlatform1</code>. The Backup server hosts <code>AppEngine1 (Backup)</code> on <code>WinPlatform2</code>. Both servers are connected by two links: the <strong>Primary Connection</strong> (shared Plant network) and the <strong>RMC</strong> (dedicated Redundancy Message Channel for heartbeat monitoring and failover coordination). (page 10-3)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0431_0.jpeg" alt="Active/Standby topology diagram with color-coded Active and Standby labels">
+  <div class="caption">Active/Standby runtime topology. After deployment, the Primary server becomes <strong>Active</strong> (green label) — the object executing functions. The Backup server becomes <strong>Standby</strong> (blue label) — monitoring the Active engine via heartbeat pings through the RMC. The RMC link carries heartbeat signals, checkpoint data, and synchronization information between the pair. (page 10-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0432_0.jpeg" alt="Table showing Primary AppEngine and Backup AppEngine icons">
+  <div class="caption">AppEngine redundancy icons. The <strong>Primary AppEngine</strong> is represented by a dual interlocking gear icon (blue and green), while the <strong>Backup AppEngine</strong> is shown as a single green gear icon. These icons appear in the Deployment view to visually distinguish primary and backup engine instances. (page 10-5)</div>
+</div>
+
+<div class="pitfall">
+  <strong>Important — One-to-One Topology:</strong> Plant supports a one-to-one topology in which the computers hosting the Primary and Backup object sets must be connected by crossover cable and have fixed IP addresses. For data acquisition, the Primary/Backup DI objects must be separately created, configured, and deployed. Also, install and configure the primary OPC server on the backup engine node.
+</div>
+
+<!-- ============================================================ -->
+<h2>29.3 Engine Restart After Failure</h2>
+<p class="page-ref">Reference: page 10-5</p>
+
+<p>An AppEngine will restart automatically after an engine failure such as a crash or hang. If the engine is redundant, it will synchronize with its redundant partner, and running applications will resume. Engine restart on failure is <strong>automatic</strong> and is not user-configurable.</p>
+
+<p>In the AppEngine redundancy environment, the Active and Standby objects monitor each other's statuses and switch during a failover situation. During a failover, when an Active engine fails, it restarts and the Standby engine becomes active. The Active engine then turns to the standby mode.</p>
+
+<!-- ============================================================ -->
+<h2>29.4 Configuring Redundancy</h2>
+<p class="page-ref">Reference: page 10-6</p>
+
+<p>You configure redundancy in AppEngine/WinPlatform objects using their Object Editors. The redundancy-related parameters in the AppEngine Object Editor are located on the <strong>Redundancy</strong> and <strong>General</strong> tabs.</p>
+
+<h3>29.4.1 Steps to Create AppEngine Redundancy</h3>
+<ol>
+  <li>In the Primary AppEngine, select the <strong>Enable Redundancy</strong> check box on the <strong>Redundancy</strong> tab.</li>
+  <li>Configure the remaining redundancy parameters as needed.</li>
+  <li>On the <strong>General</strong> tab, set the <strong>Engine Failure Timeout</strong> option to <strong>2000 milliseconds</strong>. You may need to tune this parameter between 2000 ms and the default 10000 ms.</li>
+</ol>
+
+<div class="tip">
+  <strong>Warm Redundancy (System Platform 2023+):</strong> Starting in System Platform 2023, Warm Redundancy is enabled by default. When Warm Redundancy is enabled, failover from the Active to the Standby engine occurs much faster. Warm Redundancy starts up and initializes the Standby engine concurrently with the Active engine.
+</div>
+
+<div class="pitfall">
+  <strong>Engine Failure Timeout Note:</strong> The actual engine failure time-out is <strong>three times</strong> the value of this parameter. If you set the parameter to 2000 ms (2 seconds), a failover occurs if the AppEngine fails to communicate with the computer's Bootstrap for 6 seconds. A setting of 10000 ms (10 seconds) can be too long a wait period (30 seconds) for a well-functioning redundancy operation.
+</div>
+
+<h3>29.4.2 Redundancy Deployment Statuses</h3>
+
+<p>After you save the configuration and check it into the Galaxy, the icon for the object changes. A Backup AppEngine is created with the same configuration as the Primary object. The redundancy pair can be in one of these deployment states:</p>
+
+<table>
+  <tr><th>Status</th><th>Description</th></tr>
+  <tr><td><strong>Pair Deployed</strong></td><td>Both Primary and Backup AppEngines are deployed.</td></tr>
+  <tr><td><strong>Pair Undeployed</strong></td><td>Both Primary and Backup AppEngines are undeployed.</td></tr>
+  <tr><td><strong>Partial Deployed</strong></td><td>Either the Primary or Backup AppEngine is deployed and its partner is not deployed.</td></tr>
+  <tr><td><strong>Partial Undeployed</strong></td><td>Either the Primary or Backup AppEngine is undeployed and its partner is deployed.</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2>29.5 Deploying and Undeploying Redundant AppEngines</h2>
+<p class="page-ref">Reference: pages 10-7 to 10-9</p>
+
+<p>Primary and Backup AppEngines can be deployed together or individually:</p>
+<ul>
+  <li>When deployed <strong>together</strong>, regardless of which object is selected for deployment, the Primary always becomes the Active and the Backup becomes the Standby.</li>
+  <li>When deployed <strong>individually</strong>, the first one deployed becomes the Active.</li>
+</ul>
+
+<p>Hosted ApplicationObjects are always deployed to the Active AppEngine. When deploying the first of a redundant pair of AppEngines, you can cascade deploy all objects it hosts.</p>
+
+<div class="pitfall">
+  <strong>Warning:</strong> If you deploy the Backup AppEngine first and then deploy hosted objects to that AppEngine, make sure the network communication to both target computers is good before deploying the Primary AppEngine. Otherwise, errors occur.
+</div>
+
+<h3>29.5.1 Deployment Condition Matrix</h3>
+
+<table>
+  <tr><th>Condition</th><th>Deploy Both Primary &amp; Backup</th><th>Cascade Deploy Allowed</th></tr>
+  <tr><td>Backup WinPlatform configured for failover and deployed</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>Backup AppEngine in error state</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>Backup WinPlatform not deployed</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Backup WinPlatform not configured for failover and deployed</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>Deploy from Galaxy node</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Deploy from WinPlatform hosting Primary</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Multiple object selection deploy</td><td>No</td><td>No</td></tr>
+  <tr><td>Backup WinPlatform not configured and not deployed</td><td>No</td><td>Yes</td></tr>
+  <tr><td>Deploy from Backup AppEngine</td><td>Yes</td><td>Yes</td></tr>
+  <tr><td>Deploy from Primary AppEngine</td><td>Yes</td><td>Yes</td></tr>
+</table>
+
+<h3>29.5.2 Configuration Requirements</h3>
+<p>Before deploying the Primary and Backup AppEngines, all configuration requirements must be met:</p>
+<ul>
+  <li>Each AppEngine must be assigned to a <strong>separate WinPlatform</strong>.</li>
+  <li>A valid <strong>redundancy message channel (RMC)</strong> must be configured for each WinPlatform.</li>
+  <li>To deploy the Primary and Backup together, select <strong>Include Redundant Partner</strong> in the Deploy dialog box.</li>
+</ul>
+
+<h3>29.5.3 Undeploying as a Pair</h3>
+<ol>
+  <li>Select one of the objects in an Application view.</li>
+  <li>On the Object menu, click <strong>Undeploy</strong>. The Undeploy dialog box appears.</li>
+  <li>Select <strong>Include Redundant Partner</strong> in the Undeploy dialog box and click OK.</li>
+</ol>
+
+<div class="tip">
+  <strong>Note:</strong> Undeploying any objects, including redundant AppEngine pairs, does <em>not</em> uninstall code modules for that object from the hosting computer. Code modules are uninstalled only when the WinPlatform is undeployed.
+</div>
+
+<h3>29.5.4 File Deployment Order</h3>
+<p>During initial deployment of a redundant pair of AppEngines, files are deployed in the following order:</p>
+<ol>
+  <li>Code modules and other files for the Primary AppEngine are deployed</li>
+  <li>Those files for its assigned ApplicationObjects</li>
+  <li>All of these files are deployed to the Standby AppEngine by the Active engine's WinPlatform using the RMC</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2>29.6 AppEngine Redundancy States</h2>
+<p class="page-ref">Reference: pages 10-9 to 10-10</p>
+
+<p>Redundant pairs of AppEngines can have one of the following states at runtime:</p>
+
+<table>
+  <tr><th>State</th><th>Description</th></tr>
+  <tr><td><strong>Active</strong></td><td>The engine has communication with its partner, schedules and runs deployed objects, sends checkpoint data and subscriber list updates to the Standby.</td></tr>
+  <tr><td><strong>Active — Standby not Available</strong></td><td>The engine cannot achieve communications with its partner. Continues normal execution but cannot send data to the Standby.</td></tr>
+  <tr><td><strong>Determining Failover Status</strong></td><td>Initial state when first started. Attempts communication over RMC, then primary network to determine Active or Standby role.</td></tr>
+  <tr><td><strong>Standby — Missed Heartbeats</strong></td><td>Heartbeat pings are not received from the Active partner, but the maximum missed beats threshold has not been reached.</td></tr>
+  <tr><td><strong>Standby — Not Ready</strong></td><td>Lost communications with partner, or missed checkpoint updates, or new objects deployed that are not yet installed on the Standby.</td></tr>
+  <tr><td><strong>Standby — Ready</strong></td><td>Completed synchronizing code modules and checkpoint data with the Active AppEngine. Monitors for failure via heartbeat pings.</td></tr>
+  <tr><td><strong>Standby — Sync'ing with Active</strong></td><td>Synchronizing code modules with the Active object. After code sync, transitions to Standby-Sync'd Code state.</td></tr>
+  <tr><td><strong>Standby — Syncing Code</strong></td><td>Successfully synchronized all code modules with the Active object.</td></tr>
+  <tr><td><strong>Standby — Sync'ing Data</strong></td><td>All object-related data, including checkpoint and subscriber information, are synchronized. Typically transitions to Standby-Ready.</td></tr>
+  <tr><td><strong>Switching to Active</strong></td><td>Transitional state when a Standby is commanded to become Active.</td></tr>
+  <tr><td><strong>Switching to Standby</strong></td><td>Transitional state when an Active is commanded to become Standby. The engine will be restarted.</td></tr>
+  <tr><td><strong>Failed</strong></td><td>Partner process crashed or was terminated. Can be restarted using System Management Console / Platform Manager.</td></tr>
+  <tr><td><strong>Unknown</strong></td><td>Communication loss occurred or partner is stopped, shutdown, or undeployed.</td></tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h1>Lab 18 — Configuring Application Redundancy</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 10 Lab 18</p>
+<p class="page-ref">Hands-on lab covering Windows network configuration for RMC, $WinPlatform redundancy configuration, $AppEngine redundancy enablement, deployment of redundant engines, and forced failover observation. (pages 10-11 to 10-29)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>29.7 Lab 18 Overview</h2>
+<p class="page-ref">Reference: Lab 18 Introduction (page 10-11)</p>
+
+<p>In this lab, you will configure a second network connection in Windows for use as the Redundancy Message Channel (RMC). Then, you will configure the Galaxy platforms and engines for redundancy. Finally, you will create the hosting relationship, deploy the changes, and force a failover to confirm the functionality.</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Configure a secondary network connection in Windows as the Redundancy Message Channel</li>
+    <li>Configure <code>$WinPlatform</code> and <code>$AppEngine</code> objects for redundancy</li>
+    <li>Create a deployment model for redundant engines</li>
+    <li>Force a failover on a redundant system</li>
+  </ul>
+</div>
+
+<p><strong>Prerequisites:</strong> You should have completed previous labs with <code>ProdPlatform</code> and <code>GRPlatform</code> configured, <code>AppEngine1</code> deployed with hosted objects, and access to two computers (or a two-node training environment). If you are on a single-node network configuration, you will skip this lab.</p>
+
+<!-- ============================================================ -->
+<h2>29.8 Configure Windows for Redundancy — ProdPlatform</h2>
+<p class="page-ref">Reference: Lab 18 Steps 1–20 (pages 10-12 to 10-17)</p>
+
+<p>In the following steps, you will configure a second network connection in Windows as the Redundancy Message Channel (RMC). You will do this on two computers: first, where ProdPlatform is deployed; second, where GRPlatform is deployed.</p>
+
+<h3>Steps 1–3: Open Network Settings on ProdPlatform</h3>
+
+<p><strong>Step 1.</strong> Connect to the machine where the ProdPlatform is deployed.</p>
+<p><strong>Step 2.</strong> Open the Network and Internet settings (Start | Settings | Network &amp; Internet).</p>
+<p><strong>Step 3.</strong> Click <strong>Change adapter options</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0438_0.png" alt="Windows Settings Network and Internet Status page showing Change adapter options">
+  <div class="caption">Windows Settings — Network &amp; Internet Status page. The connection diagram shows <code>Ethernet0 cloud.training</code> connected to the Internet. Click <strong>Change adapter options</strong> under "Change your network settings" to open the Network Connections window (page 10-12).</div>
+</div>
+
+<h3>Steps 4–5: Rename Ethernet0 to "Plant"</h3>
+
+<p><strong>Step 4.</strong> The Network Connections window appears. Right-click <strong>Ethernet0</strong> and select <strong>Rename</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0439_0.png" alt="Network Connections window with right-click context menu showing Rename option on Ethernet0">
+  <div class="caption">Network Connections window on the ProdPlatform computer. Right-click on <strong>Ethernet0</strong> (the VMware vmxnet3 adapter on <code>cloud.training</code>) and select <strong>Rename</strong> from the context menu (page 10-13).</div>
+</div>
+
+<p><strong>Step 5.</strong> Rename the connection to <strong>Plant</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0439_1.png" alt="Network Connections showing Plant and Ethernet1 adapters after renaming Ethernet0">
+  <div class="caption">After renaming, <strong>Ethernet0</strong> is now displayed as <strong>Plant</strong> (vmxnet3, cloud.training). The second adapter <strong>Ethernet1</strong> is still at its default name with an "Unidentified network" status (page 10-13).</div>
+</div>
+
+<h3>Step 6: Rename Ethernet1 to "RMC"</h3>
+
+<p><strong>Step 6.</strong> Right-click <strong>Ethernet1</strong>, which has an Unidentified network, and select <strong>Rename</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0439_2.png" alt="Network Connections with right-click Rename on Ethernet1">
+  <div class="caption">Right-click on <strong>Ethernet1</strong> (Intel 82574L Gigabit Network Connection — the physical NIC) and select <strong>Rename</strong>. This adapter will become the dedicated Redundancy Message Channel (page 10-13).</div>
+</div>
+
+<div class="tip">
+  <strong>Note:</strong> The network connection may have a different name, such as Local Area Connection, depending upon your network configuration.
+</div>
+
+<h3>Steps 7–8: Rename to "RMC" and Open Properties</h3>
+
+<p><strong>Step 7.</strong> Rename the connection to <strong>RMC</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0440_0.png" alt="Network Connections showing Plant and RMC adapters after renaming Ethernet1">
+  <div class="caption">After renaming, the two adapters on the ProdPlatform computer are now clearly labeled: <strong>Plant</strong> (vmxnet3 VMware adapter) and <strong>RMC</strong> (Intel Gigabit physical NIC, Unidentified network). The RMC adapter is selected (page 10-14).</div>
+</div>
+
+<p><strong>Step 8.</strong> In the Network Connections window, right-click <strong>RMC</strong> and select <strong>Properties</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0440_1.png" alt="Right-click Properties on RMC adapter">
+  <div class="caption">Right-click on the <strong>RMC</strong> adapter and select <strong>Properties</strong> from the context menu. This opens the RMC Properties dialog where you will configure the TCP/IPv4 settings for the redundancy channel (page 10-14).</div>
+</div>
+
+<h3>Steps 9–10: Select TCP/IPv4</h3>
+
+<p><strong>Step 9.</strong> In the <em>This connection uses the following items</em> list, select <strong>Internet Protocol Version 4 (TCP/IPv4)</strong>.</p>
+<p><strong>Step 10.</strong> Click the <strong>Properties</strong> button.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0440_2.png" alt="RMC Properties dialog with TCP/IPv4 selected">
+  <div class="caption">RMC Properties dialog — Networking tab. <strong>Internet Protocol Version 4 (TCP/IPv4)</strong> is highlighted. Click <strong>Properties</strong> to configure the static IP address for this redundancy channel (page 10-14).</div>
+</div>
+
+<h3>Steps 11–14: Configure IP Address 192.168.10.1</h3>
+
+<p><strong>Step 11.</strong> Select the <strong>Use the following IP address</strong> option.</p>
+<p><strong>Step 12.</strong> In the IP address field, enter <code>192.168.10.1</code>.</p>
+<p><strong>Step 13.</strong> Click in the Subnet mask field to automatically assign the subnet mask.</p>
+<p><strong>Step 14.</strong> In the bottom-right of the dialog box, click the <strong>Advanced</strong> button.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0441_0.png" alt="TCP/IPv4 Properties with IP address 192.168.10.1 configured">
+  <div class="caption">Internet Protocol Version 4 (TCP/IPv4) Properties for the RMC connection on ProdPlatform. Static IP is set to <strong>192.168.10.1</strong> with subnet mask <strong>255.255.255.0</strong>. Click <strong>Advanced</strong> to access DNS registration settings (page 10-15).</div>
+</div>
+
+<div class="tip">
+  <strong>Note:</strong> In some training environments, your instructor may provide you with an alternate IP address.
+</div>
+
+<h3>Steps 15–20: Disable DNS Registration and Close</h3>
+
+<p><strong>Step 15.</strong> On the DNS tab, <strong>uncheck</strong> the <em>Register this connection's addresses in DNS</em> check box.</p>
+<p><strong>Step 16.</strong> In the Advanced TCP/IP Settings dialog box, click OK.</p>
+<p><strong>Step 17.</strong> In the TCP/IPv4 Properties dialog box, click OK.</p>
+<p><strong>Step 18.</strong> In the RMC Properties dialog box, click Close.</p>
+<p><strong>Step 19.</strong> Close the Network Connections window.</p>
+<p><strong>Step 20.</strong> Close the Settings window.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0442_0.png" alt="Advanced TCP/IP Settings DNS tab with Register connection addresses unchecked">
+  <div class="caption">Advanced TCP/IP Settings — DNS tab. <strong>Uncheck</strong> the "Register this connection's addresses in DNS" checkbox. The RMC is a private point-to-point link and should not be registered in DNS. Click OK to confirm (page 10-16).</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>29.9 Configure Windows for Redundancy — GRPlatform</h2>
+<p class="page-ref">Reference: Lab 18 Steps 21–39 (pages 10-17 to 10-21)</p>
+
+<p>In the following steps, you will repeat the same configuration for the GRPlatform that you just completed on the computer hosting the ProdPlatform.</p>
+
+<h3>Steps 21–23: Open Network Settings on GRPlatform</h3>
+
+<p><strong>Step 21.</strong> Connect to the machine where the GRPlatform is deployed.</p>
+<p><strong>Step 22.</strong> Open Network and Internet settings (Start | Settings | Network &amp; Internet).</p>
+<p><strong>Step 23.</strong> Click <strong>Change adapter options</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0443_0.png" alt="Windows Settings Network Status page for GRPlatform">
+  <div class="caption">Windows Settings — Network &amp; Internet Status page on the GRPlatform computer. Click <strong>Change adapter options</strong> to configure the network adapters for the redundancy channel (page 10-17).</div>
+</div>
+
+<h3>Steps 24–26: Rename Adapters on GRPlatform</h3>
+
+<p><strong>Step 24.</strong> When the Network Connections window appears, right-click <strong>Ethernet0</strong> and select <strong>Rename</strong>.</p>
+<p><strong>Step 25.</strong> Rename the connection to <strong>Plant</strong>.</p>
+<p><strong>Step 26.</strong> Rename the Ethernet1 connection to <strong>RMC</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0444_0.png" alt="Network Connections on GRPlatform with right-click Rename on Ethernet0">
+  <div class="caption">Network Connections on the GRPlatform computer. Right-click on <strong>Ethernet0</strong> and select <strong>Rename</strong>. Rename it to "Plant" (page 10-18).</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0444_1.png" alt="Network Connections showing Plant and Ethernet1 adapters on GRPlatform">
+  <div class="caption">After renaming Ethernet0 to <strong>Plant</strong>, the second adapter <strong>Ethernet1</strong> (Intel Gigabit, Unidentified network) is visible. Rename it to "RMC" (page 10-18).</div>
+</div>
+
+<h3>Steps 27–29: Open RMC Properties on GRPlatform</h3>
+
+<p><strong>Step 27.</strong> In the Network Connections window, right-click <strong>RMC</strong> and select <strong>Properties</strong>.</p>
+<p><strong>Step 28.</strong> In the <em>This connection uses the following items</em> list, select <strong>Internet Protocol Version 4 (TCP/IPv4)</strong>.</p>
+<p><strong>Step 29.</strong> Click the <strong>Properties</strong> button.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0444_2.png" alt="Network Connections on GRPlatform showing Plant and RMC adapters">
+  <div class="caption">GRPlatform Network Connections after renaming both adapters to <strong>Plant</strong> and <strong>RMC</strong>. The RMC adapter (Intel Gigabit) is selected and will be configured for the redundancy IP address (page 10-19).</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0445_0.png" alt="RMC Properties dialog for GRPlatform with TCP/IPv4 selected">
+  <div class="caption">RMC Properties dialog on the GRPlatform computer. Select <strong>Internet Protocol Version 4 (TCP/IPv4)</strong> and click <strong>Properties</strong> to configure the static IP address (page 10-19).</div>
+</div>
+
+<h3>Steps 30–33: Configure IP Address 192.168.10.2</h3>
+
+<p><strong>Step 30.</strong> Select the <strong>Use the following IP address</strong> option.</p>
+<p><strong>Step 31.</strong> In the IP address field, enter <code>192.168.10.2</code>.</p>
+<p><strong>Step 32.</strong> Click in the Subnet mask field to automatically assign the subnet mask.</p>
+<p><strong>Step 33.</strong> In the bottom-right of the dialog box, click the <strong>Advanced</strong> button.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0445_1.png" alt="TCP/IPv4 Properties with IP address 192.168.10.2 configured for GRPlatform">
+  <div class="caption">TCP/IPv4 Properties for the RMC connection on GRPlatform. Static IP is set to <strong>192.168.10.2</strong> with subnet mask <strong>255.255.255.0</strong>. This pairs with the ProdPlatform's 192.168.10.1 address on the same subnet for point-to-point RMC communication (page 10-20).</div>
+</div>
+
+<h3>Steps 34–39: Disable DNS Registration and Close</h3>
+
+<p><strong>Step 34.</strong> On the DNS tab, <strong>uncheck</strong> the <em>Register this connection's addresses in DNS</em> check box.</p>
+<p><strong>Step 35.</strong> In the Advanced TCP/IP Settings dialog box, click OK.</p>
+<p><strong>Step 36.</strong> In the TCP/IPv4 Properties dialog box, click OK.</p>
+<p><strong>Step 37.</strong> In the RMC Properties dialog box, click Close.</p>
+<p><strong>Step 38.</strong> Close the Network Connections window.</p>
+<p><strong>Step 39.</strong> Close the Settings window.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0446_0.png" alt="Advanced TCP/IP Settings DNS tab for GRPlatform">
+  <div class="caption">Advanced TCP/IP Settings — DNS tab on the GRPlatform computer. Uncheck "Register this connection's addresses in DNS" and click OK. This completes the RMC network configuration on the second computer (page 10-20).</div>
+</div>
+
+<div class="key-concept">
+  <strong>RMC IP Configuration Summary:</strong>
+  <table>
+    <tr><th>Computer</th><th>RMC Adapter</th><th>IP Address</th><th>Subnet Mask</th></tr>
+    <tr><td>ProdPlatform</td><td>RMC (Intel 82574L)</td><td><code>192.168.10.1</code></td><td><code>255.255.255.0</code></td></tr>
+    <tr><td>GRPlatform</td><td>RMC (Intel 82574L)</td><td><code>192.168.10.2</code></td><td><code>255.255.255.0</code></td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<h2>29.10 Configure the Platforms for Redundancy in the IDE</h2>
+<p class="page-ref">Reference: Lab 18 Steps 40–46 (pages 10-22 to 10-23)</p>
+
+<p>You will now return to the IDE and configure the platforms for redundancy.</p>
+
+<div class="tip">
+  <strong>Note:</strong> You must be logged in as a user other than the student account.
+</div>
+
+<p><strong>Step 40.</strong> Verify you are on the primary development computer node.</p>
+<p><strong>Step 41.</strong> In the IDE, Deployment view, open the <strong>ProdPlatform</strong> configuration editor.</p>
+<p><strong>Step 42.</strong> On the General tab, Redundancy area, <strong>Local redundancy message IP Address</strong> field, enter <code>192.168.10.1</code>, which is the IP address you configured for the RMC network on ProdPlatform.</p>
+<p><strong>Step 43.</strong> Save and close and check in with an appropriate comment.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0447_0.png" alt="ProdPlatform configuration editor General tab with Redundancy IP address 192.168.10.1">
+  <div class="caption">ProdPlatform configuration editor — General tab. The <strong>Redundancy</strong> section shows the <strong>Local redundancy message IP Address</strong> set to <code>192.168.10.1</code>. The redundancy ports are configured as: message port <code>30001</code>, primary port <code>30000</code>, store forward redundancy port <code>32568</code>. (page 10-22)</div>
+</div>
+
+<p><strong>Step 44.</strong> In the IDE, Deployment view, open the <strong>GRPlatform</strong> configuration editor.</p>
+<p><strong>Step 45.</strong> On the General tab, Redundancy area, <strong>Local redundancy message IP Address</strong> field, enter <code>192.168.10.2</code>, which is the IP address you configured for the RMC network on GRPlatform.</p>
+<p><strong>Step 46.</strong> Save and close and check in with an appropriate comment.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0448_0.png" alt="GRPlatform configuration editor General tab with Redundancy IP address 192.168.10.2">
+  <div class="caption">GRPlatform configuration editor — General tab. The <strong>Redundancy</strong> section shows the <strong>Local redundancy message IP Address</strong> set to <code>192.168.10.2</code>. The same port configuration applies: message port <code>30001</code>, primary port <code>30000</code>, store forward redundancy port <code>32568</code>. (page 10-23)</div>
+</div>
+
+<p>The Deployment view now displays that both platforms have pending changes. You will redeploy the platforms later in this lab.</p>
+
+<!-- ============================================================ -->
+<h2>29.11 Configure AppEngine1 for Redundancy</h2>
+<p class="page-ref">Reference: Lab 18 Steps 47–55 (pages 10-24 to 10-25)</p>
+
+<p>You will now configure AppEngine1 for redundancy. Since AppEngine1 is currently deployed, you must first undeploy it.</p>
+
+<p><strong>Step 47.</strong> Right-click AppEngine1 and select <strong>Undeploy</strong>.</p>
+<p><strong>Step 48.</strong> In the Undeploy dialog box, leave the default options and click <strong>Undeploy</strong>.</p>
+<p><strong>Step 49.</strong> When the Undeploying Objects progress is complete, click Close.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0449_0.png" alt="Deployment view showing TrainingGalaxy tree before undeploy">
+  <div class="caption">Deployment view showing the TrainingGalaxy hierarchy before undeploying AppEngine1. The tree contains Unassigned Host, GRPlatform, and ProdPlatform with AppEngine1 and its hosted objects (page 10-24).</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0449_1.png" alt="Deployment view showing ProdPlatform expanded with AppEngine1 and hosted objects">
+  <div class="caption">Deployment view with ProdPlatform expanded, showing AppEngine1 and its child objects: ControlSystem, Line1, and other hosted objects. This is the state before undeploying (page 10-24).</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0450_0.png" alt="Undeploy dialog showing 31 objects to be undeployed">
+  <div class="caption">Undeploy dialog for 31 objects. The default options are: <strong>Cascade undeploy</strong> checked (ensures all dependent objects are also undeployed), <strong>Include redundant partner</strong> unchecked, and <strong>Force off scan</strong> checked. Click <strong>Undeploy</strong> to proceed (page 10-24).</div>
+</div>
+
+<p><strong>Step 50.</strong> Open the AppEngine1 configuration editor.</p>
+<p><strong>Step 51.</strong> On the <strong>Redundancy</strong> tab, check the <strong>Enable redundancy</strong> check box.</p>
+<p><strong>Step 52.</strong> Leave the default values and click Save and Close, and then check in the engine with an appropriate comment.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0450_1.png" alt="AppEngine1 Redundancy tab with Enable redundancy checked">
+  <div class="caption">AppEngine1 configuration editor — <strong>Redundancy</strong> tab. The <strong>Enable redundancy</strong> checkbox is checked. Default redundancy parameters are auto-populated: Forced failover timeout = 90000 ms, Standby/Active heartbeat periods = 1000 ms each, Maximum consecutive heartbeats missed = 5, Maximum time to discover partner = 15000 ms, and <strong>Enable warm redundancy</strong> is checked (page 10-24).</div>
+</div>
+
+<p><strong>Step 53.</strong> Expand the <strong>Unassigned Host</strong> folder to reveal the new backup application engine instance. This was automatically created when redundancy was enabled in AppEngine1.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0451_0.png" alt="Deployment view showing Unassigned Host with AppEngine1 Backup">
+  <div class="caption">Deployment view after enabling redundancy. The <strong>Unassigned Host</strong> folder is expanded (circled red), revealing the automatically created <strong>AppEngine1 (Backup)</strong> instance. This backup engine was generated by the Plant infrastructure when redundancy was enabled on AppEngine1 (page 10-25).</div>
+</div>
+
+<p>You will now have GRPlatform host the new AppEngine1 (Backup) object and redeploy the platforms.</p>
+
+<p><strong>Step 54.</strong> Assign <strong>AppEngine1 (Backup)</strong> to <strong>GRPlatform</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0451_1.png" alt="Deployment view showing AppEngine1 Backup moved to GRPlatform">
+  <div class="caption">After dragging <strong>AppEngine1 (Backup)</strong> from Unassigned Host to <strong>GRPlatform</strong>. The backup engine is now assigned to the GRPlatform, establishing the redundant hosting relationship (page 10-25).</div>
+</div>
+
+<p><strong>Step 55.</strong> In the Deployment view, redeploy both platforms.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0451_2.png" alt="Deployment view showing AppEngine1 Backup under GRPlatform">
+  <div class="caption">Final deployment hierarchy showing <strong>AppEngine1 (Backup)</strong> nested under <strong>GRPlatform</strong> and <strong>AppEngine1</strong> under <strong>ProdPlatform</strong> with its ControlSystem child object. The Unassigned Host folder is now collapsed (page 10-25).</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>29.12 Deploy Redundant Engines</h2>
+<p class="page-ref">Reference: Lab 18 Steps 56–59 (pages 10-26 to 10-27)</p>
+
+<p>You will now deploy the application engines using the <strong>Include redundant partner</strong> option.</p>
+
+<p><strong>Step 56.</strong> In the Deployment view, right-click <strong>AppEngine1</strong> and select <strong>Deploy</strong>.</p>
+<p><strong>Step 57.</strong> In the Deploy dialog box, check the <strong>Include redundant partner</strong> check box.</p>
+<p><strong>Step 58.</strong> Click <strong>Deploy</strong>.</p>
+<p><strong>Step 59.</strong> When the Deploying Objects progress is complete, click Close.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0452_0.png" alt="Deploy dialog with Include redundant partner checkbox checked">
+  <div class="caption">Deploy dialog for 31 objects. The critical setting is the <strong>Include redundant partner</strong> checkbox (circled in red) — this ensures both the Primary and Backup AppEngines are deployed together. Other settings: Cascade deploy checked, Force off scan checked, Preserve runtime changes checked, Deploy new objects checked, Initial scan state On scan. Click <strong>Deploy</strong> to proceed (page 10-26).</div>
+</div>
+
+<p>The Deployment view now displays that all objects have been deployed.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0453_0.png" alt="Deployment view showing all objects fully deployed with redundant engines">
+  <div class="caption">Deployment view after successful deployment. <strong>AppEngine1</strong> is on ProdPlatform with all hosted objects (ControlSystem, Line1, Line2, Packaging, Plant, ProdPLC, Production, Receiving, Shipping, Simulator). <strong>AppEngine1 (Backup)</strong> is on GRPlatform with a green standby icon (page 10-27).</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>29.13 View Redundancy Functionality in Runtime</h2>
+<p class="page-ref">Reference: Lab 18 Steps 60–65 (pages 10-27 to 10-28)</p>
+
+<p>You will now use Object Viewer and observe selected AppEngine1 attributes in the runtime environment. You will then force a failover and observe the changes.</p>
+
+<p><strong>Step 60.</strong> Return to Object Viewer.</p>
+<p><strong>Step 61.</strong> Close Object Viewer.</p>
+<p><strong>Step 62.</strong> In the IDE, Deployment view, view AppEngine1 in Object Viewer.</p>
+<p><strong>Step 63.</strong> Load the watch list you saved earlier.</p>
+
+<p><strong>Step 64.</strong> Click the <strong>AppEngine</strong> tab, and then add the following attributes to the watch window:</p>
+<ul>
+  <li>Host</li>
+  <li>Redundancy.FailoverOccurred</li>
+  <li>Redundancy.ForceFailoverCmd</li>
+  <li>Redundancy.Identity</li>
+  <li>Redundancy.PartnerPlatform</li>
+  <li>Redundancy.PartnerStatus</li>
+  <li>Redundancy.Status</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0454_0.png" alt="Watch window showing AppEngine1 redundancy attributes before failover">
+  <div class="caption">Watch window showing AppEngine1 redundancy attributes <strong>before</strong> the forced failover. Key values: <code>Host = ProdPlatform</code>, <code>Identity = Primary</code>, <code>PartnerPlatform = GRPlatform</code>, <code>PartnerStatus = Standby - Ready</code>, <code>Status = Active</code>. The ProdPlatform is currently the Active engine and GRPlatform is in Standby-Ready mode (page 10-28).</div>
+</div>
+
+<p>The watch window displays that ProdPlatform is currently hosting AppEngine1 and the redundancy status is Active. Additionally, the GRPlatform is the partner platform and is currently in a Standby - Ready mode.</p>
+
+<p><strong>Step 65.</strong> Save the watch list.</p>
+
+<!-- ============================================================ -->
+<h2>29.14 Force a Failover</h2>
+<p class="page-ref">Reference: Lab 18 Steps 66–68 (pages 10-28 to 10-29)</p>
+
+<p>You will now force a failover to trigger redundancy and observe the changes.</p>
+
+<p><strong>Step 66.</strong> In the watch window, double-click <code>AppEngine1.Redundancy.ForceFailoverCmd</code>.</p>
+<p><strong>Step 67.</strong> Click the <strong>True</strong> option, and then click <strong>OK</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0454_1.png" alt="Modify Boolean Value dialog setting ForceFailoverCmd to True">
+  <div class="caption">Modify Boolean Value dialog for <code>AppEngine1.Redundancy.ForceFailoverCmd</code>. Select <strong>True</strong> and click <strong>OK</strong> to force a failover. This command causes the Standby engine (GRPlatform) to become the Active engine, while the current Active engine (ProdPlatform) transitions to Standby (page 10-28).</div>
+</div>
+
+<p><strong>Step 68.</strong> After the failover, observe the changes in the watch window and the Deployment view:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0455_0.png" alt="Watch window showing redundancy attributes after failover - now on GRPlatform">
+  <div class="caption">Watch window showing AppEngine1 attributes <strong>after</strong> the forced failover. Key changes: <code>Host = GRPlatform</code>, <code>Identity = Backup</code>, <code>PartnerPlatform = ProdPlatform</code>, <code>PartnerStatus = Standby - Ready</code>, <code>Status = Active</code>. The failover has completed — GRPlatform is now the Active host and ProdPlatform has become the Standby partner (page 10-29).</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0455_1.png" alt="Object Viewer tree showing AppEngine1 now hosted on GRPlatform after failover">
+  <div class="caption">Object Viewer tree view after failover. <strong>AppEngine1</strong> is now listed under <code>GRPlatform[S00ENG]</code> with all its hosted objects (ControlSystem, Line1, Line2, Packaging, Plant, ProdPLC, Production, Receiving, Shipping, Simulator). Collapse ProdPlatform and expand GRPlatform to confirm the failover was successful (page 10-29).</div>
+</div>
+
+<div class="key-concept">
+  <strong>Failover Summary:</strong>
+  <table>
+    <tr><th>Attribute</th><th>Before Failover</th><th>After Failover</th></tr>
+    <tr><td>Host</td><td>ProdPlatform</td><td>GRPlatform</td></tr>
+    <tr><td>Identity</td><td>Primary</td><td>Backup</td></tr>
+    <tr><td>Status</td><td>Active</td><td>Active</td></tr>
+    <tr><td>PartnerPlatform</td><td>GRPlatform</td><td>ProdPlatform</td></tr>
+    <tr><td>PartnerStatus</td><td>Standby - Ready</td><td>Standby - Ready</td></tr>
+  </table>
+  <p>The failover demonstrated that redundancy is working correctly: when <code>ForceFailoverCmd</code> was set to True, the Standby engine (GRPlatform) seamlessly took over as the Active engine, and the original Active engine (ProdPlatform) transitioned to Standby mode. All hosted objects migrated to the new Active engine.</p>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>29.15 Lab 18 — Key Takeaways</h2>
+
+<div class="key-concept">
+  <strong>What You Accomplished in Lab 18:</strong>
+  <ol>
+    <li><strong>Configured Windows networking</strong> — Renamed network adapters to "Plant" and "RMC" on both computers, and assigned static IP addresses (192.168.10.1 and 192.168.10.2) on the RMC channel.</li>
+    <li><strong>Configured platforms for redundancy</strong> — Set the Local redundancy message IP Address on both $WinPlatform objects in the IDE to match the RMC IP addresses.</li>
+    <li><strong>Enabled AppEngine redundancy</strong> — Checked "Enable redundancy" on AppEngine1, which automatically created a backup engine instance.</li>
+    <li><strong>Assigned backup to GRPlatform</strong> — Moved the auto-created AppEngine1 (Backup) from Unassigned Host to GRPlatform.</li>
+    <li><strong>Deployed redundant pair</strong> — Used "Include redundant partner" to deploy both Primary and Backup engines simultaneously.</li>
+    <li><strong>Observed redundancy in runtime</strong> — Used Object Viewer to monitor Active/Standby states, Identity, and PartnerPlatform attributes.</li>
+    <li><strong>Forced a failover</strong> — Set ForceFailoverCmd to True and observed the engine migration from ProdPlatform to GRPlatform.</li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2>29.16 Review Quiz</h2>
+
+<div class="quiz">
+  <h3>📝 Knowledge Check</h3>
+
+  <p><strong>1.</strong> What two types of redundancy does Application Server support?</p>
+  <p class="answer">AppEngine redundancy (for computer or software failures) and Data Acquisition redundancy (for PLC communication failures).</p>
+
+  <p><strong>2.</strong> How many network cards must each production computer have for AppEngine redundancy?</p>
+  <p class="answer">A minimum of two: one for the Plant network and one for the dedicated Redundancy Message Channel (RMC).</p>
+
+  <p><strong>3.</strong> What is the relationship between configuration-time (Primary/Backup) and runtime (Active/Standby) objects?</p>
+  <p class="answer">The relationship is not static. Either the Primary or Backup object can be the Active object at any time. When one becomes Active, the other automatically becomes Standby.</p>
+
+  <p><strong>4.</strong> What happens when you enable redundancy on an AppEngine?</p>
+  <p class="answer">The Plant infrastructure automatically creates a Backup AppEngine with the same configuration as the Primary object. The backup appears under the Unassigned Host folder.</p>
+
+  <p><strong>5.</strong> How does the actual Engine Failure Timeout compare to the configured value?</p>
+  <p class="answer">The actual timeout is three times the configured value. A setting of 2000 ms results in a 6-second timeout before failover occurs.</p>
+
+  <p><strong>6.</strong> What does "Warm Redundancy" do, and when was it introduced?</p>
+  <p class="answer">Warm Redundancy (introduced in System Platform 2023) starts up and initializes the Standby engine concurrently with the Active engine, resulting in much faster failover times. It is enabled by default.</p>
+
+  <p><strong>7.</strong> What attribute do you use to force a manual failover?</p>
+  <p class="answer"><code>AppEngine1.Redundancy.ForceFailoverCmd</code> — set it to True to trigger a forced failover.</p>
+
+  <p><strong>8.</strong> When deploying redundant engines, what checkbox must you select in the Deploy dialog?</p>
+  <p class="answer"><strong>Include redundant partner</strong> — this ensures both the Primary and Backup AppEngines are deployed together.</p>
+</div>
+
+<hr>
+
+<nav>
+  <a href="L28-Object-Security.html">← Lesson 28: Object Security</a> &nbsp;|&nbsp;
+  <a href="L30-DI-Redundancy.html">Next: Lesson 30 — Device Integration Redundancy →</a>
+</nav>
+
+</body>
+</html>

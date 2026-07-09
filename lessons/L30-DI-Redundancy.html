@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 30: DI Redundancy + Lab 19 — Configuring the Redundant DI Object</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L29-Application-Redundancy.html">← Lesson 29: Application Redundancy</a> &nbsp;|&nbsp;
+  <a href="L31-Scripting-Introduction.html">Next: Lesson 31 — Scripting Introduction →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 30: Device Integration Redundancy + Lab 19 — Configuring the Redundant DI Object</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 10, Section 2 &amp; Lab 19</p>
+<p class="page-ref">Covers DI redundancy concepts, the RedundantDIObject, and a hands-on lab to configure redundant DI objects, create deployment models, and force failovers. (pages 10-33 to 10-54)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>30.1 Overview — DI Redundancy Concepts</h2>
+<p class="page-ref">Reference: Module 10, Section 2 — Device Integration Redundancy (page 10-33)</p>
+
+<p>Unlike redundant AppEngines (covered in Lesson 29), individual <strong>DIObject</strong> data sources do not have redundancy-related states. For all practical purposes they function as standalone objects. The <strong>RedundantDIObject</strong> adds redundancy at the data-acquisition level by monitoring two DIObject sources and automatically switching between them.</p>
+
+<div class="key-concept">
+<strong>What the RedundantDIObject Does:</strong>
+<ul>
+  <li>Monitors and controls two DIObject data sources at the object level</li>
+  <li>Only <strong>one</strong> DIObject provides field device data through the RedundantDIObject at a time</li>
+  <li>Automatically switches to the standby source if the active source fails</li>
+  <li>Both source DIObjects must have <strong>commonly-configured OI Server groups</strong> with the <strong>same item address space</strong></li>
+</ul>
+</div>
+
+<h3>Bad-State Detection</h3>
+<p>The RedundantDIObject determines that a data source is in a bad state by monitoring three attributes:</p>
+
+<table>
+  <tr><th>Attribute</th><th>Bad State Value</th><th>Meaning</th></tr>
+  <tr><td><code>ConnectionStatus</code></td><td><code>Disconnected</code></td><td>Lost connection to the OI Server</td></tr>
+  <tr><td><code>ProtocolFailureReasonCode</code></td><td>Non-zero</td><td>Communication failure with field device</td></tr>
+  <tr><td><code>ScanState</code></td><td><code>Offscan</code></td><td>Scan disabled on the source object</td></tr>
+</table>
+
+<p>When any of these conditions is detected, a switchover attempt is made to the other data source.</p>
+
+<h3>Relationship and Supported Operations</h3>
+
+<div class="key-concept">
+<strong>One-to-Two Relationship:</strong> Each RedundantDIObject instance is connected to exactly <strong>two</strong> source DeviceIntegration objects (Primary and Backup).
+</div>
+
+<p>The RedundantDIObject supports these I/O operations:</p>
+<ul>
+  <li><strong>Subscriptions</strong> — implemented via scan groups</li>
+  <li><strong>Read transactions</strong> — implemented via block reads (when available)</li>
+  <li><strong>Write transactions</strong> — implemented via block writes (when available)</li>
+</ul>
+
+<div class="tip">
+<strong>Note:</strong> Most ApplicationObjects write only the last data received in a scan cycle. DIObjects (including the RedundantDIObject) <strong>queue all data</strong> received and write them in the order received.
+</div>
+
+<!-- ============================================================ -->
+<h2>30.2 Architecture — How DI Redundancy Works</h2>
+<p class="page-ref">Reference: Module 10, page 10-34</p>
+
+<p>The architecture diagram below shows the complete data flow from application objects through the RedundantDIObject down to physical field controllers:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0460_0.jpeg" alt="DI Redundancy architecture diagram showing Application Objects, RDIO, DIO_1/DIO_2, OI Servers, CIP, DH+, and Control Networks">
+  <div class="caption">DI Redundancy architecture: <strong>Application Objects</strong> connect to the <strong>RDIO</strong> (RedundantDIObject), which manages two data sources — <strong>DIO_1</strong> (Primary) and <strong>DIO_2</strong> (Backup). Each DIObject connects through its own <strong>OI Server</strong> via <strong>CIP</strong> (Common Industrial Protocol) to the field-level <strong>Control Networks</strong> (DH+ and CIP) and ultimately to physical PLCs. The RDIO monitors both paths and switches between them on failure. (page 10-34)</div>
+</div>
+
+<h3>Configuration Components</h3>
+
+<table>
+  <tr><th>Component</th><th>Role</th><th>Configuration</th></tr>
+  <tr><td><strong>Primary DIObject</strong> (DIO_1)</td><td>Initially active data source</td><td>Configured with OI Server connection, scan groups, item address space</td></tr>
+  <tr><td><strong>Backup DIObject</strong> (DIO_2)</td><td>Initially standby data source</td><td>Same OI Server groups and item address space as DIO_1</td></tr>
+  <tr><td><strong>RedundantDIObject</strong> (RDIO)</td><td>Redundancy manager</td><td>References both DIO_1 and DIO_2; shared scan groups</td></tr>
+</table>
+
+<div class="key-concept">
+<strong>Configuration Rules:</strong>
+<ul>
+  <li>All standard IDE operations apply to all three objects</li>
+  <li>Deploy the RDIO <strong>only after</strong> configuring at least one scan group</li>
+  <li>Configure <strong>shared</strong> scan, block read, and block write groups between Primary and Backup</li>
+  <li>The two source DIObjects do not have to be the same type, but must support the same OI Server groups</li>
+</ul>
+</div>
+
+<h3>Runtime Behavior — Active and Standby</h3>
+<p>During configuration, you set one DIObject as <strong>Primary DI Source</strong> and the other as <strong>Backup DI Source</strong>. These are starting points. At runtime:</p>
+<ul>
+  <li>The configured Primary initially becomes the <strong>Active</strong> object (if it can connect to the field device)</li>
+  <li>The configured Backup initially becomes the <strong>Standby</strong> object</li>
+  <li>If the Active connection fails, the Standby becomes Active and the other becomes Standby</li>
+  <li>This switching can repeat multiple times depending on configured switch attributes</li>
+</ul>
+
+<div class="tip">
+<strong>PLC Connectivity Tip:</strong> For the RedundantDIObject, configure the <code>PingItem</code> attribute for each scan group to monitor PLC connection status at runtime.
+</div>
+
+<!-- ============================================================ -->
+<h2>30.3 Lab 19 — Configuring the Redundant DI Object</h2>
+<p class="page-ref">Reference: Lab 19 (pages 10-37 to 10-54)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Configure an instance of a Redundant DI Object</li>
+    <li>Create a deployment model for a Redundant DI Object</li>
+    <li>Force a failover on a redundant DI system</li>
+  </ul>
+  <strong>Prerequisites:</strong> You should have completed Lab 18 (Application Redundancy) with the production platform deployed and running.
+</div>
+
+<!-- ============================================================ -->
+<h2>30.4 Lab Step 1 — Undeploy and Rename Existing PLC</h2>
+<p class="page-ref">Reference: Lab 19 steps 1–3 (page 10-38)</p>
+
+<p>First, you will undeploy the existing production PLC and rename it to prepare for the redundant configuration.</p>
+
+<p><strong>Step 1.</strong> In the IDE, Model view, undeploy <code>ProdPLC</code>.</p>
+<p><strong>Step 2.</strong> Undeploy <code>Line1</code>, <code>Line2</code>, and all of their contained objects.</p>
+<p><strong>Step 3.</strong> Rename <code>ProdPLC</code> to <code>R_ProdPLC1</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0464_0.png" alt="Model view showing TrainingGalaxy hierarchy with Plant/ControlSystem area and components">
+  <div class="caption">Model view after renaming: <strong>TrainingGalaxy → Plant → ControlSystem</strong> shows the component hierarchy including AppEngine1, GRPlatform, ProdPlatform, the renamed <strong>R_ProdPLC1</strong>, and Simulator. The Packaging area is also visible. (page 10-38)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>30.5 Lab Step 2 — Create the Second DIObject (R_ProdPLC2)</h2>
+<p class="page-ref">Reference: Lab 19 steps 4–10 (pages 10-38 to 10-39)</p>
+
+<p>Now you will create a second DIObject instance to serve as the backup data source.</p>
+
+<p><strong>Step 4.</strong> In the Templates tab, <code>Training\Global</code> toolset, create a new instance of <code>$gDDESuiteLinkClient</code>.</p>
+<p><strong>Step 5.</strong> Rename the instance <code>R_ProdPLC2</code>.</p>
+<p><strong>Step 6.</strong> Open the R_ProdPLC2 configuration editor.</p>
+<p><strong>Step 7.</strong> On the General tab, configure the instance as follows:</p>
+
+<table>
+  <tr><th>Setting</th><th>Value</th></tr>
+  <tr><td><strong>Server node</strong></td><td><code>&lt;Instructor will provide node (e.g., S00PROD)&gt;</code></td></tr>
+  <tr><td><strong>Server name</strong></td><td><code>MBTCP</code></td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0465_0.png" alt="R_ProdPLC2 General tab showing Server node S00PROD and Server name MBTCP">
+  <div class="caption"><strong>R_ProdPLC2</strong> configuration editor — General tab. The Server node is set to <strong>S00PROD</strong> (Modbus simulator node for this course) and Server name is <strong>MBTCP</strong> (Modbus TCP). Communication protocol is SuiteLink. (page 10-39)</div>
+</div>
+
+<p class="tip"><strong>Note:</strong> The Server node shown here is for the Modbus simulator used in this course. In your plant, this will be the actual data source node.</p>
+
+<p><strong>Step 8.</strong> On the Topic tab, in the Available topics section, click the <strong>ScanGroupList</strong> button to add a topic.</p>
+<p><strong>Step 9.</strong> In the Topic field, enter <code>Topic1</code>, and then press Enter.</p>
+<p><strong>Step 10.</strong> Save and close and check in the object with an appropriate comment.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0465_1.png" alt="R_ProdPLC2 Topic tab showing Topic1 with ActiveOnDemand scan mode">
+  <div class="caption"><strong>R_ProdPLC2</strong> Topic tab showing <strong>Topic1</strong> added with Scan Mode set to <strong>ActiveOnDemand</strong>. This matches the scan group configuration of the primary DIObject (R_ProdPLC1). (page 10-39)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>30.6 Lab Step 3 — Assign R_ProdPLC2 and Create the RedundantDIObject</h2>
+<p class="page-ref">Reference: Lab 19 steps 11–18 (pages 10-40 to 10-41)</p>
+
+<p><strong>Step 11.</strong> In the Model view, assign the <code>R_ProdPLC2</code> instance to the <code>ControlSystem</code> area.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0464_1.png" alt="Model view showing R_ProdPLC2 in Unassigned Area before moving to ControlSystem">
+  <div class="caption">Model view with <strong>R_ProdPLC2</strong> highlighted in the <strong>Unassigned Area</strong>, ready to be moved to the ControlSystem area. The ControlSystem area already contains AppEngine1, GRPlatform, ProdPlatform, R_ProdPLC1, and Simulator. (page 10-38)</div>
+</div>
+
+<p><strong>Step 12.</strong> In the Deployment view, assign the <code>R_ProdPLC2</code> instance to <code>AppEngine1</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0465_3.png" alt="Model view showing R_ProdPLC2 assigned to ControlSystem area with R_ProdPLC1">
+  <div class="caption">Model view showing <strong>R_ProdPLC2</strong> selected/highlighted in the Unassigned Area, ready to be moved to the ControlSystem area alongside R_ProdPLC1, AppEngine1, GRPlatform, ProdPlatform, and Simulator. (page 10-40)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0466_0.png" alt="Deployment view showing Mixer200 components and R_ProdPLC2 in deployment tree">
+  <div class="caption">Deployment view after assigning R_ProdPLC2. Shows the expanded <strong>Mixer200</strong> component tree (Agitator, Inlets, Level, Temperature, Outlet, Pumps) along with the plant-level nodes including <strong>R_ProdPLC2</strong>. (page 10-40)</div>
+</div>
+
+<p>Now, you will create the Redundant DI Object.</p>
+
+<p><strong>Step 13.</strong> In the Templates tab, <code>Training\Global</code> toolset, create a new instance of <code>$gRedundantDIObject</code>, and then name the instance <code>ProdPLC</code>.</p>
+<p><strong>Step 14.</strong> Open the <code>ProdPLC</code> configuration editor.</p>
+<p><strong>Step 15.</strong> On the General tab, in the <strong>Primary DI source</strong> drop-down list, select <code>R_ProdPLC1</code>.</p>
+<p><strong>Step 16.</strong> In the <strong>Backup DI source</strong> drop-down list, select <code>R_ProdPLC2</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0466_1.png" alt="ProdPLC RedundantDIObject General tab showing Primary DI source R_ProdPLC1 and Backup DI source R_ProdPLC2">
+  <div class="caption"><strong>ProdPLC</strong> (RedundantDIObject) configuration editor — General tab. The <strong>Primary DI source</strong> is set to <strong>R_ProdPLC1</strong> and the <strong>Backup DI source</strong> is set to <strong>R_ProdPLC2</strong>. Tabs available include Scan Group, Block Read, Block Write, Attributes, and Scripts. (page 10-41)</div>
+</div>
+
+<p><strong>Step 17.</strong> On the Scan Group tab, click the <strong>Copy Common Scan Groups</strong> button.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0467_0.png" alt="Copy Common Scan Groups dialog showing Topic1 in Configured in primary, backup, and identically named sections">
+  <div class="caption"><strong>Copy Common Scan Groups</strong> dialog box. Topic1 appears in all three sections — <strong>Configured in primary</strong>, <strong>Configured in backup</strong>, and <strong>Identically named</strong> — confirming the scan groups match between R_ProdPLC1 and R_ProdPLC2. Click OK to proceed. (page 10-41)</div>
+</div>
+
+<p><strong>Step 18.</strong> Click OK.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0467_1.png" alt="ProdPLC Scan Group tab showing Topic1 in Available scan groups after copying common scan groups">
+  <div class="caption">ProdPLC Scan Group tab after copying. <strong>Topic1</strong> now appears in the <strong>Available scan groups</strong> list under the Scan Group column. The <strong>Copy Common Scan Groups</strong> button is visible above the list. (page 10-41)</div>
+</div>
+
+<p><strong>Step 19.</strong> Save and close and check in the object with an appropriate comment.</p>
+<p><strong>Step 20.</strong> In the Model view, assign the <code>ProdPLC</code> instance to the <code>ControlSystem</code> area.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0467_2.png" alt="Model view showing ProdPLC RedundantDIObject selected in ControlSystem area alongside R_ProdPLC1 and R_ProdPLC2">
+  <div class="caption">Model view with <strong>ProdPLC</strong> (the RedundantDIObject) selected/highlighted in the <strong>ControlSystem</strong> area. Both <strong>R_ProdPLC1</strong> and <strong>R_ProdPLC2</strong> are visible as sibling objects — the three components of the DI redundancy scheme are now organized together. (page 10-42)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>30.7 Lab Step 4 — Create Separate AppEngines for DI Objects</h2>
+<p class="page-ref">Reference: Lab 19 steps 21–29 (pages 10-42 to 10-45)</p>
+
+<p>To avoid race conditions with data acquisition that can occur with engine redundancy and Device Integration objects, you will create <strong>unique Application engines on each platform</strong> to host the redundant DI objects.</p>
+
+<p><strong>Step 21.</strong> In the Deployment view, assign the <code>ProdPLC</code> instance to <code>AppEngine1</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0468_0.png" alt="Deployment view showing TrainingGalaxy with Unassigned Host, GRPlatform, and ProdPlatform hierarchy">
+  <div class="caption">Deployment view showing the current deployment hierarchy: <strong>TrainingGalaxy</strong> with Unassigned Host (containing <strong>DIO_Engine1</strong> with a warning icon — not yet assigned), <strong>GRPlatform</strong> with AppEngine1 (Backup), and <strong>ProdPlatform</strong> with AppEngine1. (page 10-42)</div>
+</div>
+
+<p><strong>Step 22.</strong> In the Templates tab, <code>Training\Global</code> toolset, create an instance of <code>$gAppEngine</code>, and then rename it <code>DIO_Engine1</code>.</p>
+
+<p><strong>Step 23.</strong> In the Deployment view, assign <code>DIO_Engine1</code> to <code>ProdPlatform</code>.</p>
+<p><strong>Step 24.</strong> Assign <code>R_ProdPLC1</code> to <code>DIO_Engine1</code>.</p>
+<p><strong>Step 25.</strong> In the <code>Training\Global</code> toolset, create another instance of <code>$gAppEngine</code>, and then rename it <code>DIO_Engine2</code>.</p>
+<p><strong>Step 26.</strong> In the Deployment view, assign <code>DIO_Engine2</code> to <code>GRPlatform</code>.</p>
+<p><strong>Step 27.</strong> Assign <code>R_ProdPLC2</code> to <code>DIO_Engine2</code>.</p>
+<p><strong>Step 28.</strong> In the Model view, expand the Unassigned Area folder, and then assign <code>DIO_Engine1</code> and <code>DIO_Engine2</code> to the <code>ControlSystem</code> area.</p>
+<p><strong>Step 29.</strong> Deploy both <code>DIO_Engine1</code> and <code>DIO_Engine2</code>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0468_1.png" alt="Deployment view showing DIO_Engine1 under Unassigned Host and AppEngine1 Backup under GRPlatform">
+  <div class="caption">Deployment view after creating the dedicated engines. <strong>DIO_Engine1</strong> sits in Unassigned Host (ready to be moved to ProdPlatform), while <strong>AppEngine1 (Backup)</strong> runs on GRPlatform with a green checkmark. <strong>DIO_Engine2</strong> will be assigned to GRPlatform to host R_ProdPLC2. (page 10-43)</div>
+</div>
+
+<div class="key-concept">
+<strong>Why Separate Engines?</strong> Each redundant DIObject source runs on its own dedicated AppEngine on a different platform. This prevents race conditions that could occur if both DIObjects shared the same engine. R_ProdPLC1 runs on <strong>DIO_Engine1</strong> (ProdPlatform), while R_ProdPLC2 runs on <strong>DIO_Engine2</strong> (GRPlatform).
+</div>
+
+<!-- ============================================================ -->
+<h2>30.8 Lab Step 5 — Deploy Objects via IO Devices</h2>
+<p class="page-ref">Reference: Lab 19 steps 30–35 (pages 10-46 to 10-49)</p>
+
+<p>Now, you will deploy the objects by moving them from the individual DIObjects to the RedundantDIObject through the IO Devices pane.</p>
+
+<p><strong>Step 30.</strong> On the View menu, click <strong>IO Devices</strong> to open the pane.</p>
+<p><strong>Step 31.</strong> In the IO Devices pane, expand <code>TrainingGalaxy\ProdPLC</code>.</p>
+<p><strong>Step 32.</strong> Expand <code>R_ProdPLC1\Topic1</code>. Notice that the objects are all undeployed.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0469_0.png" alt="Model view showing ProdPLC selected with R_ProdPLC1 and R_ProdPLC2 visible in hierarchy">
+  <div class="caption">Model view showing the complete hierarchy with <strong>ProdPLC</strong> (RedundantDIObject) selected in the ControlSystem area. <strong>R_ProdPLC1</strong> and <strong>R_ProdPLC2</strong> are visible as the two source DIObjects that feed into the redundancy manager. (page 10-46)</div>
+</div>
+
+<p><strong>Step 33.</strong> Select all the objects in <code>R_ProdPLC1\Topic1</code>, and then drag them to <code>ProdPLC\Topic1</code>.</p>
+<p><strong>Step 34.</strong> Select all undeployed objects.</p>
+<p><strong>Step 35.</strong> Deploy the objects.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0469_1.png" alt="Deployment view showing ProdPLC selected with all components deployed under it">
+  <div class="caption">Deployment view after object deployment. <strong>ProdPLC</strong> is selected/highlighted. The deployment tree shows Mixer200 components (Agitator, Inlets, Level, Temperature, Outlet, Pumps) along with the other plant sections — objects have been successfully moved and deployed under the RedundantDIObject. (page 10-49)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>30.9 Lab Step 6 — Runtime Verification and Forced Failover</h2>
+<p class="page-ref">Reference: Lab 19 steps 36–52 (pages 10-50 to 10-54)</p>
+
+<p>Now, you will return to Object Viewer to add Redundant DI Object attributes to a new watch window and observe failover behavior.</p>
+
+<h3>Verify Initial Data</h3>
+<p><strong>Step 36.</strong> In the Deployment view, open <code>ProdPLC</code> in Object Viewer.</p>
+<p><strong>Step 37.</strong> Verify data in the Mixer100 watch window.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0456_0.png" alt="Object Viewer Mixer100 watch window showing all attributes with Good quality and Ok status">
+  <div class="caption">Mixer100 watch window in Object Viewer. All attributes — including <strong>Level_001.PV = 82.36874</strong>, <strong>Temperature_001.PV = 256.7766</strong>, <strong>Agitator_001.CMD = false</strong> — show <strong>C0:Good</strong> quality and <strong>Ok</strong> status. This confirms data is flowing through the RedundantDIObject. (page 10-50)</div>
+</div>
+
+<h3>Create DIO Redundancy Watch Window</h3>
+<p><strong>Step 38.</strong> Add a new watch window named <strong>DIO Redundancy</strong>.</p>
+<p><strong>Step 39.</strong> Select ProdPLC and add the following attributes to the watch window:</p>
+
+<table>
+  <tr><th>Attribute</th><th>Purpose</th></tr>
+  <tr><td><code>ConnectionStatus</code></td><td>Shows connection state of the DI source</td></tr>
+  <tr><td><code>DISourceActive</code></td><td>Which DIObject is currently active</td></tr>
+  <tr><td><code>DISourceBackup</code></td><td>Backup DI source reference</td></tr>
+  <tr><td><code>DISourcePrimary</code></td><td>Primary DI source reference</td></tr>
+  <tr><td><code>DISourceStandby</code></td><td>Which DIObject is currently standby</td></tr>
+  <tr><td><code>ForceFailoverCmd</code></td><td>Command to force a failover</td></tr>
+  <tr><td><code>StatusBackupDISource</code></td><td>Status of backup DI source</td></tr>
+  <tr><td><code>StatusPrimaryDISource</code></td><td>Status of primary DI source</td></tr>
+  <tr><td><code>SwitchCnt</code></td><td>Number of failovers that have occurred</td></tr>
+  <tr><td><code>SwitchReason</code></td><td>Reason for the last switch</td></tr>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0456_1.png" alt="Modify Boolean Value dialog setting ForceFailoverCmd to True">
+  <div class="caption"><strong>Modify Boolean Value</strong> dialog for <code>AppEngine1.Redundancy.ForceFailoverCmd</code>. The <strong>True</strong> option is selected to trigger a forced failover. Click OK to execute. This is the same mechanism used in Lab 18 for AppEngine redundancy — here it triggers the DI-level failover. (page 10-50)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0456_2.png" alt="AppEngine watch window showing Host=ProdPlatform, PartnerPlatform=GRPlatform, Identity=Primary, Status=Active after failover">
+  <div class="caption">AppEngine watch window <strong>after second failover</strong>. Shows <strong>Host = ProdPlatform</strong>, <strong>PartnerPlatform = GRPlatform</strong>, <strong>Identity = Primary</strong>, <strong>Status = Active</strong>. The failover has been reversed — the primary platform is back in control. (page 10-50)</div>
+</div>
+
+<p>The watch window displays that <code>R_ProdPLC1</code> is currently the active DI source and <code>R_ProdPLC2</code> is the standby DI source.</p>
+
+<h3>Force a Failover</h3>
+<p><strong>Step 40.</strong> In the watch window, double-click <code>ProdPLC.ForceFailoverCmd</code>.</p>
+<p><strong>Step 41.</strong> In the Modify Boolean Value dialog box, click the <strong>True</strong> option.</p>
+<p><strong>Step 42.</strong> Click OK.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0457_0.png" alt="Windows Network Connections showing Plant and RMC adapters with RMC right-clicked and Disable highlighted, plus Object Viewer showing Active-Standby not Available">
+  <div class="caption"><strong>Left:</strong> Windows Network Connections showing two adapters — <strong>Plant</strong> (vmnet3 Ethernet Adapter, "cloud.training") and <strong>RMC</strong> (Intel 82574L Gigabit Network Adapter, "Unidentified network") with the right-click context menu showing <strong>Disable</strong> selected. <strong>Right:</strong> Object Viewer after disabling RMC — <code>AppEngine1.Redundancy.Status</code> reads <strong>"Active - Standby not Available"</strong> and <code>PartnerStatus = Unknown</code>, confirming the partner is unreachable. (page 10-31)</div>
+</div>
+
+<p>The watch window now displays <code>R_ProdPLC2</code> as the active DI source and <code>R_ProdPLC1</code> as the standby DI source. The <code>ProdPLC.SwitchCnt</code> increments and <code>ProdPLC.SwitchReason</code> shows <strong>ForceFailover</strong>.</p>
+
+<p><strong>Step 43.</strong> Click the Mixer100 tab to verify that all of the data is still displaying good quality.</p>
+<p><strong>Step 44.</strong> On the DIO Redundancy tab, trigger <code>ProdPLC.ForceFailoverCmd</code> again to switch back to <code>R_ProdPLC1</code> as the active DI source.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0458_0.png" alt="Object Viewer showing AppEngine1 Redundancy Status = Active after re-enabling RMC connection">
+  <div class="caption">Object Viewer after re-enabling the RMC connection. <code>AppEngine1.Redundancy.Status</code> has returned to <strong>"Active"</strong> (highlighted in blue). The standby partner is now available again. Steps 76–79: Enable RMC connection, verify status returns to Active, then clean up windows. This concludes the <strong>end of Lab 18</strong> (Application Redundancy). (page 10-32)</div>
+</div>
+
+<h3>Trigger Failover via Offscan</h3>
+<p><strong>Step 45.</strong> In the console tree, expand <code>DIO_Engine1</code> and select <code>R_ProdPLC1</code>, then add <code>ScanStateCmd</code> to the watch window.</p>
+<p><strong>Step 46.</strong> Double-click <code>R_ProdPLC1.ScanStateCmd</code>.</p>
+<p><strong>Step 47.</strong> In the Modify Boolean Value dialog box, click the <strong>False</strong> option.</p>
+<p><strong>Step 48.</strong> Click OK.</p>
+
+<div class="key-concept">
+<strong>Offscan Failover Result:</strong> The watch window now displays <code>R_ProdPLC2</code> as the active DI source and <code>R_ProdPLC1</code> as the standby. The <code>SwitchCnt</code> is now 3 and the <code>SwitchReason</code> is <strong>Offscan</strong> — confirming the RedundantDIObject detected the scan-off condition and triggered a switchover.
+</div>
+
+<p><strong>Step 49.</strong> Click the Mixer100 tab to verify that all data is still displaying good quality.</p>
+<p><strong>Step 50.</strong> On the DIO Redundancy tab, set the <code>R_ProdPLC1.ScanStateCmd</code> value to True.</p>
+
+<div class="pitfall">
+<strong>Important:</strong> Notice that the failover does <strong>not</strong> automatically switch back when R_ProdPLC1 comes back online. The RedundantDIObject does <strong>not</strong> automatically return to the Primary DI Source — you must trigger <code>ForceFailoverCmd</code> to switch back.
+</div>
+
+<p><strong>Step 51.</strong> Trigger <code>ProdPLC.ForceFailoverCmd</code> again to switch back to <code>R_ProdPLC1</code> as the active DI source.</p>
+<p><strong>Step 52.</strong> Save the watch list and minimize Object Viewer.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0457_1.png" alt="Object Viewer showing AppEngine1 Redundancy Status = Active - Standby not Available with PartnerStatus = Unknown">
+  <div class="caption">Object Viewer watch window showing the Redundancy status after network simulation. <code>AppEngine1.Redundancy.Status</code> = <strong>"Active - Standby not Available"</strong> (highlighted blue) and <code>PartnerStatus</code> = <strong>"Unknown"</strong>. This state occurs when the partner platform is unreachable — the primary continues operating but has no standby backup. (page 10-31)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>30.10 Lab Complete — Summary</h2>
+
+<div class="lab">
+  <strong>Lab 19 Complete!</strong>
+  <p>In this lab, you successfully:</p>
+  <ul>
+    <li>Renamed ProdPLC to R_ProdPLC1 and created a second DIObject (R_ProdPLC2)</li>
+    <li>Created a <strong>RedundantDIObject</strong> (ProdPLC) referencing both R_ProdPLC1 (Primary) and R_ProdPLC2 (Backup)</li>
+    <li>Copied common scan groups to ensure both sources share the same data points</li>
+    <li>Created dedicated AppEngines (DIO_Engine1 on ProdPlatform, DIO_Engine2 on GRPlatform) to host each DIObject separately</li>
+    <li>Deployed objects via the IO Devices pane</li>
+    <li>Verified data flow through the RedundantDIObject in Object Viewer</li>
+    <li>Forced a failover using <code>ForceFailoverCmd</code> — observed active/standby switch with SwitchCnt increment</li>
+    <li>Triggered a failover via <code>ScanStateCmd</code> (Offscan condition) — observed automatic switchover</li>
+    <li>Confirmed the RedundantDIObject does <strong>not</strong> auto-switch back — manual ForceFailoverCmd required</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>30.11 Key Takeaways</h2>
+
+<div class="key-concept">
+<strong>DI Redundancy vs. AppEngine Redundancy:</strong>
+<table>
+  <tr><th>Aspect</th><th>AppEngine Redundancy (L29)</th><th>DI Redundancy (L30)</th></tr>
+  <tr><td>Scope</td><td>Application logic and execution</td><td>Data acquisition from field devices</td></tr>
+  <tr><td>Objects</td><td>AppEngine pair (Primary + Partner)</td><td>2 DIObjects + 1 RedundantDIObject</td></tr>
+  <tr><td>Failure Detection</td><td>Heartbeat / platform failure</td><td>ConnectionStatus, ProtocolFailure, ScanState</td></tr>
+  <tr><td>Auto-return</td><td>Configurable switch-back</td><td>No auto-return — manual ForceFailover required</td></tr>
+  <tr><td>Engine Hosting</td><td>Shared engine on each platform</td><td>Dedicated engines (DIO_Engine1/2) per platform</td></tr>
+</table>
+</div>
+
+<div class="quiz">
+<h3>30.11.1 Quiz — Test Your Understanding</h3>
+<p><strong>Q1.</strong> What are the three attributes the RedundantDIObject monitors to detect a bad data source state?</p>
+<p class="answer">ConnectionStatus (Disconnected), ProtocolFailureReasonCode (non-zero), and ScanState (Offscan).</p>
+
+<p><strong>Q2.</strong> Can the two source DIObjects be different types?</p>
+<p class="answer">Yes, they do not have to be the same type. However, they must support the same type of OI Server groups and have the same item address space.</p>
+
+<p><strong>Q3.</strong> Why do you create separate DIO_Engine1 and DIO_Engine2 for the redundant DI objects?</p>
+<p class="answer">To avoid race conditions with data acquisition that can occur when engine redundancy and Device Integration objects share the same engine. Each DIObject runs on its own dedicated AppEngine on a different platform.</p>
+
+<p><strong>Q4.</strong> What happens when you set ScanStateCmd back to True after an offscan-triggered failover?</p>
+<p class="answer">The failover does NOT automatically switch back. The RedundantDIObject does not automatically return to the Primary DI Source — you must trigger ForceFailoverCmd to switch back.</p>
+
+<p><strong>Q5.</strong> What does the SwitchCnt attribute track?</p>
+<p class="answer">The total number of failover switches that have occurred since the RedundantDIObject was deployed. Each forced or automatic switchover increments this counter.</p>
+</div>
+
+<hr>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual — Module 10, Section 2 (DI Redundancy) &amp; Lab 19 (pages 10-33 to 10-54)</p>
+<p class="page-ref">Lesson 30 of 31 — <a href="index.html">Return to Course Index</a></p>
+
+<nav style="margin-top:2em;">
+  <a href="L29-Application-Redundancy.html">← Lesson 29: Application Redundancy + Lab 18</a> &nbsp;|&nbsp;
+  <a href="L31-Scripting-Introduction.html">Next: Lesson 31 — Scripting Introduction →</a>
+</nav>
+
+</body>
+</html>

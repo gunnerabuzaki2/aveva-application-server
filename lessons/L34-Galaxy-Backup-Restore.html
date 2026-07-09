@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 34: Galaxy Backup and Restore — Module 12</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L33-Averager-Object.html">← Lesson 33: Creating an Averager Object</a> &nbsp;|&nbsp;
+  <a href="L01-System-Platform-Galaxy.html">Back to Module 1 (L01)</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 34: Galaxy Backup and Restore — Module 12</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 12, Section 1 (pages 12-2 to 12-6)</p>
+<p class="page-ref">Covers the Operations Control Management Console (OCMC), the Galaxy Database Manager, backing up a Galaxy (.cab file), restoring a Galaxy, and creating a new Galaxy from a backup file.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>34.1 Module Objectives</h2>
+<p class="page-ref">Reference: Module 12, page 12-2</p>
+
+<div class="screenshot">
+  <img src="../images/page_0520_0.png" alt="TrainingGalaxy deployment hierarchy showing platforms, engines, production lines, mixers, and field devices">
+  <div class="caption">TrainingGalaxy deployment hierarchy — the tree shows GRPlatform, ProdPlatform, AppEngine1 with Line1 and Line2 production lines, each containing Mixer100/Mixer200 with Agitator, Inlet1, Inlet2, Level, Outlet, Pump1, Pump2, and Temperature devices (Module 12, page 12-2)</div>
+</div>
+
+<p>Upon completion of this lesson, you will be able to:</p>
+<ul>
+  <li>Use the <strong>System Management Console</strong> (OCMC) to access the Galaxy Database Manager</li>
+  <li>Back up a Galaxy to a <code>.cab</code> file</li>
+  <li>Restore a Galaxy from a backup file</li>
+  <li>Create a new Galaxy from a backup file</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>34.2 Operations Control Management Console (OCMC)</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-3)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0521_0.png" alt="Status table showing Inlet1_001 device attributes with timestamps, quality, and status">
+  <div class="caption">Inlet1_001 device status table — showing LSClosed (true), LSOpen (false), and Status (Closed) attributes with timestamps, C0:Good quality, and Ok status in the SCADA monitoring interface (Module 12, page 12-3)</div>
+</div>
+
+<p>The <strong>Operations Control Management Console (OCMC)</strong> is used to help system integrators and system administrators perform administrative tasks and diagnostics on an application. Its console tree lists the items available for these tasks.</p>
+
+<p>One of these items is the <strong>Galaxy Database Manager</strong>, used to back up and restore a Galaxy.</p>
+
+<div class="key-concept">
+  <strong>Key Concept:</strong> The OCMC is a separate application from the IDE. It is used after the Galaxy has been developed and deployed, when you need to perform administrative operations such as backup, restore, and database management.
+</div>
+
+<!-- ============================================================ -->
+<h2>34.3 Galaxy Database Manager — Overview</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (pages 12-3 to 12-4)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0524_0.png" alt="Alarm configuration for Flow.Alarm.Pump1 showing Boolean data type, State alarm settings, Process category, priority 500">
+  <div class="caption">Flow.Alarm.Pump1 configuration — Boolean tag with State alarm enabled, Process category, priority 500, alarm message linked to description, active alarm state set to True (Module 12, page 12-4)</div>
+</div>
+
+<p>The <strong>Galaxy Database Manager</strong> is the tool you use to back up and restore a Galaxy. The Galaxy Database Manager is automatically installed on every Galaxy Repository node.</p>
+
+<h3>How Backing Up Works</h3>
+<p>Backing up a Galaxy creates a <strong>single backup file</strong> (with <code>.cab</code> extension) containing all the files, configuration data, and object deployment states required to recreate the Galaxy in an empty Galaxy Repository.</p>
+
+<div class="pitfall">
+  <strong>⚠️ Critical Warning:</strong> During the backup, <strong>no write operations are allowed</strong> to the Galaxy Repository. If write activity is occurring, you must back up at a later time. Be sure to perform the backup operation when no database-write operations will occur.
+</div>
+
+<h3>How Restoring Works</h3>
+<div class="screenshot">
+  <img src="../images/page_0525_0.png" alt="Alarm configuration for Flow.Alarm.Pump2 showing Boolean data type, State alarm settings">
+  <div class="caption">Flow.Alarm.Pump2 configuration — similar to Pump1, this Boolean tag triggers a state alarm for Transfer Pump 2 faulty flow condition with Process category and priority 500 (Module 12, page 12-4)</div>
+</div>
+
+<p>Restoring a Galaxy uses the backup file to either:</p>
+<ul>
+  <li>Overwrite an existing Galaxy</li>
+  <li>Create the backed-up Galaxy in a different Galaxy Repository</li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0525_1.jpeg" alt="SMixer attributes configuration showing Alarm.Condition, Flow.Alarm.Pump1, and Flow.Alarm.Pump2 inherited attributes">
+  <div class="caption">SMixer Attributes tab — shows inherited alarm attributes including Alarm.Condition (Mixer Malfunction), Flow.Alarm.Pump1 (Transfer Pump 1 - Faulty Flow Condition), and Flow.Alarm.Pump2 (Transfer Pump 2 - Faulty Flow Condition) (Module 12, page 12-4)</div>
+</div>
+
+<p>The restore process prompts you for confirmation before a Galaxy is overwritten. All objects should be <strong>undeployed</strong> before beginning to restore a Galaxy. During the restore, no clients can use the Galaxy Repository.</p>
+
+<div class="tip">
+  <strong>Tip:</strong> Be sure to back up your Galaxies regularly so that if a Galaxy becomes corrupted, you can restore it. You can choose a backup file to overwrite an existing, corrupted Galaxy or to reproduce a Galaxy in another Galaxy Repository.
+</div>
+
+<!-- ============================================================ -->
+<h2>34.4 Alarm Script Configuration</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (pages 12-4 to 12-5)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0526_0.png" alt="Flow.Alarm.Condition script configuration with WhileTrue trigger and expression checking inlet states and pump values">
+  <div class="caption">Flow.Alarm.Condition script configuration — uses WhileTrue trigger with expression checking if Inlet1.StateIndex == 1 or Inlet2.StateIndex == 1 or Pump1.PV or Pump2.PV to activate flow alarms (Module 12, page 12-4)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0527_0.png" alt="VBScript code showing alarm logic for Pump1 and Pump2 with If-Then-Else conditions checking inlet state and pump status">
+  <div class="caption">Flow alarm VBScript code — two logic blocks: (1) triggers Flow.Alarm.Pump1 if Inlet1 is closed and Pump1 is on, (2) triggers Flow.Alarm.Pump2 if Inlet2 is closed and Pump2 is on (Module 12, page 12-4)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0528_0.png" alt="Flow.Alarm.Condition OnScan initialization script resetting both pump alarms to false">
+  <div class="caption">OnScan initialization script — runs each scan cycle to reset Flow.Alarm.Pump1 and Flow.Alarm.Pump2 to false before other logic evaluates alarm conditions (Module 12, page 12-4)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0528_1.png" alt="SMixer Scripts tab showing Flow.Alarm.Condition script listed as active and executing">
+  <div class="caption">SMixer Scripts tab — shows Flow.Alarm.Co... script with On and Ex marks indicating it is active and executing (Module 12, page 12-4)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.5 Galaxy Object Check-In</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-4)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0528_2.png" alt="Checking in objects dialog showing check-in complete with details of template propagation and galaxy database optimization">
+  <div class="caption">Check-in complete dialog — shows steps: Finding descendent objects status, Propagating template changes to 2 descendent objects, Finalizing checkin, $Mixer Successful, Optimizing the galaxy database (Module 12, page 12-4)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.6 Runtime Monitoring — Mixer100</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-4)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0529_0.png" alt="Monitoring table showing Mixer100 with pumps stopped, inlets closed, and no flow alarms active">
+  <div class="caption">Mixer100 monitoring — all components in idle state: Inlet1/Inlet2 Closed, Pump1/Pump2 Stopped, Flow.Alarm.Pump1 and Flow.Alarm.Pump2 both false, all quality C0:Good (Module 12, page 12-4)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0529_1.png" alt="Monitoring table showing Mixer100 with Pump1 running and flow alarm active, Pump2 running with no alarm">
+  <div class="caption">Mixer100 active state — Pump1 commanded ON and running with Flow.Alarm.Pump1 = true (alarm active), Inlet2 Open, Pump2 ON and running with no alarm. Shows alarm triggering when pump runs with closed inlet (Module 12, page 12-4)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0530_0.png" alt="Monitoring table showing Mixer100 with both pumps stopped and no alarms active after alarm conditions cleared">
+  <div class="caption">Mixer100 after alarm reset — both pumps commanded OFF and stopped, all flow alarms cleared to false, system returned to normal idle state (Module 12, page 12-4)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.7 Averager Object — Templates</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-5)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0532_0.png" alt="Templates panel showing TrainingGalaxy hierarchy with Application, Training folders and $Averager, $Meter, $Mixer templates">
+  <div class="caption">Templates panel — TrainingGalaxy project tree showing Application folder with $AnalogDevice, $DiscreteDevice, $Sequencer, $SQLData, $UserDefined, and Training/Project folder with $Averager (selected), $Meter, $Mixer, Agitator (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0532_1.png" alt="Average attribute configuration showing Double data type, Calculated writeability, initial value 0.0">
+  <div class="caption">Average attribute configuration — Name: Average, Data type: Double, Writeability: Calculated, Initial value: 0.0, no engineering units assigned (Module 12, page 12-5)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.8 Average.Calculate Script</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-5)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0533_0.png" alt="Average.Calculate script aliases section showing ValueToAverage alias with reference to input data">
+  <div class="caption">Average.Calculate script aliases — ValueToAverage alias maps to input data source for the averaging calculation (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0533_1.png" alt="Average.Calculate script declarations showing sampleValues array, sampleLength, sampleSize, and nextElementIndex variables">
+  <div class="caption">Average.Calculate declarations — sampleValues[60] circular buffer array, sampleLength (current queue size), sampleSize (queue capacity), nextElementIndex for circular buffer indexing (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0533_2.png" alt="Average.Calculate script configuration showing Periodic trigger type and Execute execution type">
+  <div class="caption">Average.Calculate script configuration — Periodic trigger type, Execute execution type, with options for quality changes, async runs, timeout, and error reporting (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0534_0.png" alt="VBScript code for sliding window average calculation with circular buffer, sum calculation, and quality status management">
+  <div class="caption">Average.Calculate VBScript code — implements circular buffer average: calculates nextElementIndex, stores new sample, sums all samples, rounds average to 3 decimal places, sets quality to Initializing until buffer is full then Good (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0535_0.png" alt="Script initialization code getting sample queue length and resetting sampleLength to zero">
+  <div class="caption">OnScan initialization script — gets sample queue size via GetLength(0) and resets SampleLength to 0 to clear stale data when object goes offscan and back onscan (Module 12, page 12-5)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.9 Object Hierarchy and Tag Management</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-5)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0536_0.png" alt="Model-Tagname tree showing TrainingGalaxy hierarchy with Plant, Production, Line1, Mixer100 and its devices including Averager_001">
+  <div class="caption">Model-Tagname tree — full hierarchy from TrainingGalaxy root through Plant, ControlSystem, Packaging, Production, Line1, Mixer100 with all field devices and Averager_001 (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0536_1.png" alt="Inherited scripts panel showing Average.Calculate script with active, enabled, and executing status marks">
+  <div class="caption">Inherited scripts panel — Average.Calculate script shown with St (Status), On (Enabled), Ex (Execute), Of (Off), and Sh (Shared) status marks all indicating active execution (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0536_2.png" alt="Average.Calculate script aliases showing ValueToAverage mapped to myContainer.PV">
+  <div class="caption">Average.Calculate aliases configuration — ValueToAverage alias mapped to myContainer.PV (Process Variable) for the averaging input source (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0537_0.png" alt="Object Information tab showing Mixer100.Temperature.Averager_001 with derived from $Averager, host Line1">
+  <div class="caption">Object Information tab — Hierarchical name: Mixer100.Temperature.Averager_001, Container: Temperature_001, Derived from: $Averager, Host: Line1, Area: Line1, Security group: Default (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0538_0.png" alt="Galaxy Browser showing TrainingGalaxy namespace with 38 objects and Temperature_001 attributes">
+  <div class="caption">Galaxy Browser — TrainingGalaxy namespace with 38 objects listed in left pane; right pane shows Temperature_001 attributes including PV (Float), PV.Deadband (Double), and PV.Description (String) (Module 12, page 12-5)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0538_1.png" alt="Execution order configuration showing After process order with GTemperature_001.PV as relative object">
+  <div class="caption">Execution order configuration — Process order set to After with GTemperature_001.PV as the relative object, defining sequential execution dependency (Module 12, page 12-5)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.10 Average Value Monitoring</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-5)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0539_0.png" alt="Monitoring table showing Averager_001.Average value of 109.825 with Good quality and Ok status">
+  <div class="caption">Averager_001.Average monitoring — showing calculated average value 109.825, timestamped 1/6/2023 4:14:17 PM, C0:Good quality, Ok status on the Average tab (Module 12, page 12-5)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.11 Galaxy Backup and Restore — Section Overview</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (pages 12-5 to 12-6)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0541_0.jpeg" alt="Team of professionals working at computers in a collaborative workspace">
+  <div class="caption">Collaborative workspace — team of professionals working together on industrial automation systems, reflecting the collaborative nature of Galaxy database management and backup operations (Module 12, page 12-5)</div>
+</div>
+
+<p>The Operations Control Management Console is used to help system integrators and system administrators perform administrative tasks and diagnostics on an application. Its console tree lists the items available for these tasks. One of these items is the Galaxy Database Manager used to back up and restore a Galaxy.</p>
+
+<p>This section briefly describes the OCMC and explains how to back up and restore operations using the Galaxy Database Manager. It includes a discussion on how to create a new Galaxy from a backup file.</p>
+
+<!-- ============================================================ -->
+<h2>34.12 Galaxy Backup and Restore — OCMC Interface</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-3)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0543_0.png" alt="OCMC window showing the Galaxy Database Manager in the navigation tree with PLC configuration">
+  <div class="caption">OCMC — Operations Control Management Console — left pane shows Historian, Galaxy Database Manager, Operations Integration Server Manager, Log Viewer, and Platform Manager. TrainingGalaxy listed under Galaxy Database Manager with OI.SIM.1 PLC_TEST node configured (Module 12, page 12-3)</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>34.13 Backing Up a Galaxy</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (pages 12-4 to 12-5)</p>
+
+<p>Follow these steps to back up a Galaxy:</p>
+
+<div class="lab">
+<strong>Step 1:</strong> Open the <strong>OCMC</strong> and expand the <strong>Galaxy Database Manager</strong> node in the left navigation tree.<br>
+<strong>Step 2:</strong> Right-click the Galaxy you want to back up (e.g., <code>TrainingGalaxy</code>) and select <strong>Backup</strong> from the context menu.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0544_0.png" alt="Right-click context menu on TrainingGalaxy showing Backup option selected">
+  <div class="caption">Right-click on TrainingGalaxy under the Galaxy Database Manager — the context menu shows Backup (highlighted), Restore, View, Export List, and Help options. Backup is selected (Module 12, page 12-4)</div>
+</div>
+
+<div class="lab">
+<strong>Step 3:</strong> A warning dialog appears. Read the warning carefully — it reminds you that no database-write operations are allowed during the backup. Click <strong>Yes</strong> to continue.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0544_1.png" alt="Galaxy Database Manager warning dialog about no write operations during backup">
+  <div class="caption">The Galaxy Database Manager warning dialog — it warns that no database-write operations are allowed during the backup operation and asks "Are you sure you want to continue?" Click Yes to proceed (Module 12, page 12-4)</div>
+</div>
+
+<div class="lab">
+<strong>Step 4:</strong> In the <strong>Save As</strong> dialog, choose a location and name for the backup file. The file will be saved with a <code>.cab</code> extension. Click <strong>Save</strong>.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0545_0.png" alt="Save As dialog for backing up the Galaxy as a .cab file">
+  <div class="caption">Backup Galaxy Repository Save As dialog — file type is Backup files (*.cab), file name entered as TrainingGalaxy_Backup, saved to Documents folder. Choose a safe location to store the backup (Module 12, page 12-5)</div>
+</div>
+
+<div class="lab">
+<strong>Step 5:</strong> The Galaxy Database Manager progress bar appears as the backup is created. Wait for the operation to complete.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0545_1.png" alt="Galaxy Database Manager showing backup successful confirmation with step-by-step details">
+  <div class="caption">Backup successful — the Galaxy Database Manager displays the backup progress details: Connect to database, Backup database, Save galaxy information, Remove backup directory, Backup galaxy completed, Backup galaxy successful. Click Close when finished (Module 12, page 12-5)</div>
+</div>
+
+<div class="lab">
+<strong>Step 6:</strong> When the backup is complete, click <strong>Close</strong> to dismiss the dialog.
+</div>
+
+<div class="key-concept">
+  <strong>Best Practice:</strong> Establish a regular backup schedule — for example, a weekly full backup. Store backup files in a safe, off-system location. Always perform a backup before deploying major configuration changes or software upgrades.
+</div>
+
+<!-- ============================================================ -->
+<h2>34.14 Creating a New Galaxy from a Backup File</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-5)</p>
+
+<p>You can also create a <strong>new Galaxy</strong> using the <code>.cab</code> file created when a Galaxy backup is performed. This is useful for deploying a Galaxy configuration to a new server or for creating a development copy.</p>
+
+<div class="lab">
+<strong>Step 1:</strong> Copy the backup <code>.cab</code> file to the following directory:<br>
+<code>C:\Program Files (x86)\ArchestrA\Framework\Bin\BackupGalaxies</code><br><br>
+<strong>Step 2:</strong> In the IDE, open the <strong>New Galaxy</strong> window.<br>
+<strong>Step 3:</strong> Create a new Galaxy and select your backup Galaxy in the <strong>Galaxy type</strong> field.
+</div>
+
+<div class="tip">
+  <strong>Tip:</strong> The backup <code>.cab</code> file must be placed in the <code>BackupGalaxies</code> folder before it will appear as an available Galaxy type option in the New Galaxy dialog.
+</div>
+
+<!-- ============================================================ -->
+<h2>34.15 Restoring a Galaxy</h2>
+<p class="page-ref">Reference: Module 12, Section 1 (page 12-6)</p>
+
+<p>When you restore a Galaxy from backup, <strong>any information saved to the database since the backup was performed is overwritten</strong> with the restored information. All changes to the database since the backup are lost. Also, any transactions in progress when the backup was performed are rolled back.</p>
+
+<div class="lab">
+<strong>Step 1:</strong> Open the <strong>OCMC</strong> and expand the <strong>Galaxy Database Manager</strong>.<br>
+<strong>Step 2:</strong> Right-click the existing Galaxy and select <strong>Restore</strong> from the context menu.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0546_0.png" alt="Right-click context menu on TrainingGalaxy showing Restore option selected">
+  <div class="caption">Right-click on TrainingGalaxy under the Galaxy Database Manager — Restore is highlighted in the context menu, ready to initiate the restore operation (Module 12, page 12-6)</div>
+</div>
+
+<div class="lab">
+<strong>Step 3:</strong> The Galaxy Database Manager warning dialog appears. Read the warnings carefully:
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0546_1.png" alt="Galaxy Database Manager restore warning dialog with detailed precautions">
+  <div class="caption">The Restore warning dialog — lists four critical warnings: (1) all galaxy applications on GR node will be shut down, (2) the galaxy will be overwritten, (3) recommended to make a backup first, (4) recommended to undeploy all objects prior to restore (Module 12, page 12-6)</div>
+</div>
+
+<div class="pitfall">
+  <strong>⚠️ Critical Warnings for Restore:</strong>
+  <ol>
+    <li>During the restore operation, <strong>all galaxy applications on the GR node will be shut down</strong>. Make sure no other applications are using the GR node.</li>
+    <li>The galaxy to be restored <strong>will be overwritten</strong> during this operation.</li>
+    <li>It is recommended that you <strong>make a backup of the galaxy before restore operation</strong>.</li>
+    <li>It is recommended that you <strong>undeploy all objects</strong> prior to doing the restore operation. Restoring a galaxy effectively deletes all objects in the galaxy. If objects are deployed and the restore is executed, there will be no way of undeploying those objects.</li>
+  </ol>
+</div>
+
+<div class="lab">
+<strong>Step 4:</strong> Click <strong>Yes</strong> to continue restoring, or <strong>No</strong> to terminate the restore function.<br>
+<strong>Step 5:</strong> If you choose Yes, select the name (<code>.cab</code> extension) of the backup file you want to use and click <strong>Restore</strong>.<br>
+<strong>Step 6:</strong> If you have an active client connected to the Galaxy Repository, a message appears. You are required to <strong>quit those client programs</strong> before restore can continue.<br>
+<strong>Step 7:</strong> A confirmation dialog box displays when the restore function is finished.
+</div>
+
+<div class="tip">
+  <strong>Tip:</strong> Before restoring, ensure that all objects are undeployed and no clients are connected to the Galaxy Repository. This prevents data corruption and ensures a clean restore.
+</div>
+
+<!-- ============================================================ -->
+<h2>34.16 Backup and Restore Summary</h2>
+
+<table>
+  <tr><th>Operation</th><th>What Happens</th><th>Key Requirements</th></tr>
+  <tr>
+    <td><strong>Backup</strong></td>
+    <td>Creates a single <code>.cab</code> file containing all files, configuration data, and deployment states</td>
+    <td>No write operations to the Galaxy Repository during backup</td>
+  </tr>
+  <tr>
+    <td><strong>Restore</strong></td>
+    <td>Overwrites an existing Galaxy with the contents of a backup file</td>
+    <td>All objects must be undeployed; no clients connected; applications on GR node shut down</td>
+  </tr>
+  <tr>
+    <td><strong>Create from Backup</strong></td>
+    <td>Creates a new Galaxy using a <code>.cab</code> backup file</td>
+    <td>Copy <code>.cab</code> file to <code>BackupGalaxies</code> folder first</td>
+  </tr>
+</table>
+<div class="key-concept">
+  <strong>Key Takeaway:</strong> The Galaxy Database Manager is your safety net for Galaxy configuration. Regular backups protect against corruption, accidental changes, and hardware failures. Always back up before making major changes, and always undeploy before restoring.
+</div>
+<!-- ============================================================ -->
+<h2>34.17 Knowledge Check</h2>
+
+<div class="quiz">
+  <h3>Quiz: Galaxy Backup and Restore</h3>
+
+  <p><strong>1.</strong> What file extension is used for Galaxy backup files?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer"><code>.cab</code> — the backup creates a single cabinet file containing all Galaxy data.</p>
+  </details>
+
+  <p><strong>2.</strong> What happens to write operations during a Galaxy backup?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">No write operations are allowed to the Galaxy Repository during the backup. If write activity is occurring, you must back up at a later time.</p>
+  </details>
+
+  <p><strong>3.</strong> Where must a backup <code>.cab</code> file be placed to create a new Galaxy from it?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">The file must be copied to <code>C:\Program Files (x86)\ArchestrA\Framework\Bin\BackupGalaxies</code> before it will appear as an available Galaxy type option.</p>
+  </details>
+
+  <p><strong>4.</strong> What should be done to all objects before restoring a Galaxy?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">All objects should be <strong>undeployed</strong> before restoring. If objects are deployed and the restore is executed, there will be no way of undeploying those objects.</p>
+  </details>
+
+  <p><strong>5.</strong> What happens to Galaxy applications on the GR node during a restore operation?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">All galaxy applications on the GR node will be <strong>shut down</strong> during the restore operation. No clients can use the Galaxy Repository during restore.</p>
+  </details>
+
+  <p><strong>6.</strong> What information is lost when restoring a Galaxy from backup?</p>
+  <details>
+    <summary>Click to reveal answer</summary>
+    <p class="answer">Any information saved to the database <strong>since the backup was performed</strong> is overwritten. All changes since the backup are lost, and any in-progress transactions are rolled back.</p>
+  </details>
+</div>
+<!-- ============================================================ -->
+<nav>
+  <a href="L33-Averager-Object.html">← Lesson 33: Creating an Averager Object</a> &nbsp;|&nbsp;
+  <a href="L01-System-Platform-Galaxy.html">Back to Module 1 (L01)</a>
+</nav>
+
+</body>
+</html>

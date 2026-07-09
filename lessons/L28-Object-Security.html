@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 28: Object Security + Lab 17</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L27-Security-Overview.html">← Lesson 27: Security Overview</a> &nbsp;|&nbsp;
+  <a href="L29-Application-Redundancy.html">Next: Lesson 29 — Application Redundancy →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 28: Object Security + Lab 17</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 9 Section 2 + Lab 17</p>
+<p class="page-ref">Covers attribute-level security classifications, security audit trail, and Lab 17: Implementing Object Security with hands-on testing of FreeAccess, Operate, SecuredWrite, VerifiedWrite, Configure, and ViewOnly classifications. (pages 9-39 to 9-64)</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>28.1 Section 2 — Object Security: Setting Security Classifications</h2>
+<p class="page-ref">Reference: Module 9 Section 2 (pages 9-39 to 9-40)</p>
+
+<p>Operators interact with automation objects through individual <strong>attributes</strong>. Each attribute in the Object Editor that can be modified at runtime can have an associated <strong>security classification</strong> that controls who may write to it and under what conditions.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0401_0.png" alt="Section 2 – Object Security title and overview slide">
+  <div class="caption">Section 2 – Object Security introduction: operators interact with objects through individual attributes, each with configurable security controls</div>
+</div>
+
+<p>On the <strong>Attributes</strong> tab, security icons must first be enabled before you can set security for an attribute or any of its features in a template. Click the <strong>Show/Hide Security icon</strong> to the right of the description field. When enabled, shield icons appear next to values for which security is configurable.</p>
+
+<h3>The Seven Security Classifications</h3>
+<p>Clicking the security control (shield icon) next to an attribute allows you to select one of <strong>seven possible security states</strong>:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0401_1.png" alt="Speed.SP attribute configuration with security classification dropdown showing all seven options">
+  <div class="caption">The Speed.SP attribute configuration showing the security classification dropdown with all seven options: FreeAccess, Operate, SecuredWrite, VerifiedWrite, Tune, Configure, ViewOnly</div>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Classification</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>FreeAccess</strong></td><td>Anyone can write to this attribute without restriction — no login or permissions required. Used for safety or time-critical tasks (e.g., halting a failing process) where a login request could cause dangerous delays.</td></tr>
+    <tr><td><strong>Operate</strong></td><td>Requires <em>Operate</em> permissions for the security group assigned to the object. Used for normal day-to-day tasks like writing to a Setpoint or Command attribute.</td></tr>
+    <tr><td><strong>SecuredWrite</strong></td><td>Requires the user to authenticate with username and password each time they write to the attribute, plus <em>Operate</em> permissions. Provides an extra confirmation step.</td></tr>
+    <tr><td><strong>VerifiedWrite</strong></td><td>Requires two different users to authenticate: the primary operator (with <em>Operate</em> permissions) and a verifier (with <em>Can Verify Writes</em> permission). A four-eyes principle for critical changes.</td></tr>
+    <tr><td><strong>Tune</strong></td><td>Requires <em>Tune Operational</em> permissions. Used for tuning parameters like alarm setpoints and PID sensitivity.</td></tr>
+    <tr><td><strong>Configure</strong></td><td>Requires <em>Configure Operational</em> permissions. The object must first be placed <strong>off scan</strong> before writing. Used for significant configuration changes (e.g., a PLC register defining input type).</td></tr>
+    <tr><td><strong>ViewOnly</strong></td><td>Read-only access — users can view but never write to this attribute at runtime, regardless of permissions.</td></tr>
+  </tbody>
+</table>
+
+<div class="tip">
+  <strong>Tip:</strong> If an attribute's security is shown in <strong>gray</strong>, its security classification is locked in the parent object and cannot be changed, or it requires enabling a group attribute first.
+</div>
+
+<!-- ============================================================ -->
+<h2>28.2 Group Locking and Security</h2>
+<p class="page-ref">Reference: Module 9 Section 2 (pages 9-40)</p>
+
+<p>The lock and security controls associated with <strong>option groups</strong> and <strong>features</strong> allow you to quickly set conditions for all options in the group at once.</p>
+
+<div class="key-concept">
+  <strong>Group Control Behavior:</strong>
+  <ul>
+    <li>The group control typically reflects the setting for <strong>all options</strong> in the group or feature set.</li>
+    <li>If <strong>at least one option</strong> differs from the others, the group control shows an <strong>indeterminate icon</strong>.</li>
+    <li>You can lock or unlock all attributes of a feature by selecting the <strong>lock icon</strong> next to the feature name (after enabling the feature).</li>
+    <li>If an attribute is locked in the <strong>parent template</strong>, it <strong>cannot be unlocked</strong> in derived children.</li>
+    <li>If you change the value in the parent template, the change <strong>propagates to all child objects</strong>.</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>28.3 Security Audit Trail</h2>
+<p class="page-ref">Reference: Module 9 Section 2 (pages 9-40 to 9-42)</p>
+
+<p>Application Server creates <strong>security-audit (operator change) events</strong> that are saved as historical data. These event messages are logged to the <strong>Alarms and Events</strong> subsystem when:</p>
+<ul>
+  <li>An operator <strong>logs on to</strong> or <strong>logs off from</strong> an application.</li>
+  <li>An operator changes actions through <strong>User sets</strong>.</li>
+</ul>
+
+<h3>Security-Audit Event Message Fields</h3>
+<table>
+  <thead>
+    <tr><th>Field</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>Event type</code></td><td>Operator change</td></tr>
+    <tr><td><code>Timestamp</code></td><td>Date and time of the event (AppEngine scan time)</td></tr>
+    <tr><td><code>Tagname</code></td><td>Name of the object generating the event</td></tr>
+    <tr><td><code>Prim.attr</code></td><td>Reference string of the attribute being changed</td></tr>
+    <tr><td><code>Tag description</code></td><td>Short description (for Secured/Verified writes: write type, user comment, reason)</td></tr>
+    <tr><td><code>FieldAttribute description</code></td><td>Attribute description (if a FieldAttribute), otherwise object description</td></tr>
+    <tr><td><code>Area</code></td><td>Area containing the object</td></tr>
+    <tr><td><code>UserEngine</code></td><td>View engine or user engine requesting the change</td></tr>
+    <tr><td><code>Operator1</code></td><td>Full name of the primary operator (from UserProfile)</td></tr>
+    <tr><td><code>Operator2</code></td><td>Full name of the secondary operator (verifier), if applicable</td></tr>
+    <tr><td><code>Old value</code></td><td>Previous value of the attribute</td></tr>
+    <tr><td><code>New value</code></td><td>New value of the attribute</td></tr>
+  </tbody>
+</table>
+
+<h3>Security Query with SQL Server Management Studio</h3>
+<p>You can use Microsoft SQL Server Management Studio to view security-related events. Connect to the Historian server and create a query against the <code>Runtime</code> database's <code>Events</code> table.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0403_0.png" alt="SQL Server Management Studio showing Lab 17 Security Audit Trail query">
+  <div class="caption">SQL Server Management Studio with the Lab 17 Security Audit Trail query — selects all Write events from the last hour using DATEADD(hh, -1, GETDATE())</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0403_1.png" alt="Query results showing User.Write.Secured and User.Write.Verified audit events">
+  <div class="caption">Query results displaying User.Write.Secured and User.Write.Verified event types with timestamps and event details — the security audit trail in action</div>
+</div>
+
+<div class="pitfall">
+  <strong>Important:</strong> When connecting to SQL Server Management Studio, verify the <strong>Server name matches the Historian computer</strong> — otherwise the query will not return results from the correct database.
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>28.4 Lab 17 — Implementing Object Security</h2>
+<p class="page-ref">Reference: Lab 17 (pages 9-43 to 9-64)</p>
+
+<div class="lab">
+  <strong>Lab Objectives:</strong>
+  <ul>
+    <li>Configure security classifications for object attributes</li>
+    <li>Perform secured and verified writes with Object Viewer</li>
+    <li>View the security audit trail</li>
+  </ul>
+</div>
+
+<p><strong>Prerequisites:</strong> You should have completed Lab 16 (Security Roles and Permissions), with security roles configured and the production platform deployed.</p>
+
+<p>In this lab, you will configure the security classifications in automation objects. The specific changes:</p>
+<table>
+  <thead>
+    <tr><th>Object</th><th>Attribute</th><th>Classification</th><th>Why</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>$Mixer.Agitator</code></td><td><code>Speed.SP</code></td><td>SecuredWrite</td><td>Speed setpoint requires authentication each time</td></tr>
+    <tr><td><code>$Mixer.Outlet</code></td><td><code>CMD</code></td><td>VerifiedWrite</td><td>Outlet valve command requires two-person verification</td></tr>
+    <tr><td><code>Temperature_001</code></td><td><code>PV.EngUnitsMax</code>, <code>PV.EngUnitsRangeMax</code></td><td>Configure (default)</td><td>Engineering units are significant configuration changes</td></tr>
+  </tbody>
+</table>
+
+<!-- ---- Lab Step: Agitator Speed.SP ---- -->
+<h3>Part 1: Configure Agitator Speed.SP as SecuredWrite</h3>
+
+<p><strong>Step 1:</strong> Verify you are logged in as a member of the <strong>Application Developers 1</strong> security role:</p>
+<table>
+  <thead>
+    <tr><th>Role</th><th>First, Last</th><th>User name</th><th>Password</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Application Developers 1</td><td>Thomas Miller</td><td>CLOUD\ThomasM</td><td>ww</td></tr>
+    <tr><td></td><td>Carol Morris</td><td>CLOUD\CarolM</td><td>ww</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Step 2:</strong> In the IDE, <strong>Templates</strong> tab, open the <code>$Mixer.Agitator</code> configuration editor from the Training\Project template toolset.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0406_0.jpeg" alt="$Mixer.Agitator template showing attributes list with Speed.SP">
+  <div class="caption">$Mixer.Agitator template editor — Attributes tab showing CMD, PV, Speed.PV, and Speed.SP attributes inherited from the parent template</div>
+</div>
+
+<p><strong>Step 3:</strong> Select the <code>Speed.SP</code> attribute in the Attributes list.</p>
+
+<p><strong>Step 4:</strong> Click the <strong>shield icon</strong> next to the Initial value field, and change the security classification to <strong>SecuredWrite</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0406_1.png" alt="Speed.SP security classification dropdown with Operate highlighted">
+  <div class="caption">Selecting the security classification for Speed.SP — the dropdown shows all seven options with Operate currently highlighted before changing to SecuredWrite</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0407_0.png" alt="Speed.SP configuration showing lock/padlock icons for propagation">
+  <div class="caption">Speed.SP attribute configuration with lock icons visible — ready to propagate the SecuredWrite classification to derived instances</div>
+</div>
+
+<p><strong>Step 5:</strong> Click the <strong>lock icon</strong> to propagate the security classification to the derived instances.</p>
+
+<p><strong>Step 6:</strong> Save and close the configuration editor.</p>
+
+<p><strong>Step 7:</strong> In the <strong>Check-in</strong> dialog box, check <em>"Don't warn about check-in operations blocking other users in the future."</em></p>
+
+<div class="screenshot">
+  <img src="../images/page_0407_1.png" alt="Check-in dialog warning about propagation to derived objects">
+  <div class="caption">Check-in dialog warning: the operation will propagate changes to 3 derived objects, temporarily blocking other users from editing during propagation</div>
+</div>
+
+<p><strong>Step 8:</strong> Check in the object with an appropriate comment.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0408_0.png" alt="Check-in completion dialog showing successful propagation">
+  <div class="caption">Check-in complete — changes propagated to 2 descendant objects and the galaxy database was optimized successfully</div>
+</div>
+
+<p><strong>Step 9:</strong> Click <strong>Close</strong>.</p>
+
+<div class="key-concept">
+  <strong>Why the two-step process?</strong> First you <em>lock</em> the attribute to propagate the security classification to all derived instances, then you <em>unlock</em> it so the value can be changed at runtime. The lock/unlock sequence ensures the classification is set everywhere before allowing runtime access.
+</div>
+
+<p><strong>Step 10:</strong> Reopen the <code>$Mixer.Agitator</code> configuration editor.</p>
+<p><strong>Step 11:</strong> Select the <code>Speed.SP</code> attribute.</p>
+<p><strong>Step 12:</strong> <strong>Unlock</strong> the Initial value property.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0408_1.png" alt="Speed.SP attribute with padlock icons in unlocked state">
+  <div class="caption">Speed.SP attribute with the Initial value property now unlocked — the padlock icons show the attribute is unlocked and the SecuredWrite classification is in place</div>
+</div>
+
+<p><strong>Step 13:</strong> Save, close, and check in with an appropriate comment.</p>
+
+<!-- ---- Lab Step: Outlet CMD ---- -->
+<h3>Part 2: Configure Outlet CMD as VerifiedWrite</h3>
+
+<p><strong>Step 14:</strong> Open the <code>$Mixer.Outlet</code> configuration editor.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0409_0.png" alt="$Mixer.Outlet template showing CMD and LSOpen attributes">
+  <div class="caption">$Mixer.Outlet template editor — Attributes tab showing CMD (Valve Command) and LSOpen (Limit Switch Open) attributes</div>
+</div>
+
+<p><strong>Step 15:</strong> Select the <code>CMD</code> attribute.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0409_1.png" alt="CMD attribute configuration panel showing Valve Command with security options">
+  <div class="caption">CMD attribute configuration — Valve Command (Boolean, User writeable, Initial value: Close) with FreeAccess and Operate highlighted in the security panel</div>
+</div>
+
+<p><strong>Step 16:</strong> Click the <strong>shield icon</strong> and change the security classification to <strong>VerifiedWrite</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0410_0.png" alt="CMD attribute configuration showing state label mapping (False=Close, True=Open)">
+  <div class="caption">CMD attribute with state label mappings — False maps to "Close" and True maps to "Open", defining the valve command behavior</div>
+</div>
+
+<p><strong>Step 17:</strong> <strong>Lock</strong> the Initial value property to propagate to derived instances.</p>
+<p><strong>Step 18:</strong> Save, close, and check in with an appropriate comment.</p>
+<p><strong>Step 19:</strong> Reopen the <code>$Mixer.Outlet</code> editor.</p>
+<p><strong>Step 20:</strong> Select the <code>CMD</code> attribute.</p>
+<p><strong>Step 21:</strong> <strong>Unlock</strong> the Initial value property.</p>
+<p><strong>Step 22:</strong> Save, close, and check in with an appropriate comment.</p>
+
+<!-- ---- Lab Step: Deploy ---- -->
+<h3>Part 3: Deploy Changes</h3>
+
+<p><strong>Step 23:</strong> If Object Viewer is open, close it.</p>
+<p><strong>Step 24:</strong> In <strong>Deployment view</strong>, expand all objects.</p>
+<p><strong>Step 25:</strong> Right-click <code>TrainingGalaxy</code> and select <strong>Deploy</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0411_0.png" alt="Deployment view showing TrainingGalaxy with all production objects expanded">
+  <div class="caption">Deployment view showing the complete TrainingGalaxy hierarchy — ProdPlatform with AppEngine1, Line1 (Mixer100), Line2 (Mixer200), and all child components including Agitator, Inlets, Outlet, Pumps, and Temperature sensors</div>
+</div>
+
+<p><strong>Step 26:</strong> Leave the default options and click <strong>Deploy</strong>. Wait for the deployment to complete.</p>
+<p><strong>Step 27:</strong> Click <strong>Close</strong> when deployment finishes.</p>
+
+<!-- ---- Lab Step: Test Security ---- -->
+<h3>Part 4: Test Security Classifications in Object Viewer</h3>
+
+<p><strong>Step 28:</strong> In Deployment view, select <code>Outlet_001</code> and view it in <strong>Object Viewer</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0412_0.png" alt="Object Viewer showing TrainingGalaxy hierarchy and attribute table">
+  <div class="caption">Object Viewer with TrainingGalaxy tree hierarchy on the left and detailed attribute table on the right showing alarm, command, and configuration attributes with security levels</div>
+</div>
+
+<p><strong>Step 29:</strong> In Object Viewer, on the <strong>Options</strong> menu, select <strong>Change User</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0412_1.png" alt="Object Viewer Options menu with Change User highlighted">
+  <div class="caption">Object Viewer Options dropdown menu — Change User option selected to switch the active user for testing different security roles</div>
+</div>
+
+<!-- ---- Test Operate: Plant Operators 1 ---- -->
+<h4>Testing Operate Permissions — Plant Operators 1</h4>
+
+<p><strong>Step 30:</strong> Log in as a member of <strong>Plant Operators 1</strong>:</p>
+<table>
+  <thead>
+    <tr><th>Role</th><th>First, Last</th><th>User name</th><th>Password</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Plant Operators 1</td><td>John Johnson</td><td>CLOUD\JohnJ</td><td>ww</td></tr>
+    <tr><td></td><td>Lisa Young</td><td>CLOUD\LisaY</td><td>ww</td></tr>
+  </tbody>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0413_0.png" alt="Sign in to TrainingGalaxy dialog as JohnJ">
+  <div class="caption">Sign in dialog for TrainingGalaxy — logging in as CLOUD\JohnJ (Plant Operators 1 role) to test security classifications</div>
+</div>
+
+<p><strong>Step 31:</strong> Load the saved watch list and switch to the <strong>Mixer200</strong> watch window.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0413_1.png" alt="Mixer200 watch window showing Inlet2_002.CMD highlighted">
+  <div class="caption">Mixer200 watch window showing all Line 2 attributes — Inlet2_002.CMD is highlighted (value: false) ready for testing</div>
+</div>
+
+<p><strong>Step 32:</strong> Double-click <code>Inlet2_002.CMD</code>. Set it to <strong>True</strong> and click OK.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0413_2.png" alt="Modify Boolean Value dialog for Inlet2_002.CMD set to True">
+  <div class="caption">Modify Boolean Value dialog — setting Inlet2_002.CMD to True to attempt operating a Line 2 object</div>
+</div>
+
+<div class="pitfall">
+  <strong>Expected Result — ACCESS DENIED:</strong> Since Plant Operators 1 were <strong>not</strong> given permissions to operate Line 2 objects, an error message appears: "Security error: Write access denied."
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0414_0.png" alt="SetAttribute FAILURE error for Inlet2_002.CMD — write access denied">
+  <div class="caption">SetAttribute FAILURE: Inlet2_002.CMD — MxCategorySecurityError with "Security error: Write access denied" because Plant Operators 1 lacks Operate permissions on Line 2</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0414_1.png" alt="Mixer100 watch window showing all attribute values with Inlet1_001.CMD ready for modification">
+  <div class="caption">Mixer100 watch window showing Line 1 attribute values — Inlet1_001.CMD is available for modification since Plant Operators 1 have Operate permissions on Line 1</div>
+</div>
+
+<p><strong>Step 36:</strong> In the <strong>Mixer100</strong> watch window, double-click <code>Inlet1_001.CMD</code>. Set it to <strong>True</strong> and click OK.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0414_2.png" alt="Modify Boolean Value dialog for Inlet1_001.CMD set to True">
+  <div class="caption">Modify Boolean Value dialog — setting Inlet1_001.CMD to True to operate a Line 1 object</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0415_0.png" alt="Mixer100 watch window showing Inlet1_001.CMD is now true">
+  <div class="caption">Mixer100 watch window — Inlet1_001.CMD is now true and the command executed successfully because Plant Operators 1 have Operate permissions over Line 1 objects</div>
+</div>
+
+<div class="key-concept">
+  <strong>Key Learning:</strong> Plant Operators 1 have <em>Operate</em> permissions for <strong>Line 1 objects only</strong>. Line 2 objects require different permissions, demonstrating how security roles restrict access by area/object scope.
+</div>
+
+<!-- ---- Test Configure: Plant Maintenance 1 ---- -->
+<h4>Testing Configure Permissions — Plant Maintenance 1</h4>
+
+<p><strong>Step 39:</strong> Use Change User to log in as a member of <strong>Plant Maintenance 1</strong>:</p>
+<table>
+  <thead>
+    <tr><th>Role</th><th>First, Last</th><th>User name</th><th>Password</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Plant Maintenance 1</td><td>Kevin Green</td><td>CLOUD\KevinG</td><td>ww</td></tr>
+    <tr><td></td><td>Monica Reed</td><td>CLOUD\MonicaR</td><td>ww</td></tr>
+  </tbody>
+</table>
+
+<div class="screenshot">
+  <img src="../images/page_0415_1.png" alt="Sign in to TrainingGalaxy dialog as KevinG">
+  <div class="caption">Sign in dialog — logging in as CLOUD\KevinG (Plant Maintenance 1 role) to test Configure security classification</div>
+</div>
+
+<p><strong>Step 40:</strong> Add the following attributes to the Mixer100 watch window:</p>
+<ul>
+  <li><code>Temperature_001.ScanState</code></li>
+  <li><code>Temperature_001.ScanStateCmd</code></li>
+  <li><code>Temperature_001.PV.EngUnitsMax</code></li>
+  <li><code>Temperature_001.PV.EngUnitsRangeMax</code></li>
+</ul>
+
+<div class="screenshot">
+  <img src="../images/page_0416_0.png" alt="Mixer100 watch window with temperature attributes added">
+  <div class="caption">Mixer100 watch window with temperature-related attributes added — ScanState, ScanStateCmd, EngUnitsMin, and EngUnitsMax for testing Configure classification</div>
+</div>
+
+<p><strong>Step 42:</strong> Double-click <code>Temperature_001.PV.EngUnitsRangeMax</code> and change the value to <strong>505.0</strong>. Click OK.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0416_1.png" alt="Modify Numeric Value dialog for Temperature_001.PV.EngUnitsRangeMax set to 505.0">
+  <div class="caption">Modify Numeric Value dialog — attempting to change Temperature_001.PV.EngUnitsRangeMax to 505.0</div>
+</div>
+
+<div class="pitfall">
+  <strong>Expected Result — OBJECT MUST BE OFF SCAN:</strong> Since the attribute has a <strong>Configure</strong> security classification, an error appears: "Object must be offscan to modify attributes that have an MxSecurityConfigure security classification."
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0417_0.png" alt="SetAttribute FAILURE error — object must be offscan for Configure classification">
+  <div class="caption">SetAttribute FAILURE: Temperature_001.PV.EngUnitsRangeMax — MxCategorySecurityError: "Object must be offscan to modify attributes that have an MxSecurityConfigure security classification"</div>
+</div>
+
+<p><strong>Step 45:</strong> Double-click <code>Temperature_001.ScanStateCmd</code> and change the value to <strong>False</strong>. Click OK.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0417_1.png" alt="Modify Boolean Value dialog for Temperature_001.ScanStateCmd set to False">
+  <div class="caption">Modify Boolean Value dialog — setting Temperature_001.ScanStateCmd to False to place the object off scan</div>
+</div>
+
+<div class="pitfall">
+  <strong>Expected Result — ACCESS DENIED:</strong> The ScanStateCmd attribute has <strong>Operate</strong> classification. Maintenance personnel were <strong>not</strong> given Operate permissions, so: "Security error: Write access denied."
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0417_2.png" alt="SetAttribute FAILURE error for Temperature_001.ScanStateCmd — write access denied">
+  <div class="caption">SetAttribute FAILURE: Temperature_001.ScanStateCmd — MxCategorySecurityError: "Security error: Write access denied" because maintenance lacks Operate permissions</div>
+</div>
+
+<!-- ---- Operator places off-scan, then maintenance configures ---- -->
+<h4>Coordinating Off-Scan and Configuration</h4>
+
+<p><strong>Step 48:</strong> Log in as <strong>Plant Operators 1</strong> (CLOUD\JohnJ).</p>
+<p><strong>Step 49:</strong> Set <code>Temperature_001.ScanStateCmd</code> to <strong>False</strong>. This time the change takes effect — the ScanState now displays <strong>false</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0418_0.png" alt="Mixer100 watch window showing ScanState=false — object off scan">
+  <div class="caption">Mixer100 watch window — Temperature_001.ScanState is now false (object placed off scan by Plant Operators 1), enabling maintenance to configure attributes</div>
+</div>
+
+<p><strong>Step 50:</strong> Log in as <strong>Plant Maintenance 1</strong> (CLOUD\KevinG).</p>
+<p><strong>Step 51:</strong> Set <code>Temperature_001.PV.EngUnitsRangeMax</code> to <strong>505.0</strong>. Now that the object is off scan, the value writes successfully because maintenance personnel have <strong>Configure</strong> permissions.</p>
+<p><strong>Step 52:</strong> Set <code>Temperature_001.PV.EngUnitsMax</code> to <strong>500.0</strong>.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0418_1.png" alt="Mixer100 watch window showing EngUnitsRangeMax=505.0 after maintenance configuration">
+  <div class="caption">Mixer100 watch window — Temperature_001.PV.EngUnitsRangeMax now shows 505.0 (successfully written by maintenance while object was off scan)</div>
+</div>
+
+<div class="key-concept">
+  <strong>Workflow Pattern:</strong> The Configure classification enforces a two-step safety process:
+  <ol>
+    <li>An <strong>operator</strong> (with Operate permissions) places the object <strong>off scan</strong></li>
+    <li>A <strong>maintainer</strong> (with Configure permissions) makes the configuration change while the object is offline</li>
+    <li>The operator places the object <strong>back on scan</strong></li>
+  </ol>
+  This prevents configuration changes while the object is actively being used in production.
+</div>
+
+<!-- ---- Operator places back on-scan ---- -->
+<p><strong>Step 53:</strong> Log in as <strong>Plant Operators 1</strong> (CLOUD\JohnJ). Set <code>Temperature_001.ScanStateCmd</code> to <strong>True</strong> to place the object back on scan.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0419_0.png" alt="Mixer100 watch window showing ScanState=true — object back on scan">
+  <div class="caption">Mixer100 watch window — Temperature_001.ScanState is now true (object placed back on scan by Plant Operators 1 after maintenance configuration complete)</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0419_1.png" alt="Mixer100 watch window showing EngUnitsMax=500.0 configured by maintenance">
+  <div class="caption">Mixer100 watch window — Temperature_001.PV.EngUnitMax shows 500.0 and EngUnitRangeMax shows 505.0 — both configuration changes successfully applied while the object was off scan</div>
+</div>
+
+<!-- ---- Test SecuredWrite ---- -->
+<h4>Testing SecuredWrite — Agitator Speed.SP</h4>
+
+<p><strong>Step 55:</strong> Double-click <code>Agitator_001.Speed.SP</code> and change the value to <strong>25</strong>. Click OK.</p>
+
+<div class="pitfall">
+  <strong>Expected Result — PASSWORD PROMPT:</strong> Since the attribute has a <strong>SecuredWrite</strong> classification, you are prompted for your password before the value is written.
+</div>
+
+<p><strong>Step 57:</strong> Enter the password. Click OK. The value is written to the attribute.</p>
+
+<div class="key-concept">
+  <strong>SecuredWrite vs Operate:</strong> Operate permissions allow writing without re-authentication. SecuredWrite adds an <strong>extra authentication step</strong> — requiring the user to confirm their identity each time, providing an audit trail for each individual change.
+</div>
+
+<!-- ---- Test VerifiedWrite ---- -->
+<h4>Testing VerifiedWrite — Outlet_001.CMD</h4>
+
+<p><strong>Step 59:</strong> Double-click <code>Outlet_001.CMD</code>, set it to <strong>True</strong>, and click OK.</p>
+
+<p><strong>Step 60:</strong> The VerifiedWrite prompt appears asking for both your password and a <strong>different user</strong> with <em>Can Verify Writes</em> permissions. First, attempt with a user who does <strong>not</strong> have Can Verify Writes permissions (another Plant Operators 1 member).</p>
+
+<div class="pitfall">
+  <strong>Expected Result — ACCESS DENIED:</strong> The second user (Plant Operators 1) does not have <em>Can Verify Writes</em> permissions over the object, so an access denied message is displayed.
+</div>
+
+<p><strong>Step 63:</strong> Double-click <code>Outlet_001.CMD</code>, set it to <strong>True</strong>, and click OK again.</p>
+<p><strong>Step 64:</strong> Enter your password, and this time use a member of <strong>Plant Supervisors 1</strong> as the verifier:</p>
+<table>
+  <thead>
+    <tr><th>Role</th><th>First, Last</th><th>User name</th><th>Password</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Plant Supervisors 1</td><td>Michael Jones</td><td>CLOUD\MichaelJ</td><td>ww</td></tr>
+    <tr><td></td><td>Karen Turner</td><td>CLOUD\KarenT</td><td>ww</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Step 65:</strong> Click OK. The verifier <strong>has</strong> Can Verify Writes permissions, so the value is written successfully.</p>
+
+<div class="key-concept">
+  <strong>VerifiedWrite — The Four-Eyes Principle:</strong> This classification enforces that <strong>two different users</strong> must authenticate before a critical change is made. The primary operator (with Operate permission) and a secondary verifier (with Can Verify Writes permission) must both confirm. The verifier <strong>must be a different person</strong> — using the same credentials for both will fail.
+</div>
+
+<!-- ---- View Security Audit Trail ---- -->
+<h3>Part 5: View the Security Audit Trail</h3>
+
+<p><strong>Step 68:</strong> Open Microsoft SQL Server Management Studio.</p>
+<p><strong>Step 69:</strong> Verify the Server name matches the Historian computer and click <strong>Connect</strong>.</p>
+<p><strong>Step 70:</strong> On the File menu, click <strong>Open → File</strong>.</p>
+<p><strong>Step 71:</strong> Navigate to <code>C:\Training</code> and select <code>Lab 17 - Security Audit Trail.SQL</code>.</p>
+<p><strong>Step 72:</strong> Click Open.</p>
+<p><strong>Step 73:</strong> Highlight the first query and click <strong>Execute</strong>.</p>
+
+<p>The first query returns the <strong>complete, unformatted history</strong> of all Write events in the last hour.</p>
+
+<p><strong>Step 75:</strong> Highlight the second query and click <strong>Execute</strong>.</p>
+
+<p>The second query returns <strong>formatted and sorted</strong> results showing relevant information related to Write events in the last hour — including the comment field showing write attempts from Secured and Verified writes performed during the lab.</p>
+
+<p><strong>Step 76:</strong> Close Microsoft SQL Server Management Studio.</p>
+
+<div class="lab">
+  <strong>Lab 17 Complete!</strong> You have successfully:
+  <ul>
+    <li>Configured SecuredWrite on Agitator Speed.SP</li>
+    <li>Configured VerifiedWrite on Outlet CMD</li>
+    <li>Deployed changes to the production galaxy</li>
+    <li>Tested Operate permissions (Line 1 vs Line 2 scope)</li>
+    <li>Tested Configure classification (object must be off scan)</li>
+    <li>Tested SecuredWrite (password re-authentication)</li>
+    <li>Tested VerifiedWrite (two-person verification)</li>
+    <li>Viewed the security audit trail in SQL Server Management Studio</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>28.5 Summary — Security Classification Reference</h2>
+
+<table>
+  <thead>
+    <tr><th>Classification</th><th>Authentication Required</th><th>Permissions Needed</th><th>Off-Scan Required</th><th>Typical Use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>FreeAccess</td><td>None</td><td>None</td><td>No</td><td>Emergency stop, safety-critical controls</td></tr>
+    <tr><td>Operate</td><td>Session login</td><td>Operate</td><td>No</td><td>Normal day-to-day operations</td></tr>
+    <tr><td>SecuredWrite</td><td>Per-write login</td><td>Operate</td><td>No</td><td>Important changes needing audit trail</td></tr>
+    <tr><td>VerifiedWrite</td><td>Two users, per-write</td><td>Operate + Can Verify Writes</td><td>No</td><td>Critical changes requiring two-person approval</td></tr>
+    <tr><td>Tune</td><td>Session login</td><td>Tune</td><td>No</td><td>Alarm setpoints, PID tuning</td></tr>
+    <tr><td>Configure</td><td>Session login</td><td>Configure</td><td><strong>Yes</strong></td><td>Significant configuration changes</td></tr>
+    <tr><td>ViewOnly</td><td>None</td><td>None</td><td>N/A</td><td>Read-only attributes, never written at runtime</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>28.6 Comprehension Check</h2>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q1: What is the key difference between Operate and SecuredWrite security classifications?</h3></summary>
+<p class="answer"><strong>Operate</strong> requires the user to have logged in with Operate permissions — the session login is sufficient for multiple writes. <strong>SecuredWrite</strong> requires the user to re-authenticate with their username and password <em>each time</em> they write to the attribute, plus Operate permissions. This creates a more detailed audit trail for each individual change.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q2: Why does the Configure classification require the object to be off scan?</h3></summary>
+<p class="answer">Configure classification is used for <strong>significant configuration changes</strong> (like changing a PLC register that defines input type). Requiring the object to be off scan prevents these changes from being made while the system is actively using the object, which could cause <strong>process instability or unsafe conditions</strong>. It enforces a deliberate two-step workflow: operator places off scan → maintainer configures → operator places back on scan.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q3: In a VerifiedWrite scenario, what happens if the verifier is the same person as the primary operator?</h3></summary>
+<p class="answer">The write will <strong>fail with an access denied error</strong>. The VerifiedWrite classification enforces the <strong>four-eyes principle</strong> — two <em>different</em> users must authenticate. The primary operator must have Operate permissions, and the verifier must be a different user with Can Verify Writes permissions for the object.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q4: What are the seven security classifications available for object attributes?</h3></summary>
+<p class="answer">The seven classifications are: <strong>FreeAccess</strong> (no restrictions), <strong>Operate</strong> (session login + Operate permissions), <strong>SecuredWrite</strong> (per-write authentication), <strong>VerifiedWrite</strong> (two-person verification), <strong>Tune</strong> (Tune permissions), <strong>Configure</strong> (Configure permissions + off scan), and <strong>ViewOnly</strong> (read-only, never written at runtime).</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q5: What information does a security-audit event message contain?</h3></summary>
+<p class="answer">A security-audit event message contains: <strong>Event type</strong> (operator change), <strong>Timestamp</strong>, <strong>Tagname</strong>, <strong>Primary attribute reference</strong>, <strong>Tag description</strong> (including write type, comment, and reason for Secured/Verified writes), <strong>FieldAttribute description</strong>, <strong>Area</strong>, <strong>UserEngine</strong>, <strong>Operator1</strong> (primary), <strong>Operator2</strong> (verifier, if any), <strong>Old value</strong>, and <strong>New value</strong>.</p>
+</details>
+</div>
+
+<div class="quiz">
+<details>
+<summary><h3 style="display:inline;">Q6: What SQL query would you use to find only Secured write events from the last 24 hours?</h3></summary>
+<pre><code>USE Runtime
+SELECT EventTime, Type, Tagname, Prim_attr AS Attribute,
+       Comment, Operator1, Operator2, OldValue, NewValue
+FROM Events
+WHERE EventTime > DATEADD(hh, -24, GETDATE())
+  AND Type = 'User.Write.Secured'
+ORDER BY EventTime DESC</code></pre>
+<p class="answer">This query filters the Events table for only <code>User.Write.Secured</code> type events from the last 24 hours, showing the operator names, old and new values, and any comments entered during the secured write. It uses <code>DATEADD(hh, -24, GETDATE())</code> for the 24-hour time window.</p>
+</details>
+</div>
+
+<hr>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 9 Section 2 + Lab 17</p>
+
+</body>
+</html>

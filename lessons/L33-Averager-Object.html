@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 33: Creating an Averager Object — Lab 24</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 900px; margin: 2em auto; padding: 0 1em; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+  h2 { font-size: 1.3em; color: #2c5f2d; margin-top: 1.5em; }
+  h3 { font-size: 1.1em; color: #555; }
+  .key-concept { background: #f0f7f0; border-left: 4px solid #2c5f2d; padding: 1em; margin: 1em 0; }
+  .pitfall { background: #fff3f3; border-left: 4px solid #c0392b; padding: 1em; margin: 1em 0; }
+  .lab { background: #f0f4ff; border-left: 4px solid #2c3e50; padding: 1em; margin: 1em 0; }
+  .tip { background: #fffde7; border-left: 4px solid #f39c12; padding: 1em; margin: 1em 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
+  th { background: #f5f5f5; }
+  code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
+  .screenshot { text-align: center; margin: 1.5em 0; }
+  .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
+  .quiz { background: #fffde7; border: 1px solid #f0e68c; padding: 1em; margin: 2em 0; }
+  .quiz h3 { margin-top: 0; }
+  .answer { color: #2c5f2d; font-weight: bold; }
+  nav { margin-bottom: 2em; font-size: 0.9em; }
+  nav a { color: #2c5f2d; }
+  .source { font-size: 0.85em; color: #777; font-style: italic; }
+  .page-ref { font-size: 0.8em; color: #999; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="L32-Variables-Control.html">← Lesson 32: Variables &amp; Control Statements</a> &nbsp;|&nbsp;
+  <a href="L34-Galaxy-Backup-Restore.html">Next: Lesson 34 — Galaxy Backup &amp; Restore →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;">
+<summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">📚 All Lessons</summary>
+<div style="margin-top:0.8em;line-height:2;">
+<strong>Module 1 — Introduction</strong><br>
+<a href="L01-System-Platform-Galaxy.html">L01: System Platform + Galaxy</a><br>
+<a href="L02-IDE-Tools-Views.html">L02: The IDE — Tools, Views</a><br>
+<a href="L03-Automation-Objects.html">L03: Automation Objects</a><br>
+<a href="L04-Lab2-Derived-Templates.html">L04: Lab 2 + Licensing</a><br>
+<strong>Module 2 — Application Planning</strong><br>
+<a href="L05-Workflow-Case-Study.html">L05: Workflow + Case Study</a><br>
+<strong>Module 3 — Application Infrastructure</strong><br>
+<a href="L06-Plant-Deployment-Models.html">L06: Plant + Deployment Models</a><br>
+<a href="L07-Lab3-Creating-Models.html">L07: Lab 3 — Creating Models</a><br>
+<a href="L08-OCMC-Runtime.html">L08: OCMC + Runtime</a><br>
+<a href="L09-Lab4-Object-Viewer.html">L09: Lab 4 — Object Viewer</a><br>
+<a href="L10-Data-Simulation.html">L10: Data Simulation</a><br>
+<strong>Module 4 — Application Objects</strong><br>
+<a href="L11-App-Objects-Attributes.html">L11: App Objects + Attributes</a><br>
+<a href="L12-Lab6-Modeling-Meters.html">L12: Lab 6 — Modeling Meters</a><br>
+<a href="L13-Change-Control-Lab7.html">L13: Change Control + Lab 7</a><br>
+<a href="L14-Containment-Lab8-Mixer.html">L14: Containment + Lab 8</a><br>
+<strong>Module 5 — Device Integration</strong><br>
+<a href="L15-Device-Integration-Servers.html">L15: DI Servers</a><br>
+<a href="L16-Lab9-OI-Server.html">L16: DI Objects + Lab 9</a><br>
+<a href="L17-Lab10-DI-Object.html">L17: Connecting to Field + Labs 10-11</a><br>
+<strong>Module 6 — History</strong><br>
+<a href="L18-History.html">L18: History + Lab 12</a><br>
+<strong>Module 7 — Alarms and Events</strong><br>
+<a href="L23-Alarms-Events-Overview.html">L23: Alarms and Events Overview</a><br>
+<a href="L24-Lab13-Configuring-Alarms.html">L24: Lab 13 — Configuring Alarms</a><br>
+<strong>Module 8 — Object Management</strong><br>
+<a href="L25-Object-Export-Import.html">L25: Object Export and Import</a><br>
+<a href="L26-CSV-Export-Import.html">L26: CSV Export/Import + Lab 15</a><br>
+<strong>Module 9 — Security</strong><br>
+<a href="L27-Security-Overview.html">L27: Security Overview + Lab 16</a><br>
+<a href="L28-Object-Security.html">L28: Object Security + Lab 17</a><br>
+<strong>Module 10 — Application Redundancy</strong><br>
+<a href="L29-Application-Redundancy.html">L29: Application Redundancy + Lab 18</a><br>
+<a href="L30-DI-Redundancy.html">L30: DI Redundancy + Lab 19</a><br>
+<strong>Module 11 — QuickScript.NET</strong><br>
+<a href="L31-Scripting-Introduction.html">L31: Scripting Introduction + Labs 20-21</a><br>
+<a href="L32-Variables-Control.html">L32: Variables and Control + Labs 22-23</a><br>
+<a href="L33-Averager-Object.html">L33: Lab 24 — Averager Object</a><br>
+<strong>Module 12 — Galaxy Backup and Restore</strong><br>
+<a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a><br>
+</div>
+</nav>
+
+<h1>Lesson 33: Creating an Averager Object — Lab 24</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 11 — Introduction to QuickScript.NET</p>
+<p class="page-ref">Covers creating a custom Automation Object ($Averager) that averages multiple input values using array variables, Declarations, and Aliases. (pages 11-51 to 11-59)</p>
+
+<div class="screenshot">
+  <img src="../images/page_0514_1.jpeg" alt="Averager Object icon representing data aggregation and averaging">
+  <div class="caption">Figure 33-1 — Averager Object icon. The overlapping shapes and arrows symbolize data sources being aggregated into a calculated average value.</div>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>33.1 Introduction</h2>
+
+<div class="lab">
+  <strong>Lab 24 — Creating an Averager Object</strong>
+  <p>In this lab, you will create a script that will gather data using array variables, and then use declarations and aliases to calculate an average of the data.</p>
+</div>
+
+<h3>Objectives</h3>
+<p>Upon completion of this lab, you will be able to:</p>
+<ul>
+  <li>Use array variables in QuickScript.NET</li>
+  <li>Use Declarations in a script</li>
+  <li>Use Aliases in a script</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>33.2 Create the $Averager Template</h2>
+<p class="page-ref">Reference: pages 11-52 to 11-53</p>
+
+<p>You will create a new derived template with a new attribute and a script that makes use of both Aliases and Declarations to gather data and then calculate an average of that data.</p>
+
+<div class="lab">
+<strong>Step 1:</strong> In the IDE, <strong>Templates</strong> tab, Application template toolset, create a new derived template from the <code>$UserDefined</code> template named <code>$Averager</code>.<br>
+<strong>Step 2:</strong> Move <code>$Averager</code> to the <code>Training\Project</code> toolset.<br>
+<strong>Step 3:</strong> Open the <code>$Averager</code> configuration editor.
+</div>
+
+<!-- ============================================================ -->
+<h2>33.3 Create the Average Attribute</h2>
+<p class="page-ref">Reference: page 11-52</p>
+
+<p>Add a new attribute to the <code>$Averager</code> template and configure it as follows:</p>
+
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Name</td><td><code>Average</code></td></tr>
+  <tr><td>Data Type</td><td><code>Double</code></td></tr>
+  <tr><td>Writeability</td><td><code>Calculated</code></td></tr>
+</table>
+
+<p>The attribute configuration interface is used to define all attributes on any object. The screenshots below show the general attribute configuration panels used throughout the platform:</p>
+
+<div class="screenshot">
+  <img src="../images/page_0514_0.png" alt="Attribute configuration showing Boolean type for LSOpen with Writeability set to Object writeable">
+  <div class="caption">Figure 33-2 — Attribute configuration panel example (Boolean type). The <em>LSOpen</em> attribute uses Boolean data type with Object writeable writeability and display labels for True/False states. The <em>Average</em> attribute is configured similarly but with Data Type set to Double instead of Boolean, and Writeability set to Calculated.</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0514_2.png" alt="Attribute configuration showing Boolean type for LSClosed with Writeability set to Object writable">
+  <div class="caption">Figure 33-3 — Another attribute configuration panel example (Boolean type). The <em>LSClosed</em> attribute demonstrates the same configuration pattern: Name, Description, Data type, Writeability, and display labels. For the Average attribute, you configure similar fields but use the Double data type.</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0515_0.jpeg" alt="Attribute configuration showing String type with Calculated writeability for Status">
+  <div class="caption">Figure 33-4 — Attribute configuration showing <em>String</em> data type with <em>Calculated</em> writeability. The <em>Status</em> attribute is configured as Calculated, meaning its value is updated only by script logic and cannot be overwritten by external writes — the same Writeability setting used for the <em>Average</em> attribute in this lab.</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0515_1.jpeg" alt="Attribute configuration showing String array with 4 elements for StateArray">
+  <div class="caption">Figure 33-5 — Attribute configuration showing an array attribute. The <em>StateArray</em> attribute demonstrates how to configure an array by checking the <em>Array</em> checkbox and specifying the number of elements. Array variables are a key concept in this lab — the Average.Calculate script uses a 60-element Double array as a circular sample buffer.</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0516_0.jpeg" alt="Attribute configuration showing Integer type for StateIndex with Object writeable">
+  <div class="caption">Figure 33-6 — Attribute configuration showing <em>Integer</em> data type. The <em>StateIndex</em> attribute uses Integer data type with Object writeable writeability. Similarly, the <em>Average</em> attribute in this lab uses a numeric data type (Double) to store the calculated average value.</div>
+</div>
+
+<div class="tip">
+  <strong>Note:</strong> Setting Writeability to <em>Calculated</em> ensures the attribute value is updated only by script execution and cannot be overwritten by external writes.
+</div>
+
+<!-- ============================================================ -->
+<h2>33.4 Configure the Average.Calculate Script</h2>
+<p class="page-ref">Reference: pages 11-53 to 11-54</p>
+
+<h3>33.4.1 Add the Script and Alias</h3>
+
+<div class="lab">
+<strong>Step 4:</strong> On the <strong>Scripts</strong> tab, add a new script named <code>Average.Calculate</code>.<br>
+<strong>Step 5:</strong> Expand the <strong>Aliases</strong> area.<br>
+<strong>Step 6:</strong> Click the <strong>Add Alias</strong> button to add an alias named <code>ValueToAverage</code> and press Enter, leaving the Reference defaulted to <code>---.---</code>.<br>
+<strong>Step 7:</strong> Lock and collapse the Aliases area.
+</div>
+
+<p>Aliases provide a convenient way to reference external attributes or tags within a script. By defining an alias, you create a short name that maps to an external reference — the actual binding is configured later when the instance is created.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0516_1.jpeg" alt="Object configuration editor showing attributes list with Name, Data Type, and other properties">
+  <div class="caption">Figure 33-7 — Object configuration editor with the Attributes tab active. The <code>$Averager</code> instance editor looks similar, showing the <code>Average</code> attribute and inherited scripts. The attribute list displays all configured attributes with their data types, descriptions, and properties.</div>
+</div>
+
+<h3>33.4.2 Add Declarations</h3>
+
+<div class="lab">
+<strong>Step 8:</strong> Expand the <strong>Declarations</strong> area, and then in the script body, enter the following:
+</div>
+
+<pre><code>' Circular sample queue to hold the values
+dim sampleValues[60] as double;
+dim sampleLength as integer;
+' Holds the current size of the sample queue
+dim sampleSize as integer;
+' Index to store the next value
+dim nextElementIndex as integer;</code></pre>
+
+<div class="tip">
+  <strong>Understanding Declarations:</strong> The <code>dim</code> statement declares variables that are local to the script. Here, <code>sampleValues</code> is a 60-element array of doubles used as a circular buffer to store incoming samples.
+</div>
+
+<div class="lab">
+<strong>Step 9:</strong> Lock and collapse the Declarations area.<br>
+<strong>Step 10:</strong> In the <strong>Scripts</strong> area, <strong>Execution type</strong> drop-down list, verify <code>Execute</code> is selected, and then lock it.<br>
+<strong>Step 11:</strong> In the <strong>Basics</strong> area, <strong>Trigger type</strong> drop-down list, select <code>Periodic</code>.<br>
+<strong>Step 12:</strong> Lock the Basics area.
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0517_0.png" alt="Script configuration showing Execute execution type and trigger settings">
+  <div class="caption">Figure 33-8 — Script configuration panel showing Execution type (Execute), Trigger type, and Basics area. The Average.Calculate script uses a <em>Periodic</em> trigger type so it runs at regular intervals. The <em>Aliases</em> and <em>Declarations</em> sections (collapsed in this view) hold the alias definitions and local variable declarations respectively.</div>
+</div>
+
+<h3>33.4.3 Enter the Execute Script Body</h3>
+
+<div class="lab">
+<strong>Step 13:</strong> In the script body, enter the following:
+</div>
+
+<pre><code>' Calculate the index where the next element will be stored
+' and stores the next sample value in that position.
+nextElementIndex = (nextElementIndex mod sampleSize) + 1;
+sampleValues[nextElementIndex] = ValueToAverage;
+
+' Verify if the sample queue is filled or not.
+if sampleLength < sampleSize then
+    sampleLength = sampleLength + 1;
+endif;
+
+' Calculate the average rounded to 3 decimal places,
+' with the values stored in the sample queue.
+dim sampleSum as double;
+sampleSum = 0.0;
+dim i as integer;
+for i = 1 to sampleLength
+    sampleSum = sampleSum + sampleValues[i];
+next;
+Me.Average = Round(sampleSum / sampleLength, .001);
+
+' Set the quality of the Average based on the sample queue being filled.
+if sampleLength < sampleSize then
+    SetInitializing(Me.Average);
+else;
+    SetGood(Me.Average);
+endif;</code></pre>
+
+<div class="key-concept">
+  <strong>Script Logic Breakdown:</strong>
+  <ul>
+    <li><strong>Circular buffer:</strong> <code>nextElementIndex</code> wraps around using modulo arithmetic, cycling through array positions 1–60.</li>
+    <li><strong>Sample accumulation:</strong> Each execution stores the current <code>ValueToAverage</code> alias value into the circular buffer.</li>
+    <li><strong>Average calculation:</strong> Sums all stored samples and divides by the count, rounded to 3 decimal places.</li>
+    <li><strong>Quality management:</strong> While fewer than 60 samples are collected, the quality is set to <em>Initializing</em>. Once the buffer is full, quality is set to <em>Good</em>.</li>
+  </ul>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0518_0.png" alt="Script body showing QuickScript code with if/elseif/else logic and variable references">
+  <div class="caption">Figure 33-9 — Script editor showing QuickScript code. The script body uses <code>Me.</code> references, conditional logic, and array indexing patterns — the same structural patterns used in the Average.Calculate script for computing rolling averages.</div>
+</div>
+
+<h3>33.4.4 Add the OnScan Script Body</h3>
+
+<p>In addition to the Execute script, you need an OnScan script that initializes variables when the object comes on-scan.</p>
+
+<div class="lab">
+<strong>Step 14:</strong> In the <strong>Execution type</strong> drop-down list, select <code>OnScan</code>.<br>
+<strong>Step 15:</strong> In the script body, enter the following:
+</div>
+
+<pre><code>' Gets the size/capacity of the sample queue
+sampleSize = sampleValues.GetLength(0);
+
+' Initialized sampleLength
+' This is needed to ensure that if the object goes offscan,
+' the values stored in the sample queue are ignored
+' when the object goes back onscan
+sampleLength = 0;</code></pre>
+
+<div class="tip">
+  <strong>Why OnScan?</strong> The OnScan script runs once when the object transitions to on-scan status. By setting <code>sampleLength = 0</code>, it ensures stale data from a previous off-scan period is discarded.
+</div>
+
+<div class="lab">
+<strong>Step 16:</strong> Validate the script.<br>
+<strong>Step 17:</strong> Save and close, and check in the object with an appropriate comment.
+</div>
+
+<!-- ============================================================ -->
+<h2>33.5 Checking In the Template</h2>
+<p class="page-ref">Reference: page 11-56</p>
+
+<p>After saving the <code>$Averager</code> template, you must check it in to commit the changes to the Galaxy repository. The check-in process propagates template changes to descendant objects and optimizes the database.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0519_0.png" alt="Check-In completion dialog showing propagation steps and galaxy optimization">
+  <div class="caption">Figure 33-10 — Check-In completion dialog. The system finds descendant objects, propagates template changes to all derived objects, finalizes the check-in, and optimizes the Galaxy database. This confirms the <code>$Averager</code> template has been successfully saved to the repository.</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>33.6 Create the Averager Instance</h2>
+<p class="page-ref">Reference: pages 11-56 to 11-57</p>
+
+<p>Next, you will create an instance of the <code>$Averager</code> template and configure it to calculate the average of the <code>Temperature_001.PV</code> attribute.</p>
+
+<div class="lab">
+<strong>Step 18:</strong> Create a new instance of <code>$Averager</code> and leave the default name (<code>Averager_001</code>).
+</div>
+
+<div class="lab">
+<strong>Step 19:</strong> In Model view, assign <code>Averager_001</code> to <code>Mixer100.Temperature_001</code>.<br>
+<strong>Step 20:</strong> Open the <code>Averager_001</code> configuration editor.<br>
+<strong>Step 21:</strong> Click the <strong>Scripts</strong> tab.<br>
+<strong>Step 22:</strong> In the <strong>Inherited scripts</strong> list, select <code>Average.Calculate</code>.<br>
+<strong>Step 23:</strong> Expand <strong>Aliases</strong>, and then in the <strong>Reference</strong> field, double-click <code>---.---</code>.<br>
+<strong>Step 24:</strong> Replace it with <code>myContainer.PV</code> and press Enter.
+</div>
+
+<div class="key-concept">
+  <strong>Understanding the Alias Reference:</strong> The alias <code>ValueToAverage</code> was left undefined in the template. By setting the Reference to <code>myContainer.PV</code>, the alias now points to the <code>PV</code> attribute of the object's container (i.e., <code>Mixer100.Temperature_001.PV</code>). This is the value that will be averaged.
+</div>
+
+<!-- ============================================================ -->
+<h2>33.7 Configure Execution Order</h2>
+<p class="page-ref">Reference: pages 11-57 to 11-58</h2>
+
+<div class="lab">
+<strong>Step 25:</strong> On the <strong>Object Information</strong> tab, <strong>Execution order</strong> area, <strong>Process order</strong> drop-down list, select <code>After</code>.<br>
+<strong>Step 26:</strong> To the right of the <strong>Relative object</strong> field, click the ellipsis button.
+</div>
+
+<p>The Galaxy Browser appears.</p>
+
+<div class="lab">
+<strong>Step 27:</strong> In the Galaxy Browser, <strong>Instances</strong> list, select <code>Temperature_001</code>.<br>
+<strong>Step 28:</strong> In the <code>Temperature_001</code> pane to the right, select <code>PV</code>.<br>
+<strong>Step 29:</strong> Click <strong>OK</strong>.
+</div>
+
+<p>When completed, the Relative object displays <code>@Temperature_001.PV</code>. This configuration ensures the averaging script executes <em>after</em> the temperature sensor's PV has been updated.</p>
+
+<div class="lab">
+<strong>Step 30:</strong> Save and close, and check in the instance with an appropriate comment.<br>
+<strong>Step 31:</strong> Deploy the <code>Averager_001</code> instance.
+</div>
+
+<!-- ============================================================ -->
+<h2>33.8 Test in Runtime</h2>
+<p class="page-ref">Reference: page 11-59</p>
+
+<p>Now, you will use the Object Viewer to observe the results in runtime.</p>
+
+<div class="lab">
+<strong>Step 32:</strong> View <code>Averager_001</code> in Object Viewer.<br>
+<strong>Step 33:</strong> Add a new watch window, and then rename it <code>Average</code>.<br>
+<strong>Step 34:</strong> Add the <code>Averager_001.Average</code> attribute to the watch window.
+</div>
+
+<div class="tip">
+  <strong>Note:</strong> The Quality parameter will show as <code>20:Initializing</code> until enough values have been captured according to the configuration of the Averager object (60 samples). Once the circular buffer is full, the quality transitions to <code>0:Good</code>.
+</div>
+
+<div class="lab">
+<strong>Step 35:</strong> Save the watch window.
+</div>
+
+<div class="pitfall">
+  <strong>Important:</strong> If the quality remains in <em>Initializing</em> state for an extended period, verify that the OnScan script is initializing <code>sampleLength</code> to 0 and that the periodic trigger is firing correctly.
+</div>
+
+<h3>Optional Extension</h3>
+<p>Repeat the previous steps to add additional instances of the Averager object to other attributes, such as the remaining Temperature or Level instances.</p>
+
+<!-- ============================================================ -->
+<h2>33.9 Summary</h2>
+
+<div class="key-concept">
+  <strong>Key Concepts Covered:</strong>
+  <ul>
+    <li><strong>Array variables:</strong> Used <code>dim sampleValues[60] as double</code> to create a fixed-size circular buffer for storing sample data.</li>
+    <li><strong>Declarations:</strong> Local variables declared with <code>dim</code> hold runtime state within the script (sample queue, counters, indices).</li>
+    <li><strong>Aliases:</strong> Created a named reference (<code>ValueToAverage</code>) that maps to an external attribute, enabling flexible binding of input data sources.</li>
+    <li><strong>Periodic execution:</strong> The Execute script runs on a timer, accumulating and averaging samples over time.</li>
+    <li><strong>OnScan initialization:</strong> The OnScan script initializes variables when the object comes on-scan, ensuring clean state after off-scan periods.</li>
+    <li><strong>Quality management:</strong> Script logic manages the quality of the computed average — <em>Initializing</em> while the buffer fills, <em>Good</em> once sufficient data is available.</li>
+    <li><strong>Execution order:</strong> Setting Process order to <em>After</em> with a relative object ensures the averaging script runs after the source data is updated.</li>
+  </ul>
+</div>
+
+<div class="quiz">
+<h3>Review Questions</h3>
+<ol>
+  <li>What is the purpose of the circular buffer pattern used in the Average.Calculate script?</li>
+  <li>Why is the <code>sampleLength</code> variable reset to 0 in the OnScan script?</li>
+  <li>What is the difference between a Declaration and an Alias in QuickScript.NET?</li>
+  <li>Why is the Process order set to <em>After</em> with a relative object of <code>@Temperature_001.PV</code>?</li>
+  <li>What quality value does the Average attribute report while the sample buffer is filling?</li>
+</ol>
+
+<details>
+<summary style="cursor:pointer;font-weight:bold;color:#2c5f2d;">Click for Answers</summary>
+<ol>
+  <li>The circular buffer ensures a fixed memory footprint while continuously capturing the most recent 60 samples. Older values are overwritten as new ones arrive, keeping a rolling average window.</li>
+  <li>Resetting <code>sampleLength</code> to 0 ensures that stale samples from a previous on-scan period are discarded when the object goes off-scan and comes back on-scan, preventing incorrect averages.</li>
+  <li><strong>Declarations</strong> are local variables defined within the script (like <code>dim</code> statements) that hold intermediate values during execution. <strong>Aliases</strong> are named references to external attributes or tags that can be configured per-instance, enabling the same script to work with different data sources.</li>
+  <li>Setting Process order to <em>After</em> ensures the averaging script executes after the temperature sensor's PV value has been updated, so it always averages the latest data.</li>
+  <li>The quality is set to <code>20:Initializing</code> (via <code>SetInitializing</code>) while the buffer is filling, and transitions to <code>0:Good</code> (via <code>SetGood</code>) once the full 60 samples have been collected.</li>
+</ol>
+</details>
+</div>
+
+<hr>
+
+<p class="source">Lesson 33 — AVEVA App Server Training — Module 11: Introduction to QuickScript.NET — Lab 24</p>
+
+</body>
+</html>
