@@ -17,6 +17,8 @@
   th, td { border: 1px solid #ddd; padding: 0.5em; text-align: left; }
   th { background: #f5f5f5; }
   code { background: #f4f4f4; padding: 0.1em 0.4em; font-size: 0.95em; }
+  pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.9em; line-height: 1.5; }
+  pre code { background: none; padding: 0; }
   .screenshot { text-align: center; margin: 1.5em 0; }
   .screenshot img { max-width: 100%; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
   .screenshot .caption { font-size: 0.85em; color: #666; font-style: italic; margin-top: 0.5em; }
@@ -37,9 +39,12 @@
 <body>
 
 <nav>
-  <p><a href="L22-History-Configuration.html">← Lesson 22: History Configuration</a> &nbsp;|&nbsp;
-  <a href="L24-Lab13-Configuring-Alarms.html">Lesson 24: Lab 13 — Configuring Alarms →</a></p>
-  <details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;margin-bottom:1.5em;">
+  <a href="L22-Lab12-Retrieving-History.html">← Lesson 22: Lab 12 — Retrieving History</a> &nbsp;|&nbsp;
+  <a href="L24-Lab13-Configuring-Alarms.html">Next: Lesson 24 — Lab 13: Configuring Alarms →</a>
+</nav>
+
+<nav style="margin-bottom:1.5em;">
+<details style="background:#f5f5f5;padding:0.8em;border-radius:6px;border:1px solid #ddd;margin-bottom:1.5em;">
 <summary style="cursor:pointer;font-weight:bold;font-size:1.1em;color:#2c5f2d;">&#128218; All Lessons</summary>
 <div style="margin-top:0.8em;line-height:1.8;max-height:70vh;overflow-y:auto;">
 <div style="margin-bottom:0.5em;padding:0.5em;background:#e8f5e9;border-radius:4px;">
@@ -93,33 +98,356 @@
 <label style="cursor:pointer;display:block;margin:0.1em 0;"><input type="checkbox" data-lesson="L34" onchange="saveProgress()"> <a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a></label>
 </div>
 </details>
+</nav>
 
-  <p><strong>Q2:</strong> Name the five types of alarms supported by Application Server.</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Limit, Deviation, Diagnostic, Rate of Change (ROC), and Bad Value alarms.</p></details>
+<h1>Lesson 23: Alarms and Events Overview</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 7 Section 1</p>
+<p class="page-ref">Comprehensive overview of alarm types, alarm modes, alarm attributes, severities, aggregation, shelving, and the role of the Platform in alarm/event infrastructure. (pages 7-3 through 7-19)</p>
 
-  <p><strong>Q3:</strong> A HiHi alarm limit is set to 80 with an alarm deadband of 5 EU. At what value must the process variable drop to clear the alarm?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The value must drop below 75 EU (80 − 5 = 75) to clear the HiHi alarm.</p></details>
+<hr>
 
-  <p><strong>Q4:</strong> What are the three alarm states, from most permissive to most restrictive?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Enabled (most permissive) → Silenced → Disabled (most restrictive).</p></details>
+<!-- ============================================================ -->
+<h2>23.1 Events and Alarms — What's the Difference?</h2>
+<p class="page-ref">Reference: Module 7, pages 7-3 through 7-5</p>
 
-  <p><strong>Q5:</strong> What happens when the <code>AlarmInhibit</code> attribute is set to TRUE?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">ALL alarms for the Object and all contained objects are disabled immediately. When set back to FALSE, inhibition is removed and the system checks AlarmMode and parent status to determine the alarm state.</p></details>
+<p>Before diving into the alarm system, it is essential to understand the distinction between an <strong>event</strong> and an <strong>alarm</strong>. These two terms are often used interchangeably in casual conversation, but in the context of Application Server, they carry very different meanings — and understanding that difference is key to using the platform effectively.</p>
 
-  <p><strong>Q6:</strong> Which alarm states are aggregated, and which is NOT?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">UNACK_ALM, ACK_ALM, and UNACK_RTN are aggregated. ACK_RTN is NOT aggregated.</p></details>
+<p>An <strong>event</strong> is a general occurrence of a condition at a specific point in time. Events represent state changes in your system and are not inherently abnormal. They simply record that something happened. For example, a plant process started, an operator changed a setpoint, a new object was deployed to a platform, a platform recovered from a failure, or a user logged in. All of these are events. They are recorded and can be viewed in history, but they do not require any action from an operator.</p>
 
-  <p><strong>Q7:</strong> What is the default alarm state for the "Running" plant state, and can it be changed?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The Running state defaults to Enable and its alarm state is <em>read-only</em> — it cannot be changed from Enable. The state name can be renamed, but the alarm mode cannot be modified.</p></details>
+<p>An <strong>alarm</strong>, on the other hand, is a special, prioritized type of event that signals an abnormal condition requiring immediate attention. When a process measurement exceeds a configured limit, a device fails to reach its desired state, or hardware moves outside acceptable limits, the system generates an alarm. Alarms are distinguished from ordinary events by the fact that they indicate something is wrong — and that someone needs to respond.</p>
 
-  <p><strong>Q8:</strong> How does shelving differ from silencing an alarm?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Key differences: (1) Shelved alarms have a built-in timeout and are auto-unshelved when expired; (2) Shelving applies only to individual alarms, not entire Areas or Objects; (3) Role-based access controls limit who can shelve; (4) The system tracks the user, workstation, reason, start time, and expiration of shelving.</p></details>
+<div class="key-concept">
+  <strong>Key Concept: Events vs. Alarms</strong><br>
+  An <em>event</em> records that something happened (state change, operator action, system recovery). An <em>alarm</em> is a prioritized event that signals an abnormal condition requiring operator attention. All alarms are events, but not all events are alarms.
+</div>
 
-  <p><strong>Q9:</strong> What are the default priority ranges for each alarm severity?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Critical (1): 1–250, High (2): 251–500, Medium (3): 501–750, Low (4): 751–999.</p></details>
+<p>It is also important to note what falls outside the scope of events and alarms entirely. Galaxy Repository configuration actions — such as modifying a template or changing object properties in the IDE — are <strong>not</strong> events or alarms. Similarly, Bootstrap installation activities and Logger messages are not categorized as events or alarms within the Application Server framework.</p>
 
-  <p><strong>Q10:</strong> When viewing alarm trends in Historian Client Web, how can you identify an alarm vs. an event on the trend line?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Alarms display with highlighted areas on the trend line — clicking the highlight shows alarm details (type, duration, limit). Events display with event icons (e.g., a purple + marker) — clicking the icon shows event details (type, user, verification).</p></details>
+<!-- ============================================================ -->
+<h2>23.2 The Platform as Alarm Provider</h2>
+<p class="page-ref">Reference: Module 7, pages 7-5 through 7-6</p>
+
+<p>The Application Server <strong>Platform</strong> plays a central role in the alarm and event infrastructure. Every alarm and event that originates within your system is routed through the Platform, which acts as the bridge between the Alarm/Event Notification Distributors (such as AVEVA Alarm Notification or AVEVA Historian) and the distributed alarm infrastructure.</p>
+
+<p>When you subscribe an Area to alarm and event notifications, the Platform collects all alarms and events from that Area and routes them to the appropriate subscribers. It also handles acknowledgments, enabling, and disabling operations — and it tracks which user performed each action for security and auditing purposes.</p>
+
+<p>This architecture means that the Platform is the single point through which all alarm traffic flows. If you need to understand why an alarm was or was not delivered to a particular client, the Platform's routing behavior is the first place to look.</p>
+
+<!-- ============================================================ -->
+<h2>23.3 Types of Alarms</h2>
+<p class="page-ref">Reference: Module 7, pages 7-6 through 7-10</p>
+
+<p>Application Server supports five distinct types of alarms, each designed to detect a specific kind of abnormal condition. Understanding when to use each type is fundamental to building an effective alarm strategy.</p>
+
+<h3>23.3.1 Limit Alarms</h3>
+
+<p>Limit alarms are the most common type and the most straightforward to configure. They trigger when a process value crosses a defined threshold. Application Server provides four configurable limits for any numeric attribute:</p>
+
+<table>
+<tr><th>Limit</th><th>Description</th></tr>
+<tr><td><strong>LoLo</strong></td><td>Low-Low limit — critical low threshold</td></tr>
+<tr><td><strong>Lo</strong></td><td>Low limit — warning low threshold</td></tr>
+<tr><td><strong>Hi</strong></td><td>High limit — warning high threshold</td></tr>
+<tr><td><strong>HiHi</strong></td><td>High-High limit — critical high threshold</td></tr>
+</table>
+
+<p>Each limit is individually configurable: you can enable or disable it, set its threshold value, assign a priority, and define a custom alarm message. The diagram below shows how the four limit levels relate to a typical process value trending over time.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0275_0.png" alt="Limit alarm levels showing LoLo, Lo, Hi, and HiHi thresholds on a process value">
+  <div class="caption">Limit alarm levels — LoLo, Lo, Hi, and HiHi thresholds shown relative to a process value trending over time</div>
+</div>
+
+<p>Two important concepts govern how limit alarms behave once triggered: the <strong>alarm deadband</strong> and the <strong>time deadband</strong>.</p>
+
+<p>The <strong>alarm deadband</strong> defines how far the process value must return toward the normal range before the alarm clears. For example, if the HiHi limit is set to 80 EU with a deadband of 5 EU, the process value must drop below 75 EU (80 − 5 = 75) before the alarm is cleared. This prevents rapid alarm toggling when a value hovers near the threshold.</p>
+
+<p>The <strong>time deadband</strong> defines the minimum duration the value must remain outside the threshold before the alarm condition is actually reported. This filters out momentary spikes that do not represent a genuine alarm condition.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0275_1.png" alt="Limit alarm configuration dialog showing enabled state, limit value, priority, and alarm message fields">
+  <div class="caption">Limit alarm configuration — each limit can be individually enabled with its own threshold, priority, and message</div>
+</div>
+
+<div class="key-concept">
+  <strong>Key Concept: Alarm Deadband Prevents Alarm Chatter</strong><br>
+  The alarm deadband ensures a process value must return a specified distance past the threshold before the alarm clears. Without it, values fluctuating near the threshold would cause the alarm to rapidly toggle on and off — a condition known as "alarm chatter."
+</div>
+
+<h3>23.3.2 Deviation Alarms</h3>
+
+<p>Deviation alarms compare a measured value against a target setpoint rather than against a fixed threshold. The system calculates the absolute difference between the current value and the target engineering units, then compares that difference against configured minor and major deviation limits.</p>
+
+<p>Two additional parameters govern deviation alarm behavior: the <strong>settling period</strong>, which is the time after a device starts during which no alarms are generated (allowing the process to stabilize), and the <strong>deviation deadband</strong>, which defines how far the deviation must decrease before the alarm clears.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0276_0.png" alt="Alarm deadband diagram and deviation alarm concept showing current value versus target with minor and major deviation limits">
+  <div class="caption">Alarm deadband and deviation alarm concept — the measured value is compared against a target, and absolute deviation is checked against minor and major limits</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0276_1.png" alt="Deviation alarm configuration dialog with minor and major deviation limits, settling period, and deadband settings">
+  <div class="caption">Deviation alarm configuration — minor and major deviation limits, settling period, and deadband are all configurable per alarm</div>
+</div>
+
+<h3>23.3.3 Rate of Change (ROC) Alarms</h3>
+
+<p>Rate of Change alarms detect when a process value is changing too quickly — regardless of whether it is within acceptable absolute limits. The system calculates the slope of change as the absolute difference between the current and previous values divided by the time interval: <code>Slope = |Current − Previous| / Interval</code>.</p>
+
+<p>ROC alarm limits can be configured in engineering units per second, per minute, per hour, or per day, giving you fine-grained control over the sensitivity of the alarm. Both upward and downward rate limits are configurable independently.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0277_0.png" alt="ROC alarm diagram showing a tank level changing too rapidly and triggering the rate-of-change alarm">
+  <div class="caption">ROC alarm example — a tank level changes too quickly, exceeding the configured rate-of-change threshold</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0277_1.png" alt="ROC alarm configuration dialog with upward and downward rate limits in EU per time unit">
+  <div class="caption">ROC alarm configuration — upward and downward rate limits are set independently in engineering units per second, minute, hour, or day</div>
+</div>
+
+<h3>23.3.4 Bad Value Alarms</h3>
+
+<p>Bad Value alarms trigger when an attribute returns a bad quality status. This typically occurs when a data source becomes unavailable, a communication link fails, or a value cannot be reliably determined. Rather than reporting a stale or incorrect value, the system flags the condition as an alarm so operators know the data they are relying on may be compromised.</p>
+
+<h3>23.3.5 Diagnostic Alarms</h3>
+
+<p>Diagnostic alarms are system-level alarms generated by the platform itself to indicate infrastructure problems — such as a platform failing, a network interruption, or a device going offline. These alarms are not tied to a specific process measurement but rather to the health and availability of the system components.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0278_0.png" alt="Bad value alarm concept and plant states table showing default alarm modes for Running, Maintenance, Startup, Shutdown, and Testing states">
+  <div class="caption">Bad value alarms and plant states — the five default plant states and their associated alarm modes</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.4 Plant State-Based Alarms</h2>
+<p class="page-ref">Reference: Module 7, pages 7-10 through 7-11</p>
+
+<p>Application Server provides a powerful mechanism for tying alarm behavior to the operational state of your plant. Rather than manually enabling and disabling alarms when the plant transitions between operational modes, you can map alarm modes to plant states and have the system automatically apply the correct alarm configuration.</p>
+
+<p>Every Galaxy ships with five default plant states:</p>
+
+<table>
+<tr><th>Plant State</th><th>Default Alarm Mode</th><th>Editable?</th></tr>
+<tr><td><strong>Running</strong></td><td>Enable</td><td>Read-only (can rename, but alarm mode cannot change from Enable)</td></tr>
+<tr><td><strong>Maintenance</strong></td><td>Disable</td><td>Yes</td></tr>
+<tr><td><strong>Startup</strong></td><td>Silence</td><td>Yes</td></tr>
+<tr><td><strong>Shutdown</strong></td><td>Disable</td><td>Yes</td></tr>
+<tr><td><strong>Testing</strong></td><td>Silence</td><td>Yes</td></tr>
+</table>
+
+<p>You can create new plant states, rename existing ones, and delete states you no longer need — with one exception. The <strong>Running</strong> state can be renamed, but its alarm mode is locked to Enable. This safeguard ensures that when the plant is in its normal operating condition, alarms are always active.</p>
+
+<p>To assign a plant state to an Area, you set the <code>PlantState</code> attribute on the Area object. When you do this, the <code>PlantAlarmMode</code> attribute automatically updates to reflect the alarm mode associated with that state.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0278_1.png" alt="Alarms and Events configuration window showing the Plant States tab where default states and their alarm modes are defined">
+  <div class="caption">Alarms and Events configuration — the Plant States tab where default states and their associated alarm modes are defined and managed</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.5 Enabling, Silencing, and Disabling Alarms</h2>
+<p class="page-ref">Reference: Module 7, pages 7-11 through 7-13</p>
+
+<p>Alarms in Application Server can exist in three distinct modes: <strong>Enabled</strong>, <strong>Silenced</strong>, or <strong>Disabled</strong>. These modes can be applied at any level of the containment hierarchy — on an Area, a container, an individual object, or even a single alarm.</p>
+
+<p><strong>Enabled</strong> is the most permissive state. When alarms are enabled, all alarm conditions are reported to subscribed clients and recorded in the historian. This is the normal operating mode.</p>
+
+<p><strong>Silenced</strong> is more restrictive. In this mode, alarms are still detected, still saved to the historian, and still sent to clients — but they are <em>not displayed</em>. This is useful during planned maintenance or startup phases when you want alarms to be recorded for later analysis but do not want operators to be distracted by known conditions.</p>
+
+<p><strong>Disabled</strong> is the most restrictive state. When alarms are disabled, no alarm conditions are detected at all. There is nothing to acknowledge because no alarms are generated. Use this mode sparingly, as it means the system is completely blind to abnormal conditions.</p>
+
+<div class="pitfall">
+  <strong>Warning: Most Restrictive Wins</strong><br>
+  When alarm modes are configured at different levels of the containment hierarchy, the <em>most restrictive</em> setting always wins. If an Area has alarms enabled but a child object has them silenced, the child's alarms will be silenced. If a parent has alarms disabled, all children inherit that disabled state regardless of their own settings.
+</div>
+
+<!-- ============================================================ -->
+<h2>23.6 Alarm Mode Attributes</h2>
+<p class="page-ref">Reference: Module 7, pages 7-12 through 7-14</p>
+
+<p>Understanding how alarm modes are determined requires familiarity with three key attributes that work together in a parent-child hierarchy:</p>
+
+<p><strong><code>AlarmModeCmd</code></strong> is a writeable attribute that allows you to set the commanded alarm state for an object. You can write Enable, Silence, or Disable to this attribute to control the alarm mode directly.</p>
+
+<p><strong><code>AlarmInhibit</code></strong> is a writeable Boolean attribute that acts as a kill switch. When set to TRUE, <em>all</em> alarms for that object and every object contained within it are immediately disabled. When set back to FALSE, the inhibition is removed and the system recalculates alarm mode based on other factors.</p>
+
+<p><strong><code>AlarmMode</code></strong> is a calculated, read-only attribute that represents the effective alarm mode after the system has evaluated <code>AlarmModeCmd</code>, <code>AlarmInhibit</code>, and the parent's <code>AlarmMode</code>. The most restrictive setting among all of these always determines the final value.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0280_0.png" alt="Diagram showing the AlarmModeCmd, AlarmInhibit, and AlarmMode attribute hierarchy with parent-child inheritance">
+  <div class="caption">Alarm mode attribute hierarchy — AlarmModeCmd and AlarmInhibit combine with the parent's AlarmMode to determine the effective AlarmMode for each object</div>
+</div>
+
+<p>The parent-child hierarchy is important to understand. If a parent object has <code>AlarmInhibit</code> set to TRUE, all children are disabled regardless of their own <code>AlarmModeCmd</code> settings. However, individual alarms within an object are autonomous — changing the alarm mode on one alarm does not affect the others.</p>
+
+<div class="key-concept">
+  <strong>Key Concept: Alarm Inhibition Propagates Downward</strong><br>
+  Setting <code>AlarmInhibit</code> to TRUE on a parent object disables alarms for the parent and <em>all</em> contained children. This is a powerful tool for temporarily suppressing large groups of alarms, but use it with care — it affects everything beneath the inhibited object.
+</div>
+
+<!-- ============================================================ -->
+<h2>23.7 Alarm Attributes Reference</h2>
+<p class="page-ref">Reference: Module 7, pages 7-14 through 7-15</p>
+
+<p>Every alarm in Application Server exposes a set of attributes that control its behavior and provide runtime information. The following table summarizes the key alarm attributes:</p>
+
+<table>
+<tr><th>Attribute</th><th>Description</th></tr>
+<tr><td><code>.Acked</code></td><td>TRUE when the alarm has been acknowledged; resets to FALSE when a new alarm occurs</td></tr>
+<tr><td><code>.AckMsg</code></td><td>Operator comment (max 256 characters); writing to this attribute also sets Acked=TRUE</td></tr>
+<tr><td><code>.AlarmMode</code></td><td>Current calculated mode: Enable, Disable, or Silence</td></tr>
+<tr><td><code>.AlarmModeCmd</code></td><td>Writeable command to set the desired alarm mode</td></tr>
+<tr><td><code>.Category</code></td><td>Fixed predefined category label for classification</td></tr>
+<tr><td><code>.DescAttrName</code></td><td>Description text (max 329 characters); can reference other attributes using "me.AttrName" syntax</td></tr>
+<tr><td><code>.InAlarm</code></td><td>TRUE when the alarm is active; forced to OFF when the alarm is disabled</td></tr>
+<tr><td><code>.Inhibit</code></td><td>When TRUE, disables this single alarm only (does not affect other alarms on the object)</td></tr>
+<tr><td><code>.Priority</code></td><td>Urgency level from 1 to 999, where 1 is the most urgent</td></tr>
+<tr><td><code>.TimeAlarmAcked</code></td><td>Timestamp of the last acknowledgment</td></tr>
+<tr><td><code>.TimeAlarmOff</code></td><td>Timestamp when the alarm condition cleared</td></tr>
+<tr><td><code>.TimeAlarmOn</code></td><td>Timestamp when the alarm condition first triggered</td></tr>
+</table>
+
+<p>Notice the difference between <code>.Inhibit</code> (singular, per-alarm) and <code>AlarmInhibit</code> (on the object). The singular <code>.Inhibit</code> disables only the specific alarm it belongs to, while the object-level <code>AlarmInhibit</code> affects all alarms on the object and its children.</p>
+
+<!-- ============================================================ -->
+<h2>23.8 Alarm Severities</h2>
+<p class="page-ref">Reference: Module 7, pages 7-15 through 7-16</p>
+
+<p>Alarm severities provide a way to classify alarms by their urgency and importance. Application Server defines four severity levels, each mapped to a default range of priority values:</p>
+
+<table>
+<tr><th>Severity</th><th>Default Priority Range</th><th>Typical Use</th></tr>
+<tr><td><strong>Critical (1)</strong></td><td>1 – 250</td><td>Safety-critical conditions requiring immediate response</td></tr>
+<tr><td><strong>High (2)</strong></td><td>251 – 500</td><td>Significant process upsets requiring prompt attention</td></tr>
+<tr><td><strong>Medium (3)</strong></td><td>501 – 750</td><td>Operational deviations that should be investigated soon</td></tr>
+<tr><td><strong>Low (4)</strong></td><td>751 – 999</td><td>Informational conditions or minor deviations</td></tr>
+</table>
+
+<p>At runtime, the system ranks alarms using this hierarchy: <strong>Alarm Mode &gt; InAlarm &gt; Acked &gt; Severity Level</strong>. This means the alarm mode (enabled/silenced/disabled) takes precedence over whether the alarm is active, which in turn takes precedence over whether it has been acknowledged, and severity is considered last.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0282_0.jpeg" alt="Alarm severities table and configuration screenshot showing the four severity levels and their priority ranges">
+  <div class="caption">Alarm severity levels and their default priority ranges — priorities are configured per alarm using the .Priority attribute</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.9 Alarm Aggregation</h2>
+<p class="page-ref">Reference: Module 7, pages 7-16 through 7-17</p>
+
+<p>When your system contains hundreds or thousands of alarms spread across many Areas and objects, it becomes impractical to monitor each one individually. Alarm aggregation provides an efficient way to identify whether alarms exist anywhere within a containment hierarchy by rolling up alarm states from child objects into summary attributes on the parent.</p>
+
+<p>The aggregation system tracks four states: <strong>UNACK_ALM</strong> (unacknowledged active alarm), <strong>ACK_ALM</strong> (acknowledged active alarm), <strong>UNACK_RTN</strong> (unacknowledged return-to-normal), and <strong>ACK_RTN</strong> (acknowledged return-to-normal). However, only the first three are aggregated — <strong>ACK_RTN is not aggregated</strong>. Additionally, silenced alarms are still included in the aggregation.</p>
+
+<p>Five read-only attributes on Area objects provide the aggregated information:</p>
+
+<table>
+<tr><th>Attribute</th><th>Description</th></tr>
+<tr><td><code>AlarmCntsBySeverity</code></td><td>Count of active alarms broken down by severity level</td></tr>
+<tr><td><code>AlarmMostUrgentAcked</code></td><td>Priority of the most urgent acknowledged active alarm</td></tr>
+<tr><td><code>AlarmMostUrgentInAlarm</code></td><td>Priority of the most urgent active alarm (regardless of acknowledgment)</td></tr>
+<tr><td><code>AlarmMostUrgentMode</code></td><td>Mode of the most urgent active alarm</td></tr>
+<tr><td><code>AlarmMostUrgentSeverity</code></td><td>Severity of the most urgent active alarm</td></tr>
+</table>
+
+<p>To enable aggregation on an Area, you check the <strong>"Aggregate Alarms"</strong> checkbox in the SgArea Editor. Once enabled, the Area and all objects beneath it will contribute to the aggregation attributes.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0285_0.png" alt="SgArea Editor showing the Aggregate Alarms checkbox that enables alarm aggregation for the Area and all contained objects">
+  <div class="caption">SgArea Editor — the Aggregate Alarms checkbox enables alarm aggregation for the Area and all objects it contains</div>
+</div>
+
+<div class="pitfall">
+  <strong>Warning: ACK_RTN Is Not Aggregated</strong><br>
+  When an alarm returns to normal and the operator acknowledges that return, the ACK_RTN state is not rolled up into aggregation attributes. This means that areas with only acknowledged return-to-normal conditions will not show active aggregation indicators. Keep this in mind when designing your alarm display screens.
+</div>
+
+<!-- ============================================================ -->
+<h2>23.10 Monitoring Alarms at Runtime</h2>
+<p class="page-ref">Reference: Module 7, pages 7-17 through 7-18</p>
+
+<p>At runtime, you can monitor alarm activity directly through the Object Viewer. The Object Viewer provides a real-time view of alarm attributes including the current alarm state, acknowledgment status, timestamps, and priority. This is the primary tool for operators who need to interact with alarms during normal plant operations.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0286_0.png" alt="Object Viewer showing alarm attributes including InAlarm, Acked, Priority, and timestamps for active alarms">
+  <div class="caption">Object Viewer alarm monitoring — real-time display of alarm attributes including state, acknowledgment status, priority, and timestamps</div>
+</div>
+
+<!-- ============================================================ -->
+<h2>23.11 Shelving Alarms</h2>
+<p class="page-ref">Reference: Module 7, pages 7-18 through 7-19</p>
+
+<p>Shelving is a mechanism for temporarily hiding alarms from operator view without disabling them entirely. When an alarm is shelved, it continues to be detected and historized, but it does not appear in alarm displays. Shelved alarms are automatically unshelved after a configurable timeout period.</p>
+
+<p>Shelving differs from silencing in several important ways:</p>
+
+<table>
+<tr><th>Feature</th><th>Silencing</th><th>Shelving</th></tr>
+<tr><td><strong>Scope</strong></td><td>Applies to Areas, containers, objects, or individual alarms</td><td>Applies only to individual alarms</td></tr>
+<tr><td><strong>Timeout</strong></td><td>No automatic timeout</td><td>Has a built-in timeout — alarm returns after expiration</td></tr>
+<tr><td><strong>Access Control</strong></td><td>Standard alarm mode controls</td><td>Role-based access controls who can shelve alarms</td></tr>
+<tr><td><strong>Audit Trail</strong></td><td>Tracks user who changed mode</td><td>Tracks user, workstation, reason, start time, and expiration</td></tr>
+<tr><td><strong>Historization</strong></td><td>Alarms are historized</td><td>Alarms are still historized when shelved</td></tr>
+</table>
+
+<p>Seven attributes support the shelving mechanism:</p>
+
+<table>
+<tr><th>Attribute</th><th>Description</th></tr>
+<tr><td><code>AlarmShelveCmd</code></td><td>Writeable command to shelve or unshelve an alarm</td></tr>
+<tr><td><code>AlarmShelved</code></td><td>Read-only indicator of whether the alarm is currently shelved</td></tr>
+<tr><td><code>AlarmShelveStartTime</code></td><td>Timestamp when the alarm was shelved</td></tr>
+<tr><td><code>AlarmShelveStopTime</code></td><td>Timestamp when the alarm will be automatically unshelved</td></tr>
+<tr><td><code>AlarmShelveReason</code></td><td>Free-text reason for shelving the alarm</td></tr>
+<tr><td><code>AlarmShelveUser</code></td><td>User who performed the shelving operation</td></tr>
+<tr><td><code>AlarmShelveNode</code></td><td>Workstation from which the shelving was performed</td></tr>
+</table>
+
+<p>To use shelving, you must first enable it at the Area level through the Galaxy configuration. Navigate to Galaxy &gt; Configure &gt; Galaxy &gt; Alarms and Events, and enable shelving for the relevant Areas. Individual alarms can then be shelved at runtime through the Object Viewer.</p>
+
+<div class="screenshot">
+  <img src="../images/page_0288_0.jpeg" alt="Alarms tab showing shelving configuration options including timeout, reason field, and access controls">
+  <div class="caption">Shelving configuration — the Alarms tab provides shelving controls with timeout settings and reason documentation</div>
+</div>
+
+<div class="screenshot">
+  <img src="../images/page_0288_1.png" alt="Object Viewer showing shelving attributes including AlarmShelved, AlarmShelveStartTime, AlarmShelveStopTime, and AlarmShelveReason">
+  <div class="caption">Object Viewer shelving attributes — runtime display of shelving status, timestamps, user, workstation, and reason</div>
+</div>
+
+<div class="tip">
+  <strong>Tip: Shelving vs. Silencing — When to Use Which?</strong><br>
+  Use <em>silencing</em> when you want to suppress alarm displays for an entire Area or object during a known condition (like startup). Use <em>shelving</em> when you need to temporarily hide a specific alarm with a documented reason and automatic timeout — for example, during temporary maintenance on a single instrument.
+</div>
+
+<!-- ============================================================ -->
+<h2>23.12 Summary</h2>
+
+<p>In this lesson, we covered the complete alarm and event infrastructure in AVEVA Application Server. We distinguished between events (general state changes) and alarms (prioritized abnormal conditions), explored the five alarm types (Limit, Deviation, ROC, Bad Value, and Diagnostic), and understood how the Platform routes alarms through the distributed infrastructure.</p>
+
+<p>We examined the three alarm modes — Enabled, Silenced, and Disabled — and how the parent-child hierarchy enforces the most restrictive setting. We reviewed the key alarm attributes, severity levels, and the aggregation mechanism that allows you to monitor alarm status across entire containment hierarchies. Finally, we explored shelving as a targeted, time-limited mechanism for hiding individual alarms with full audit tracking.</p>
+
+<p>In the next lesson, <strong>Lab 13</strong>, you will apply this knowledge hands-on by configuring limit alarms on your mixer objects, interacting with alarm attributes in Object Viewer, and viewing alarm history in Historian Client Web.</p>
+
+<!-- ============================================================ -->
+<h2>Quiz: Test Your Understanding</h2>
+<div class="quiz">
+
+<p><strong>Q1:</strong> An operator says, "The tank level is at 78 EU and I'm seeing the HiHi alarm active." The HiHi limit is set to 80 EU with a deadband of 5 EU. The level then drops to 76 EU. Is the alarm cleared? Why or why not?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">No, the alarm is not cleared. With a HiHi limit of 80 EU and a deadband of 5 EU, the process value must drop below 75 EU (80 − 5 = 75) before the alarm clears. At 76 EU, the value has not returned far enough past the threshold.</p></details>
+
+<p><strong>Q2:</strong> You set <code>AlarmInhibit</code> to TRUE on the <code>Line1</code> Area. What is the effect on alarms on objects inside <code>Line1/Mixer100</code>?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">All alarms for every object contained within Line1 — including Mixer100 and everything inside it — are immediately disabled. Setting AlarmInhibit to TRUE acts as a kill switch that propagates downward through the entire containment hierarchy.</p></details>
+
+<p><strong>Q3:</strong> What is the difference between <code>.Inhibit</code> (singular, on an individual alarm) and <code>AlarmInhibit</code> (on an object)?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer"><code>.Inhibit</code> disables only the single alarm it belongs to and has no effect on any other alarms on the same object. <code>AlarmInhibit</code> (the object-level attribute) disables ALL alarms for that object and every object contained beneath it in the hierarchy.</p></details>
+
+<p><strong>Q4:</strong> Name the three alarm states that are aggregated, and the one that is NOT.</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The three aggregated states are UNACK_ALM, ACK_ALM, and UNACK_RTN. ACK_RTN (acknowledged return-to-normal) is NOT aggregated.</p></details>
+
+<p><strong>Q5:</strong> You need to temporarily hide a single alarm on Mixer100 for 30 minutes while you perform maintenance on the sensor. The alarm should still be recorded in the historian, and it should come back automatically. Should you use silencing or shelving? Why?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">You should use <strong>shelving</strong>. Shelving applies to individual alarms (not entire Areas), has a built-in timeout that will automatically unshelve the alarm after 30 minutes, and the alarm is still historized while shelved. Silencing would hide all alarms in an Area with no automatic timeout, which is not what you need here.</p></details>
+
 </div>
 
 <!-- ============================================================ -->
