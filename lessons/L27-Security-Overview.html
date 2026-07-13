@@ -93,33 +93,469 @@
 <label style="cursor:pointer;display:block;margin:0.1em 0;"><input type="checkbox" data-lesson="L34" onchange="saveProgress()"> <a href="L34-Galaxy-Backup-Restore.html">L34: Galaxy Backup and Restore</a></label>
 </div>
 </details>
+</nav>
 
-  <p><strong>Q2:</strong> In the Security Model, what is the relationship between Security Groups, Roles, and Users?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Security Groups contain AutomationObjects. Roles are granted Operational Permissions onto Security Groups. Users belong to one or more Roles and receive the sum of all permissions from their assigned Roles.</p></details>
+<h1>Lesson 27: Security Overview + Lab 16 — Configuring Security</h1>
+<p class="source">Source: AVEVA Application Server 2023 Training Manual, Module 9 Section 1 + Lab 16</p>
 
-  <p><strong>Q3:</strong> What is the difference between "Can Modify Operate Attributes" and "Can Modify Configure Attributes"?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">"Can Modify Operate Attributes" allows daily operational tasks like changing setpoints, outputs, and control modes. "Can Modify Configure Attributes" allows major configuration changes and requires the object to be set to Off scan first.</p></details>
+<!-- ============================================================ -->
+<!-- PART 1: SECURITY OVERVIEW                                     -->
+<!-- ============================================================ -->
 
-  <p><strong>Q4:</strong> Why did the Plant Maintenance user receive an "Access Denied" message when trying to open the IDE?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The Plant Maintenance 1 role was not granted "Can Start the IDE" permission (under IDE Permissions in General permissions). This role only had SMC Permissions and Operational permissions (Tune and Configure) for the production lines.</p></details>
+<h2>Security Overview</h2>
 
-  <p><strong>Q5:</strong> What happens to all new objects created in a Galaxy with respect to Security Groups?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">All new objects belong to the Default Security Group by default. This group cannot be removed. Objects must be manually moved to other security groups as needed.</p></details>
+<p>In any industrial automation environment, controlling who can do what is not just a best practice — it is essential. Application Server provides a built-in security framework that governs access to the IDE, the Operator Control and Monitoring Client (OCMC), and runtime operations. Before you can configure security effectively, you need to understand what the system can and cannot do, and how its four-layer security model fits together.</p>
 
-  <p><strong>Q6:</strong> What is the Login time setting used for in OS Group based authentication, and why did the lab set it to 3000?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Login time (in milliseconds) is the timeout period for validating user membership against OS groups. After the timeout, the system defaults to the local cache. The lab set it to 3000 ms to allow for a more seamless experience when testing different users, especially in intermittent or slow network scenarios.</p></details>
+<div class="key-concept">
+<strong>Key Concept: Application Server security is about <em>authorization</em>, not <em>protection against malicious attack</em>.</strong> Passwords are encrypted, but they are stored in a database that is physically accessible on the host machine. The system is designed to prevent accidental or unauthorized misuse by employees, not to withstand a determined external attacker. If your environment demands stronger authentication, the recommended approach is to use OS-based authentication with Microsoft tools such as password timeout policies and electronic signature authentication.
+</div>
 
-  <p><strong>Q7:</strong> What is the Plant Supervisors 1 role allowed to do that Plant Operators 1 is not?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Plant Supervisors 1 has access to all three operational areas (Line1, Line2, ControlSystem) and has Can Verify Writes permission. Plant Operators 1 only has access to Line1 (Can Acknowledge Alarms + Can Modify Operate Attributes) and no Verify Writes permission.</p></details>
+<h3>How Security Prevents Unauthorized Activities</h3>
 
-  <p><strong>Q8:</strong> After enabling security and assigning new Security Groups, what must happen to deployed objects before they function correctly?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Objects must be redeployed because their SecurityGroup attribute was modified when they were moved between security groups. The IDE will show objects needing deployment, and this will be addressed in Lab 17.</p></details>
+<p>When you enable security in a Galaxy, every action — from opening an object in the IDE to acknowledging an alarm at the operator console — requires the user to authenticate and possess the appropriate permissions. A user who is not logged in, or who lacks a specific permission, will simply be denied that action. This layered approach means that even within the same Galaxy, different users can have very different levels of access depending on their role.</p>
 
-  <p><strong>Q9:</strong> Can you modify the General permissions for the Administrator role? Why or why not?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">No, you cannot modify the General permissions for the Administrator role. The system enforces that the Administrator always has full General permissions to prevent accidental lockout from critical system functions.</p></details>
+<p>Security touches three main areas of the system. First, the <strong>Integrated Development Environment (IDE)</strong> controls who can create, modify, and deploy objects. Second, the <strong>Operator Control and Monitoring Client (OCMC)</strong> controls who can view and interact with the runtime environment. Third, the <strong>Runtime itself</strong> controls who can write to object attributes, acknowledge alarms, and perform other operational tasks.</p>
 
-  <p><strong>Q10:</strong> What security limitation should be aware of regarding password storage in Galaxy authentication mode?</p>
-  <details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Passwords are encrypted but stored in a database that is accessible. The system is not designed to stop determined programmers from accessing it. For higher-level security, use OS-based authentication with Microsoft tools, password timeout, and electronic signature authentication.</p></details>
+<h3>The Security Model: Four Core Components</h3>
+
+<p>The Application Server security model is built on four components that work together in a chain. Understanding this chain is essential before you configure anything.</p>
+
+<div class="screenshot">
+<img src="../images/page_0365_0.jpeg" alt="Security Model Diagram">
+<div class="caption">The security model hierarchy — from Security Classifications on individual attributes, up through Security Groups and Roles, to Users at the top.</div>
+</div>
+
+<p><strong>1. Security Classifications</strong> are labels assigned to individual attributes of an AutomationObject. Each classification — such as <em>Operate</em>, <em>Tune</em>, or <em>Configure</em> — defines what kind of operation is required to write a value to that attribute. For example, an attribute labeled <em>Operate</em> can be changed during normal daily operations, while an attribute labeled <em>Configure</em> requires a higher-level permission and often requires the object to be taken Off scan first.</p>
+
+<p><strong>2. Security Groups</strong> bundle together all the objects that should share the same security behavior. Think of a security group as a bucket: every AutomationObject in the Galaxy belongs to exactly one bucket. When you grant a role access to a security group, that role gains access to every object in the group. A <em>Default Security Group</em> is created automatically and cannot be removed — any object you have not explicitly placed into another group remains here.</p>
+
+<p><strong>3. Roles</strong> generalize the functions that different types of users perform. For instance, you might create a role called <em>Plant Operator</em> for staff who need to acknowledge alarms and adjust setpoints, and another role called <em>Software Engineer</em> for developers who need full IDE access. Each role is granted <strong>Operational Permissions</strong> onto one or more Security Groups, and also receives <strong>General Permissions</strong> for IDE and SMC tasks.</p>
+
+<p><strong>4. Users</strong> are the individuals who log in. A single user can be assigned multiple roles, and their effective permissions are the sum of all permissions granted by those roles. This means you can build up complex access patterns by combining simple roles rather than creating a unique role for every person.</p>
+
+<div class="key-concept">
+<strong>Key Concept: Every AutomationObject belongs to exactly one Security Group.</strong> This 1:1 relationship is what makes the model predictable. When you move an object from one security group to another, its effective security changes immediately. New objects are always placed in the Default Security Group until you move them.
+</div>
+
+<h3>Authentication Modes</h3>
+
+<p>Before users can be authorized, they must first be <em>authenticated</em> — that is, the system must verify who they are. Application Server supports four authentication modes, and you choose one for the entire Galaxy:</p>
+
+<table>
+<tr><th>Mode</th><th>Description</th><th>When to Use</th></tr>
+<tr><td><strong>None (Open Security)</strong></td><td>The default. All functions are open with no authentication required. No login dialogs appear.</td><td>Development or training environments where access control is not a concern.</td></tr>
+<tr><td><strong>Galaxy</strong></td><td>Uses the local Galaxy database for authentication. Users log in with a name and password stored in the Galaxy.</td><td>Simple deployments where you want basic authentication without relying on a Windows domain.</td></tr>
+<tr><td><strong>OS User based</strong></td><td>Uses Windows NT individual user authentication. Users provide their domain, username, and password.</td><td>Environments where each person should be individually identifiable through their Windows account.</td></tr>
+<tr><td><strong>OS Group based</strong></td><td>Uses OS group membership mapped to Galaxy Roles. Users log in through Windows and the system looks up which OS groups they belong to, then maps those to Galaxy Roles.</td><td>Enterprise environments with existing Windows domain groups — the most common production choice.</td></tr>
+</table>
+
+<div class="screenshot">
+<img src="../images/page_0367_0.png" alt="Security Settings — Authentication Mode Tab">
+<div class="caption">The Security Settings window shows the four authentication modes as radio buttons, along with the Login time and Role update fields used by OS Group based authentication.</div>
+</div>
+
+<p>When you choose <strong>OS Group based</strong> authentication, two additional settings appear:</p>
+<ul>
+  <li><strong>Login time (ms)</strong> — The timeout period (in milliseconds) for validating a user's membership against their OS groups. The default is 0, meaning the system waits indefinitely. Setting a value like 3000 ms is useful in training environments to avoid long pauses.</li>
+  <li><strong>Role update (ms)</strong> — The interval between re-validation attempts for each OS group. This controls how often the system checks whether a user's group memberships have changed.</li>
+</ul>
+
+<h3>Security Permissions: General and Operational</h3>
+
+<p>Once a user is authenticated, permissions determine what they can actually do. There are two categories of permissions:</p>
+
+<p><strong>General Permissions</strong> control access to IDE and SMC configuration tasks — things like starting the IDE, configuring objects in OCMC, or using the Object Viewer. The <em>Administrator</em> role is special: its General Permissions can never be modified, which guarantees that at least one role always has full administrative access.</p>
+
+<p><strong>Operational Permissions</strong> control what users can do at runtime. There are eight operational permissions, each corresponding to a specific type of action:</p>
+
+<table>
+<tr><th>#</th><th>Permission</th><th>What It Controls</th></tr>
+<tr><td>1</td><td>Can Modify "Operate" Attributes</td><td>Daily operational tasks — changing setpoints, outputs, and control modes.</td></tr>
+<tr><td>2</td><td>Can Modify "Tune" Attributes</td><td>Runtime tuning — adjusting alarm setpoints, PID sensitivity, and similar parameters.</td></tr>
+<tr><td>3</td><td>Can Modify "Configure" Attributes</td><td>Major configuration changes; requires the object to be taken Off scan first.</td></tr>
+<tr><td>4</td><td>Can Acknowledge Alarms</td><td>Manually acknowledging alarms in the OCMC.</td></tr>
+<tr><td>5</td><td>Can Shelve Alarms</td><td>Temporarily suppressing or restoring individual alarms.</td></tr>
+<tr><td>6</td><td>Can Modify Alarm Modes</td><td>Changing the operational mode of an alarm (e.g., enabling or disabling it).</td></tr>
+<tr><td>7</td><td>Can Modify Plant States</td><td>Modifying plant states used for state-based alarming.</td></tr>
+<tr><td>8</td><td>Can Verify Writes</td><td>Providing an authentication signature for Verified Writes.</td></tr>
+</table>
+
+<div class="pitfall">
+<strong>Important Distinction:</strong> "Can Modify Operate Attributes" is for day-to-day changes like adjusting a temperature setpoint. "Can Modify Configure Attributes" is for fundamental changes like altering an object's configuration structure — and it requires the object to be taken Offline first. Confusing these two is a common source of confusion when designing roles.
+</div>
+
+<h3>Key Behaviors with OS Group Based Authentication</h3>
+
+<p>When you are using OS Group based authentication, a few behaviors are worth keeping in mind:</p>
+<ul>
+  <li><strong>Remote node access:</strong> A user must log on at least once before writing to attributes on a remote node. The system caches credentials locally after the first successful authentication.</li>
+  <li><strong>Domain controller failure:</strong> If the domain controller becomes unavailable, the system falls back to locally cached data. This means existing users can still log in, but their group memberships will not be updated until the domain controller is reachable again.</li>
+  <li><strong>User full name:</strong> The user's full name is only available if the domain controller was connected during the user's first login. If it was disconnected, the full name field may be blank.</li>
+  <li><strong>Group type restriction:</strong> Only OS groups of type <em>Security</em> (not <em>Distribution</em>) are usable for mapping to Galaxy Roles.</li>
+</ul>
+
+<!-- ============================================================ -->
+<!-- PART 2: LAB 16 — CONFIGURING SECURITY                        -->
+<!-- ============================================================ -->
+
+<h2>Lab 16: Configuring Security</h2>
+
+<div class="lab">
+<strong>Lab Objectives:</strong>
+<ul>
+  <li>Configure security in a Galaxy by enabling OS Group based authentication</li>
+  <li>Create security groups organized by plant area</li>
+  <li>Add security roles and assign appropriate permissions</li>
+  <li>Test the security configuration by logging in as different users</li>
+</ul>
+</div>
+
+<p>In this hands-on lab, you will walk through the complete process of enabling and configuring security for your Galaxy. By the end, different users will have different levels of access depending on their role — some will be able to open the IDE, while others will be restricted to alarm acknowledgment and setpoint changes.</p>
+
+<h3>Step 1: Enable OS Group Based Authentication</h3>
+
+<p>Start by opening the Security configuration from the IDE. Navigate to the <strong>Galaxy</strong> menu and select <strong>Configure &rarr; Security</strong>. This opens the Security Settings window where you will choose how users authenticate.</p>
+
+<div class="screenshot">
+<img src="../images/page_0374_0.png" alt="IDE — Galaxy > Configure > Security menu">
+<div class="caption">Accessing the Security configuration from the Galaxy menu in the IDE.</div>
+</div>
+
+<p>On the <strong>Authentication Mode</strong> tab, select the <strong>OS Group based</strong> radio button. This tells the Galaxy to use Windows domain groups for authentication. Set the <strong>Login time</strong> to <strong>3000</strong> milliseconds. This value provides a reasonable timeout for validation against OS groups during testing without causing long delays.</p>
+
+<div class="pitfall">
+<strong>Do NOT click Save yet!</strong> You still need to configure security groups and roles before saving. If you save now with OS Group based authentication enabled, you will immediately be prompted to log in — and you may not have any roles configured yet.
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0375_0.png" alt="Authentication mode — OS Group based selected with Login time 3000">
+<div class="caption">Selecting OS Group based authentication and setting the Login time to 3000 ms.</div>
+</div>
+
+<h3>Step 2: Create Security Groups</h3>
+
+<p>Switch to the <strong>Security Groups</strong> tab. Here you will organize your objects into groups that reflect the physical layout of the plant. Click <strong>Add</strong> to create three new security groups:</p>
+
+<table>
+<tr><th>Security Group</th><th>Purpose</th></tr>
+<tr><td><strong>Line1</strong></td><td>Contains all objects on Production Line 1</td></tr>
+<tr><td><strong>Line2</strong></td><td>Contains all objects on Production Line 2</td></tr>
+<tr><td><strong>ControlSystem</strong></td><td>Contains platform, PLC, and application engine objects</td></tr>
+</table>
+
+<div class="screenshot">
+<img src="../images/page_0376_0.png" alt="Security Groups tab — before adding groups">
+<div class="caption">The Security Groups tab, initially showing only the Default Security Group.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0377_0.png" alt="Security Groups tab — Line1, Line2, ControlSystem added">
+<div class="caption">After adding the three new security groups: Line1, Line2, and ControlSystem.</div>
+</div>
+
+<h3>Step 3: Assign Objects to Security Groups</h3>
+
+<p>Now you need to move objects from the Default Security Group into the appropriate new groups. This is done by dragging and dropping instances in the left pane.</p>
+
+<p><strong>Move to Line1:</strong> Select the following objects from the Default group and drag them to Line1:</p>
+<p style="margin-left:1em;"><code>Agitator_001</code>, <code>Inlet1_001</code>, <code>Inlet2_001</code>, <code>Level_001</code>, <code>Line1</code>, <code>Mixer100</code>, <code>Outlet_001</code>, <code>Pump1_001</code>, <code>Pump2_001</code>, <code>Temperature_001</code></p>
+
+<div class="screenshot">
+<img src="../images/page_0378_0.png" alt="Dragging instances from Default to Line1">
+<div class="caption">Selecting Line 1 objects in the Default group and dragging them to the Line1 security group.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0379_0.png" alt="Default group after moving Line1 objects">
+<div class="caption">The Default Security Group after Line 1 objects have been moved out — fewer objects remain.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0379_1.png" alt="Line1 group — verifying objects">
+<div class="caption">Verifying that all Line 1 objects now appear in the Line1 security group.</div>
+</div>
+
+<p><strong>Move to Line2:</strong> Repeat the process for Line 2 objects. Select and drag these from Default to Line2:</p>
+<p style="margin-left:1em;"><code>Agitator_002</code>, <code>Inlet1_002</code>, <code>Inlet2_002</code>, <code>Level_002</code>, <code>Line2</code>, <code>Mixer200</code>, <code>Outlet_002</code>, <code>Pump1_002</code>, <code>Pump2_002</code>, <code>Temperature_002</code></p>
+
+<div class="screenshot">
+<img src="../images/page_0380_0.png" alt="Moving Line2 objects to the Line2 security group">
+<div class="caption">Selecting Line 2 objects and moving them to the Line2 security group.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0381_0.png" alt="Line2 group — verifying objects">
+<div class="caption">Verifying that all Line 2 objects are now in the Line2 security group.</div>
+</div>
+
+<p><strong>Move to ControlSystem:</strong> Finally, move the control system objects to the ControlSystem group:</p>
+<p style="margin-left:1em;"><code>AppEngine1</code>, <code>ControlSystem</code>, <code>GRPlatform</code>, <code>ProdPlatform</code>, <code>ProdPLC</code>, <code>Simulator</code></p>
+
+<div class="screenshot">
+<img src="../images/page_0382_0.png" alt="ControlSystem group with platform and PLC objects">
+<div class="caption">The ControlSystem security group containing platform, PLC, and application engine objects.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0382_1.png" alt="Default group — remaining objects after all moves">
+<div class="caption">The Default Security Group after all moves — only a few system objects remain.</div>
+</div>
+
+<h3>Step 4: Add Security Roles</h3>
+
+<p>Switch to the <strong>Roles</strong> tab. You will now create roles that map to the OS groups in your Windows domain. Click <strong>Add</strong> and select the appropriate OS groups:</p>
+
+<div class="screenshot">
+<img src="../images/page_0383_0.png" alt="Roles tab — before adding roles">
+<div class="caption">The Roles tab, initially showing the Default and Administrator roles.</div>
+</div>
+
+<p>When you click Add, a dialog appears asking you to select the source of the role. Choose your domain from the list, then select the OS groups to import:</p>
+
+<div class="screenshot">
+<img src="../images/page_0384_1.png" alt="Select groups dialog for adding roles">
+<div class="caption">The Select Groups dialog where you choose OS groups to import as Galaxy roles.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0385_0.png" alt="Domain selection dialog">
+<div class="caption">Selecting the correct Windows domain for the OS groups.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0386_1.png" alt="Adding OS groups as roles">
+<div class="caption">Selecting the OS groups to import — Application Administrators, Application Developers, Plant groups.</div>
+</div>
+
+<p>Add the following six roles:</p>
+
+<div class="screenshot">
+<img src="../images/page_0386_2.png" alt="All roles added successfully">
+<div class="caption">All six OS groups have been added as Galaxy roles.</div>
+</div>
+
+<div class="screenshot">
+<img src="../images/page_0387_0.png" alt="Complete roles list">
+<div class="caption">The complete list of roles including Default, Administrator, and the six imported OS group roles.</div>
+</div>
+
+<h3>Step 5: Configure Role Permissions</h3>
+
+<p>Now comes the most detailed part of the lab: configuring the permissions for each role. You will work through each role one at a time, checking or unchecking permissions based on what that role needs to do.</p>
+
+<p><strong>Default Role:</strong> This role applies to anyone who logs in but does not match any other role. Restrict it significantly: uncheck all IDE Permissions and the SMC "Can Start" permission. Leave only <strong>"Can Write to GObject Attributes using ObjectViewer"</strong> checked. Also uncheck the Default operational group so this role has minimal runtime access.</p>
+
+<div class="screenshot">
+<img src="../images/page_0388_0.png" alt="Default role — permissions configured">
+<div class="caption">The Default role with minimal permissions — only ObjectViewer write access enabled.</div>
+</div>
+
+<p><strong>Administrator Role:</strong> Leave this role with all permissions checked. The system prevents you from modifying the Administrator's General Permissions anyway, so this role always has full access to everything.</p>
+
+<div class="screenshot">
+<img src="../images/page_0389_0.png" alt="Administrator role — all permissions checked">
+<div class="caption">The Administrator role with full permissions — this role cannot be locked out.</div>
+</div>
+
+<p><strong>Application Administrators:</strong> Grant all permissions. This role is for team leads who need complete access to both IDE configuration and runtime operations.</p>
+
+<div class="screenshot">
+<img src="../images/page_0390_0.png" alt="Application Administrators role">
+<div class="caption">Application Administrators role with all IDE, SMC, and operational permissions checked.</div>
+</div>
+
+<p><strong>Application Developers 1:</strong> Grant IDE Permissions (but not User Configuration) and SMC Permissions (but not Start/Stop). For operational permissions, grant <strong>Configure</strong> and <strong>Operate</strong> on all four groups: Default, Line1, Line2, and ControlSystem. This allows developers to modify object configurations and daily settings across the entire plant.</p>
+
+<div class="screenshot">
+<img src="../images/page_0391_0.png" alt="Application Developers 1 role permissions">
+<div class="caption">Application Developers 1 — IDE and SMC access plus Configure and Operate on all security groups.</div>
+</div>
+
+<p><strong>Plant Maintenance 1:</strong> Grant SMC Permissions only (no Start/Stop). For operational permissions, grant <strong>Configure</strong> and <strong>Tune</strong> on Line1, Line2, and ControlSystem. This gives maintenance staff the ability to perform configuration changes and runtime tuning but no IDE access.</p>
+
+<div class="screenshot">
+<img src="../images/page_0393_0.png" alt="Plant Maintenance 1 role permissions">
+<div class="caption">Plant Maintenance 1 — SMC access with Configure and Tune permissions on all production groups.</div>
+</div>
+
+<p><strong>Plant Operators 1:</strong> This role is for operators working on Line 1 only. Grant <strong>Acknowledge Alarms</strong> and <strong>Can Modify "Operate" Attributes</strong> on Line1 only. No other operational groups are checked, and no IDE or SMC configuration permissions are granted.</p>
+
+<div class="screenshot">
+<img src="../images/page_0394_0.png" alt="Plant Operators 1 role permissions">
+<div class="caption">Plant Operators 1 — limited to Line1 with Acknowledge Alarms and Modify Operate permissions.</div>
+</div>
+
+<p><strong>Plant Operators 2:</strong> Identical to Plant Operators 1, but for Line 2. Grant <strong>Acknowledge Alarms</strong> and <strong>Can Modify "Operate" Attributes</strong> on Line2 only.</p>
+
+<div class="screenshot">
+<img src="../images/page_0395_0.png" alt="Plant Operators 2 role permissions">
+<div class="caption">Plant Operators 2 — limited to Line2 with Acknowledge Alarms and Modify Operate permissions.</div>
+</div>
+
+<p><strong>Plant Supervisors 1:</strong> Supervisors need broader access than operators. Grant <strong>Acknowledge Alarms</strong>, <strong>Can Modify "Operate" Attributes</strong>, and <strong>Can Verify Writes</strong> on all three operational groups: Line1, Line2, and ControlSystem. The Verify Writes permission is what distinguishes supervisors from operators — it allows them to provide an authentication signature when critical write operations require verification.</p>
+
+<div class="screenshot">
+<img src="../images/page_0396_0.png" alt="Plant Supervisors 1 role permissions">
+<div class="caption">Plant Supervisors 1 — full operational access to all groups with Verify Writes permission.</div>
+</div>
+
+<h3>Step 6: Save and Test</h3>
+
+<p>Click <strong>Save</strong> to apply your security configuration. Because you changed the authentication mode from None to OS Group based, the system immediately presents a login dialog. Every subsequent action in the IDE will require authentication.</p>
+
+<div class="screenshot">
+<img src="../images/page_0397_0.png" alt="Login dialog after saving security configuration">
+<div class="caption">The login dialog that appears after enabling security — users must authenticate before proceeding.</div>
+</div>
+
+<p><strong>Test 1 — Plant Maintenance user:</strong> Attempt to log in as a Plant Maintenance user and try to open the IDE. You should receive an <strong>Access Denied</strong> message. This is expected because the Plant Maintenance 1 role was not granted any IDE permissions — it only has SMC and operational permissions.</p>
+
+<div class="screenshot">
+<img src="../images/page_0398_0.png" alt="Access Denied — Plant Maintenance user cannot open IDE">
+<div class="caption">Access Denied when a Plant Maintenance user tries to open the IDE — this role lacks IDE permissions.</div>
+</div>
+
+<p><strong>Test 2 — Application Developer:</strong> Log out and log back in as an Application Developer. This time, the IDE should open successfully. Check the user information in the IDE to verify you are logged in with the correct identity.</p>
+
+<div class="screenshot">
+<img src="../images/page_0398_1.png" alt="Login as Application Developer — IDE opens successfully">
+<div class="caption">Logging in as an Application Developer — the IDE opens and displays the authenticated user.</div>
+</div>
+
+<div class="tip">
+<strong>After enabling security, you may notice that some objects need redeployment.</strong> This happens because moving objects between security groups modified their <code>SecurityGroup</code> attribute. The IDE will flag these objects as needing deployment. The redeployment process will be covered in the next lesson (Lab 17).
+</div>
+
+<h3>Security Configuration Summary</h3>
+
+<p>Here is a quick reference table summarizing what each role can do:</p>
+
+<table>
+<tr>
+  <th>Role</th>
+  <th>IDE</th>
+  <th>SMC</th>
+  <th>Operate</th>
+  <th>Tune</th>
+  <th>Configure</th>
+  <th>Alarm Ack</th>
+  <th>Verify Writes</th>
+  <th>Groups</th>
+</tr>
+<tr>
+  <td>Default</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>None</td>
+</tr>
+<tr>
+  <td>Administrator</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>All</td>
+</tr>
+<tr>
+  <td>App Administrators</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>All</td>
+</tr>
+<tr>
+  <td>App Developers 1</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>All</td>
+</tr>
+<tr>
+  <td>Plant Maintenance 1</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>L1, L2, CS</td>
+</tr>
+<tr>
+  <td>Plant Operators 1</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>Line1</td>
+</tr>
+<tr>
+  <td>Plant Operators 2</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>Line2</td>
+</tr>
+<tr>
+  <td>Plant Supervisors 1</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10007;</td>
+  <td>&#10007;</td>
+  <td>&#10003;</td>
+  <td>&#10003;</td>
+  <td>L1, L2, CS</td>
+</tr>
+</table>
+
+<p style="font-size:0.9em;color:#666;">L1 = Line1, L2 = Line2, CS = ControlSystem</p>
+
+<!-- ============================================================ -->
+<!-- QUIZ                                                          -->
+<!-- ============================================================ -->
+
+<div class="quiz">
+<h3>&#128218; Knowledge Check</h3>
+
+<p><strong>Q1:</strong> In the Application Server security model, what is the relationship between Security Groups, Roles, and Users?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Security Groups contain AutomationObjects that share the same security behavior. Roles are granted Operational Permissions onto Security Groups. Users belong to one or more Roles and receive the sum of all permissions from their assigned Roles.</p></details>
+
+<p><strong>Q2:</strong> What is the difference between "Can Modify Operate Attributes" and "Can Modify Configure Attributes"?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">"Can Modify Operate Attributes" allows daily operational tasks like changing setpoints, outputs, and control modes. "Can Modify Configure Attributes" allows major configuration changes and requires the object to be taken Off scan first.</p></details>
+
+<p><strong>Q3:</strong> Why did the Plant Maintenance user receive an "Access Denied" message when trying to open the IDE?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">The Plant Maintenance 1 role was not granted "Can Start the IDE" permission under IDE Permissions in General Permissions. This role only has SMC Permissions and Operational permissions (Tune and Configure) for the production lines — no IDE access at all.</p></details>
+
+<p><strong>Q4:</strong> What is the Login time setting used for in OS Group based authentication, and why did the lab set it to 3000?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Login time (in milliseconds) is the timeout period for validating user membership against OS groups. After the timeout, the system defaults to locally cached data. The lab set it to 3000 ms to allow seamless testing when switching between users, especially when the domain controller response is slow.</p></details>
+
+<p><strong>Q5:</strong> What distinguishes the Plant Supervisors 1 role from Plant Operators 1 in terms of permissions?</p>
+<details><summary style="cursor:pointer;color:#2c5f2d;font-weight:bold;">Click to reveal answer</summary><p class="answer">Plant Supervisors 1 has access to all three operational areas (Line1, Line2, ControlSystem) and includes the Can Verify Writes permission. Plant Operators 1 is limited to Line1 only and has only Can Acknowledge Alarms and Can Modify Operate Attributes — no Verify Writes.</p></details>
+
 </div>
 
 <!-- ============================================================ -->
